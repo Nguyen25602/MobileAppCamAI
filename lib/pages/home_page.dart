@@ -1,3 +1,4 @@
+import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -9,6 +10,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  double bottomNavBarHeight = 210.0;
+  bool isExpanded = false;
+
+  void toggleBottomNavBar() {
+    setState(() {
+      isExpanded = !isExpanded;
+      bottomNavBarHeight = isExpanded ? 200.0 : 60.0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,9 +137,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                //Footer
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -136,104 +147,44 @@ class _HomeScreenState extends State<HomeScreen> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          MaterialButton(
-                            onPressed: () {},
-                            color: const Color(0xff525F80),
-                            textColor: Colors.white,
-                            child: Image.asset(
-                              "assets/Icon_Notify.png",
-                            ),
-                            padding: const EdgeInsets.all(16),
-                            shape: const CircleBorder(),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          const Text(
-                            'Thông báo',
-                            style: TextStyle(
-                                fontFamily: 'Roboto',
-                                color: Colors.white,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12),
+                          IconWidgets(
+                            iconPath: "assets/Icon_Notify.png",
+                            text: 'Thông báo',
+                            onPressed: demo,
+                            vcolor: Color(0xffF9CA54),
                           ),
                         ],
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          MaterialButton(
-                            onPressed: () {},
-                            color: const Color(0xff525F80),
-                            textColor: Colors.white,
-                            child: Image.asset(
-                              "assets/Icon_AICam.png",
-                            ),
-                            padding: const EdgeInsets.all(16),
-                            shape: const CircleBorder(),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          const Text(
-                            'Check-in AI',
-                            style: TextStyle(
-                                fontFamily: 'Roboto',
-                                color: Colors.white,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12),
+                          IconWidgets(
+                            iconPath: "assets/Icon_AICam.png",
+                            text: 'Check-in AI',
+                            onPressed: demo,
+                            vcolor: Color(0xffF9CA54),
                           ),
                         ],
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          MaterialButton(
-                            onPressed: () {},
-                            color: const Color(0xff525F80),
-                            textColor: Colors.white,
-                            child: Image.asset(
-                              "assets/Icon_Maps.png",
-                            ),
-                            padding: const EdgeInsets.all(16),
-                            shape: const CircleBorder(),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          const Text(
-                            'Check-in GPS',
-                            style: TextStyle(
-                                fontFamily: 'Roboto',
-                                color: Colors.white,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12),
+                          IconWidgets(
+                            iconPath: "assets/Icon_Maps.png",
+                            text: 'Check-in GPS',
+                            onPressed: demo,
+                            vcolor: Color(0xffF9CA54),
                           ),
                         ],
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          MaterialButton(
-                            onPressed: () {},
-                            color: const Color(0xffF9CA54),
-                            textColor: Colors.white,
-                            child: Image.asset(
-                              "assets/Icon_Documents.png",
-                            ),
-                            padding: const EdgeInsets.all(16),
-                            shape: const CircleBorder(),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          const Text(
-                            'Đăng ký nghĩ phép',
-                            style: TextStyle(
-                                fontFamily: 'Roboto',
-                                color: Colors.white,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12),
+                          IconWidgets(
+                            iconPath: "assets/Icon_Documents.png",
+                            text: 'Đăng ký nghĩ phép',
+                            onPressed: demo,
+                            vcolor: Color(0xffF9CA54),
                           ),
                         ],
                       ),
@@ -246,3 +197,5 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+void demo() {}
