@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
+import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _LoginPageState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isExpanded = false;
   bool isChanged = false;
   BorderRadiusGeometry radius = const BorderRadius.only(
@@ -22,10 +25,11 @@ class _LoginPageState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => dialogBuilder(context),
             icon: const Icon(
               Icons.menu,
               size: 24,
@@ -44,7 +48,9 @@ class _LoginPageState extends State<HomeScreen> {
           ),
         ),
         leading: GestureDetector(
-          onTap: () {},
+          onTap: () {
+            _scaffoldKey.currentState!.openDrawer();
+          },
           child: Container(
             margin: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -67,7 +73,7 @@ class _LoginPageState extends State<HomeScreen> {
           });
         },
         panelBuilder: (scrollController) =>
-            _buildSlidingPanel(scrollController),
+            _buildSlidingPanel(scrollController, context),
         body: SingleChildScrollView(
           child: Container(
             color: Theme.of(context).primaryColor,
@@ -110,10 +116,100 @@ class _LoginPageState extends State<HomeScreen> {
         ),
         borderRadius: radius,
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 50),
+          children: <Widget>[
+            Icon(
+              Icons.account_circle,
+              size: 150,
+              color: Colors.grey[700],
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            const Text(
+              "userName",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            const Divider(
+              height: 2,
+            ),
+            // Tab Group
+            ListTile(
+              onTap: () {},
+              selectedColor: Theme.of(context).primaryColor,
+              selected: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              leading: const Icon(Icons.group),
+              title: const Text(
+                "Nhóm của bạn",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            // Tab
+            ListTile(
+              onTap: () {},
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              leading: const Icon(Icons.group),
+              title: const Text(
+                "Hồ Sơ Của Bạn",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            // Tab Logout
+            ListTile(
+              onTap: () async {
+                return showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Đăng Xuất"),
+                        content: const Text("Bạn Muốn Đăng Xuất ?"),
+                        actions: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(
+                              Icons.cancel,
+                              color: Colors.red,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () async {},
+                            icon: const Icon(
+                              Icons.done,
+                              color: Colors.blue,
+                            ),
+                          )
+                        ],
+                      );
+                    });
+              },
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              leading: const Icon(Icons.exit_to_app),
+              title: const Text(
+                "Đăng Xuất",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildSlidingPanel(ScrollController scrollController) {
+  Widget _buildSlidingPanel(
+      ScrollController scrollController, BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
@@ -160,13 +256,13 @@ class _LoginPageState extends State<HomeScreen> {
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 //Tạo button
-                Column(
+                const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconWidgets(
@@ -178,7 +274,7 @@ class _LoginPageState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                Column(
+                const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconWidgets(
@@ -195,12 +291,14 @@ class _LoginPageState extends State<HomeScreen> {
                     IconWidgets(
                       iconPath: "assets/Icon_Maps.png",
                       text: 'Check-in GPS',
-                      onPressed: demo,
-                      vcolor: Color(0xff525F80),
+                      onPressed: () {
+                        nextScreen(context, const CheckGPS());
+                      },
+                      vcolor: const Color(0xff525F80),
                     ),
                   ],
                 ),
-                Column(
+                const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconWidgets(
