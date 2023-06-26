@@ -61,14 +61,48 @@ class _LoginPageState extends State<LoginPage> {
         maxHeight: 330,
         onPanelSlide: (double slideAmount) {
           setState(() {
-            isExpanded = slideAmount > 0;
+            isExpanded = slideAmount > 0.15;
             isChanged = slideAmount > 0.5;
           });
         },
         panelBuilder: (scrollController) =>
             _buildSlidingPanel(scrollController),
-        body: const Center(
-          child: Text('Main Content'),
+        body: SingleChildScrollView(
+          child: Container(
+            color: Theme.of(context).primaryColor,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: double.infinity,
+                  child: const Column(
+                    children: [
+                      Text(
+                        'HI NGUYÊN BUỔI SÁNG',
+                        style: TextStyle(
+                            fontFamily: 'Roboto',
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14),
+                      ),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Text(
+                        'Một ngày làm việc vui vẻ nha !',
+                        style: TextStyle(
+                            fontFamily: 'Roboto',
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 10),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
         borderRadius: radius,
       ),
