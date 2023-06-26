@@ -12,6 +12,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool isExpanded = false;
+  bool isChanged = false;
   BorderRadiusGeometry radius = const BorderRadius.only(
     topLeft: Radius.circular(24.0),
     topRight: Radius.circular(24.0),
@@ -23,8 +24,9 @@ class _LoginPageState extends State<LoginPage> {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: Image.asset(
-              "assets/Icon_Info.png",
+            icon: const Icon(
+              Icons.menu,
+              size: 24,
             ),
           )
         ],
@@ -36,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
           style: GoogleFonts.robotoCondensed(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 27,
+            fontSize: 24,
           ),
         ),
         leading: GestureDetector(
@@ -56,10 +58,11 @@ class _LoginPageState extends State<LoginPage> {
         backdropEnabled: true,
         color: const Color(0XFF465475),
         minHeight: 200,
-        maxHeight: 380,
+        maxHeight: 330,
         onPanelSlide: (double slideAmount) {
           setState(() {
-            isExpanded = slideAmount > 0.0;
+            isExpanded = slideAmount > 0;
+            isChanged = slideAmount > 0.5;
           });
         },
         panelBuilder: (scrollController) =>
@@ -77,16 +80,27 @@ class _LoginPageState extends State<LoginPage> {
       scrollDirection: Axis.vertical,
       child: Column(
         children: [
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.expand_less,
-                size: 32,
-                color: Color.fromARGB(199, 172, 176, 184),
-              ),
-            ],
-          ),
+          isChanged
+              ? const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.expand_more,
+                      size: 32,
+                      color: Color.fromARGB(199, 172, 176, 184),
+                    ),
+                  ],
+                )
+              : const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.expand_less,
+                      size: 32,
+                      color: Color.fromARGB(199, 172, 176, 184),
+                    ),
+                  ],
+                ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 24),
             child: Row(
@@ -98,18 +112,18 @@ class _LoginPageState extends State<LoginPage> {
                       fontFamily: 'Roboto',
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14),
+                      fontSize: 12),
                 ),
                 Icon(
                   Icons.help,
-                  size: 32,
+                  size: 24,
                   color: Color.fromARGB(255, 255, 255, 255),
                 ),
               ],
             ),
           ),
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -122,6 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                       text: 'Thông báo',
                       onPressed: demo,
                       vcolor: Color(0xff525F80),
+                      isText: true,
                     ),
                   ],
                 ),
@@ -152,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     IconWidgets(
                       iconPath: "assets/Icon_Documents.png",
-                      text: 'Đăng ký nghĩ phép',
+                      text: 'ĐK nghỉ phép',
                       onPressed: demo,
                       vcolor: Color(0xffF9CA54),
                     ),
@@ -163,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           if (isExpanded)
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               child: Column(children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -210,6 +225,7 @@ class _LoginPageState extends State<LoginPage> {
                           text: 'Xét duyệt NV',
                           onPressed: demo,
                           vcolor: Color(0xff00FFC2),
+                          isText: true,
                         ),
                       ],
                     ),
