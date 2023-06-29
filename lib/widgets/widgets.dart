@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 const textInputDecoration = InputDecoration(
   labelStyle: TextStyle(
@@ -30,7 +31,7 @@ void showSnackbar(context, color, message) {
       style: const TextStyle(fontSize: 14),
     ),
     backgroundColor: color,
-    duration: const Duration(seconds: 2),
+    duration: const Duration(seconds: 10),
     action: SnackBarAction(
       label: "OK",
       onPressed: () {},
@@ -40,19 +41,21 @@ void showSnackbar(context, color, message) {
 }
 
 class IconWidgets extends StatefulWidget {
-  final String iconPath;
+  final FaIcon iconPath;
   final String text;
   final VoidCallback onPressed;
   final Color vcolor;
   final bool isText;
+  final bool flag;
 
   const IconWidgets({
     Key? key,
     required this.iconPath,
     required this.text,
     required this.onPressed,
-    required this.vcolor,
+    this.vcolor = const Color(0xff525F80),
     this.isText = false,
+    this.flag = false,
   }) : super(key: key);
 
   @override
@@ -72,7 +75,7 @@ class _IconWidgetsState extends State<IconWidgets> {
             textColor: Colors.white,
             padding: const EdgeInsets.all(16),
             shape: const CircleBorder(),
-            child: Image.asset(widget.iconPath),
+            child: widget.iconPath,
           ),
           if (widget.isText)
             Positioned(

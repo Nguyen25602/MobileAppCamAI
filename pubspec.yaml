@@ -33,6 +33,7 @@ dependencies:
   flutter:
     sdk: flutter
   font_awesome_flutter: ^10.4.0
+  geocode: ^1.0.3
   geolocator: ^9.0.2
   google_fonts: ^5.1.0
   google_maps_flutter: ^2.2.3
