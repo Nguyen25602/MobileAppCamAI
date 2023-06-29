@@ -43,10 +43,11 @@ void showSnackbar(context, color, message) {
 class IconWidgets extends StatefulWidget {
   final FaIcon iconPath;
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Color vcolor;
   final bool isText;
   final bool flag;
+  final bool enable;
 
   const IconWidgets({
     Key? key,
@@ -56,6 +57,7 @@ class IconWidgets extends StatefulWidget {
     this.vcolor = const Color(0xff525F80),
     this.isText = false,
     this.flag = false,
+    this.enable = false,
   }) : super(key: key);
 
   @override
@@ -70,11 +72,12 @@ class _IconWidgetsState extends State<IconWidgets> {
       children: [
         Stack(children: [
           MaterialButton(
-            onPressed: widget.onPressed,
+            onPressed: widget.enable ? null : widget.onPressed,
             color: widget.vcolor,
             textColor: Colors.white,
             padding: const EdgeInsets.all(16),
             shape: const CircleBorder(),
+            disabledColor: const Color(0xff856BCF),
             child: widget.iconPath,
           ),
           if (widget.isText)

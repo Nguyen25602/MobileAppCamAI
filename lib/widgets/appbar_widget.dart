@@ -202,7 +202,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
           style: GoogleFonts.robotoCondensed(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 24,
+            fontSize: 20,
           ),
         ),
         leading: GestureDetector(

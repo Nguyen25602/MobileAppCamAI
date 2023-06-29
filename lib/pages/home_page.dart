@@ -31,8 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: SlidingUpPanel(
         color: const Color(0XFF465475),
-        minHeight: 200,
-        maxHeight: 330,
+        minHeight: 160,
+        maxHeight: 260,
         onPanelSlide: (double slideAmount) {
           setState(() {
             isExpanded = slideAmount > 0.15;
@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Icon(
                       Icons.expand_more,
-                      size: 32,
+                      size: 24,
                       color: Color.fromARGB(199, 172, 176, 184),
                     ),
                   ],
@@ -106,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Icon(
                       Icons.expand_less,
-                      size: 32,
+                      size: 24,
                       color: Color.fromARGB(199, 172, 176, 184),
                     ),
                   ],
@@ -236,16 +236,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image(image: AssetImage("assets/Logo_CloudGo.png")),
                   ],
                 ),
               ]),
