@@ -1,5 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
-
+//NGUYEN CREATE //
 import 'dart:async';
 import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
@@ -21,6 +21,7 @@ class _CheckGPSState extends State<CheckGPS> {
   GeoCode geoCode = GeoCode();
   bool isExpanded = false;
   bool isChanged = false;
+  bool checkDistance = false;
   String address = "";
   final GlobalKey<ScaffoldState> _hello = GlobalKey<ScaffoldState>();
   bool servicestatus = false;
@@ -28,6 +29,7 @@ class _CheckGPSState extends State<CheckGPS> {
   late LocationPermission permission;
   late Position position;
   String long = "", lat = "";
+  late int distance;
   late StreamSubscription<Position> positionStream;
 
   @override
@@ -37,10 +39,11 @@ class _CheckGPSState extends State<CheckGPS> {
   }
 
   checkGps() async {
+    //GPS Điện thoại có bật không
     servicestatus = await Geolocator.isLocationServiceEnabled();
     if (servicestatus) {
+      //Quyền truy cập của app đến GPS
       permission = await Geolocator.checkPermission();
-
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
@@ -72,6 +75,7 @@ class _CheckGPSState extends State<CheckGPS> {
     });
   }
 
+  //Lấy vị trí của mình //
   getLocation() async {
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -102,7 +106,7 @@ class _CheckGPSState extends State<CheckGPS> {
         latitude: position.latitude, longitude: position.longitude);
     setState(() {
       address =
-          "${findMe.streetAddress.toString()} - ${findMe.city.toString()} - ${findMe.countryName.toString()}";
+          "${findMe.streetNumber.toString()} - ${findMe.streetAddress.toString()} - ${findMe.city.toString()} - ${findMe.countryName.toString()}";
     });
     setState(() {
       //refresh UI on update
@@ -111,21 +115,22 @@ class _CheckGPSState extends State<CheckGPS> {
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
-
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    tilt: 59.440717697143555,
-    target: LatLng(10.838766, 106.655297),
-    zoom: 19.151926040649414,
-    bearing: 192.8334901395799,
+  //Đặt vị trí công ty
+  static const CameraPosition _kCloudGo = CameraPosition(
+    tilt: 0,
+    target: LatLng(10.8441, 106.7137),
+    zoom: 17.651926040649414,
+    bearing: 0,
   );
-  static const CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(10.838766, 106.655297),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
-
   @override
   Widget build(BuildContext context) {
+    //Tính khoảng cách
+    distance = Geolocator.distanceBetween(_kCloudGo.target.latitude,
+            _kCloudGo.target.longitude, position.latitude, position.longitude)
+        .toInt();
+    //Xử lý logic Distance
+    distance > 200 ? checkDistance = false : checkDistance = true;
+    //Custom Icon GoogleMap
     return Scaffold(
       key: _hello,
       appBar: AppBarWidget(
@@ -145,27 +150,67 @@ class _CheckGPSState extends State<CheckGPS> {
         panelBuilder: (scrollController) =>
             _buildSlidingPanel(scrollController, context),
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                width: double.infinity,
-                height: 240,
-                child: GoogleMap(
-                  mapType: MapType.hybrid,
-                  initialCameraPosition: _kGooglePlex,
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                  markers: {
-                    Marker(
-                      markerId: const MarkerId('locationMarker'),
-                      position: _kLake.target,
-                    ),
-                  },
-                  zoomControlsEnabled: false,
+          child: Container(
+            height: 600,
+            color: Theme.of(context).primaryColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 300,
+                  child: GoogleMap(
+                    mapType: MapType.hybrid,
+                    initialCameraPosition: _kCloudGo,
+                    onMapCreated: (GoogleMapController controller) {
+                      _controller.complete(controller);
+                    },
+                    markers: {
+                      Marker(
+                        markerId: const MarkerId('cloudgo'),
+                        position: _kCloudGo.target,
+                        infoWindow: const InfoWindow(title: 'Vị trí Công Ty'),
+                      ),
+                      Marker(
+                        markerId: const MarkerId('me'),
+                        position: LatLng(position.latitude, position.longitude),
+                        infoWindow: const InfoWindow(title: 'Me'),
+                      ),
+                    },
+                    zoomControlsEnabled: false,
+                  ),
                 ),
-              ),
-              Column(children: [
+                const SizedBox(
+                  height: 5,
+                ),
+                // TEXT //
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
+                  child: const Text(
+                    "Vị trí hiện tại :",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontFamily: "Roboto"),
+                  ),
+                ),
+                // ADDRESS //
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: address.isEmpty
+                      ? const Text(
+                          "GPS không hoạt động vui lòng kiểm tra.",
+                          style: TextStyle(
+                              color: Colors.white, fontFamily: "Roboto"),
+                        )
+                      : Text(
+                          address,
+                          style: const TextStyle(
+                              color: Colors.white, fontFamily: "Roboto"),
+                        ),
+                ),
+                //Column(children: [
                 //Kiểm Tra App bật không
                 // Text(servicestatus ? "GPS is Enabled" : "GPS is disabled."),
                 //Quyền truy cập của App
@@ -177,15 +222,97 @@ class _CheckGPSState extends State<CheckGPS> {
                 //   style: const TextStyle(fontSize: 20),
                 // ),
                 // tên đường + thành phố
+                //Container(
+                //color: Theme.of(context).primaryColor,
+                //),
+                //])
                 Container(
-                  color: Theme.of(context).primaryColor,
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 5.0),
+                  child: Row(children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Khoảng cách :",
+                          style: TextStyle(
+                              color: Colors.yellow,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          //Tính khoảng cách
+                          "$distance meters",
+                          style: const TextStyle(
+                            color: Colors.yellow,
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: null,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero, // Đặt padding của button là 0
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              20), // Đặt bo góc cho button
+                        ),
+                        disabledBackgroundColor: const Color(0XFF465475),
+                        disabledForegroundColor: Colors.white,
+                      ),
+                      child: checkDistance
+                          ? const Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                  child: Text(
+                                    'Đủ điều kiện',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.check,
+                                    color: Colors.yellow,
+                                    size: 20,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : const Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                  child: Text(
+                                    'Khoảng cách lớn',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.xmark,
+                                    color: Colors.red,
+                                    size: 20,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    )
+                  ]),
                 ),
-              ])
-            ],
+              ],
+            ),
           ),
         ),
       ),
-      // Button gốc thao tác
+      //Button gốc thao tác
       // floatingActionButton: FloatingActionButton.extended(
       //   onPressed: () {},
       //   label: const Text('To the lake!'),
