@@ -28,13 +28,21 @@ class _CheckGPSState extends State<CheckGPS> {
   bool haspermission = false;
   late LocationPermission permission;
   late Position position;
-  String long = "", lat = "";
   late int distance;
   late StreamSubscription<Position> positionStream;
 
   @override
   void initState() {
     checkGps();
+    position = const Position(
+        longitude: 0,
+        latitude: 0,
+        timestamp: null,
+        accuracy: 0,
+        altitude: 0,
+        heading: 0,
+        speed: 0,
+        speedAccuracy: 0);
     super.initState();
   }
 
@@ -63,8 +71,8 @@ class _CheckGPSState extends State<CheckGPS> {
         setState(() {
           //refresh the UI
         });
-        showSnackbar(context, Colors.red, "Cập nhật vị trí thành công");
         getLocation();
+        showSnackbar(context, Colors.red, "Cập nhật vị trí thành công");
       }
     } else {
       showSnackbar(context, Colors.red, "Dịch vụ GPS không hoạt động");
@@ -77,31 +85,23 @@ class _CheckGPSState extends State<CheckGPS> {
 
   //Lấy vị trí của mình //
   getLocation() async {
+    //Lấy vị trí 1 lần
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    long = position.longitude.toString();
-    lat = position.latitude.toString();
+    // Lấy vị trí liên tục
+    // LocationSettings locationSettings = const LocationSettings(
+    //   accuracy: LocationAccuracy.high, //accuracy of the location data
+    //   distanceFilter: 100, //minimum distance (measured in meters) a
+    //   //device must move horizontally before an update event is generated;
+    // );
 
-    setState(() {
-      //refresh UI
-    });
+    // // ignore: unused_local_variable
+    // StreamSubscription<Position> positionStream =
+    //     Geolocator.getPositionStream(locationSettings: locationSettings)
+    //         .listen((Position position) {
+    //   setState(() {});
+    // });
 
-    LocationSettings locationSettings = const LocationSettings(
-      accuracy: LocationAccuracy.high, //accuracy of the location data
-      distanceFilter: 100, //minimum distance (measured in meters) a
-      //device must move horizontally before an update event is generated;
-    );
-
-    // ignore: unused_local_variable
-    StreamSubscription<Position> positionStream =
-        Geolocator.getPositionStream(locationSettings: locationSettings)
-            .listen((Position position) {
-      long = position.longitude.toString();
-      lat = position.latitude.toString();
-      setState(() {
-        //refresh UI on update
-      });
-    });
     Address findMe = await geoCode.reverseGeocoding(
         latitude: position.latitude, longitude: position.longitude);
     setState(() {
@@ -156,9 +156,12 @@ class _CheckGPSState extends State<CheckGPS> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Map //
                 SizedBox(
-                  height: 300,
+                  height: 350,
                   child: GoogleMap(
+                    trafficEnabled: true,
+                    myLocationEnabled: true,
                     mapType: MapType.hybrid,
                     initialCameraPosition: _kCloudGo,
                     onMapCreated: (GoogleMapController controller) {
@@ -210,22 +213,7 @@ class _CheckGPSState extends State<CheckGPS> {
                               color: Colors.white, fontFamily: "Roboto"),
                         ),
                 ),
-                //Column(children: [
-                //Kiểm Tra App bật không
-                // Text(servicestatus ? "GPS is Enabled" : "GPS is disabled."),
-                //Quyền truy cập của App
-                // Text(haspermission ? "GPS is Enabled" : "GPS is disabled."),
-                // Vị trí GPS của bạn
-                // Text("Longitude: $long", style: const TextStyle(fontSize: 20)),
-                // Text(
-                //   "Latitude: $lat",
-                //   style: const TextStyle(fontSize: 20),
-                // ),
-                // tên đường + thành phố
-                //Container(
-                //color: Theme.of(context).primaryColor,
-                //),
-                //])
+                // Distance //
                 Container(
                   margin: const EdgeInsets.symmetric(
                       horizontal: 10.0, vertical: 5.0),
@@ -307,6 +295,91 @@ class _CheckGPSState extends State<CheckGPS> {
                     )
                   ]),
                 ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.fromLTRB(
+                              10, 15, 10, 15), // Đặt padding của button là 0
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                20), // Đặt bo góc cho button
+                          ),
+                          backgroundColor: const Color(0XFF465475),
+                        ),
+                        child: const Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 20),
+                              child: Text(
+                                'CHECK-IN GPS',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              child: FaIcon(
+                                FontAwesomeIcons.mapLocation,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(
+                              15), // Đặt padding của button là 0
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                20), // Đặt bo góc cho button
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 5, right: 5),
+                          child: FaIcon(
+                            FontAwesomeIcons.camera,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(
+                              15), // Đặt padding của button là 0
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                20), // Đặt bo góc cho button
+                          ),
+                          backgroundColor: Colors.white,
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 5, right: 5),
+                          child: FaIcon(
+                            FontAwesomeIcons.locationArrow,
+                            color: Colors.green,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),

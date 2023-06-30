@@ -1,4 +1,5 @@
 import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
+import 'package:cloudgo_mobileapp/pages/checkwifi_page.dart';
 import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -187,8 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           if (isExpanded)
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               child: Column(children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -198,9 +199,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconWidgets(
-                          iconPath: FaIcon(FontAwesomeIcons.wifi),
+                          iconPath: const FaIcon(FontAwesomeIcons.wifi),
                           text: 'Check-in WiFi',
-                          onPressed: demo,
+                          onPressed: () {
+                            nextScreen(context, const CheckWiFi());
+                          },
                         ),
                       ],
                     ),
