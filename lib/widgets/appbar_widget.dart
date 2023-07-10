@@ -1,3 +1,4 @@
+import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -185,12 +186,21 @@ class _AppBarWidgetState extends State<AppBarWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            height: 3, // Chiều cao của đường thẳng
+            width: double.infinity, // Đặt độ rộng thành vô hạn
+            color: Constants().lineColor, // Màu sắc của đường thẳng
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () => dialogBuilder(context),
-            icon: const Icon(
-              Icons.menu,
+            icon: Icon(
+              Icons.notifications_active,
               size: 24,
+              color: Constants().textColor,
             ),
           )
         ],
@@ -200,9 +210,9 @@ class _AppBarWidgetState extends State<AppBarWidget> {
         title: Text(
           widget.titlebar,
           style: GoogleFonts.robotoCondensed(
-            color: Colors.white,
+            color: Constants().textColor,
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: 18,
           ),
         ),
         leading: GestureDetector(

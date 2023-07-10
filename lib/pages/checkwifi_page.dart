@@ -21,7 +21,9 @@ void main() async {
   // final wifiGateway = await info.getWifiGatewayIP(); // 192.168.1.1
 
   /// Get the IpAddress based on requestType.
+  // ignore: avoid_print
   print(wifiIP);
+  // ignore: avoid_print
   print(wifiBSSID);
 }
 
