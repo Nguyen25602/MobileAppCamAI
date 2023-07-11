@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "371718645806",
+    "project_id": "mobileappcloudgo",
+    "storage_bucket": "mobileappcloudgo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371718645806:android:e26755997c2d3ef56457bf",
+        "android_client_info": {
+          "package_name": "com.example.cloudgo_mobileapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "371718645806-fb572306fimiq1ggaksrpallljjjg00k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cloudgo_mobileapp",
+            "certificate_hash": "b522b2e814ade1566a915cf6fb792df0cdaad1d2"
+          }
+        },
+        {
+          "client_id": "371718645806-e8jeschkngqsam08daj3uvolnumonqc7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCshhj_WUiuIJSIC0RTalmJk6J9U9cGje0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "371718645806-e8jeschkngqsam08daj3uvolnumonqc7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
