@@ -374,7 +374,7 @@ class _CheckGPSState extends State<CheckGPS> {
                       child: const Row(
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(left: 20),
+                            padding: EdgeInsets.only(left: 10),
                             child: Text(
                               'CHECK-IN',
                               style: TextStyle(

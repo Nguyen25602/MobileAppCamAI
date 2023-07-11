@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
 import 'package:cloudgo_mobileapp/pages/event.dart';
+import 'package:cloudgo_mobileapp/pages/login_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/database_service.dart';
 import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
@@ -29,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
   int _hellocuccung(DateTime date) {
     final events = selectedEvents[date];
     if (events != null && events.isNotEmpty) {
-      print(events[0].checkInOutData['status']);
       return events[0].checkInOutData['status'];
     }
     return 0; // Mặc định là status = 0
@@ -39,51 +39,52 @@ class _HomeScreenState extends State<HomeScreen> {
     topLeft: Radius.circular(24.0),
     topRight: Radius.circular(24.0),
   );
-  // final checkInOutData = {
-  //   DateTime.utc(2023, 07, 03): [
-  //     Event(checkInOutData: {
-  //       'checkIn': '09:00 AM',
-  //     }),
-  //     Event(checkInOutData: {
-  //       'checkIn': '10:00 AM',
-  //       'status': 1,
-  //     }),
-  //     Event(checkInOutData: {
-  //       'checkIn': '17:00 PM',
-  //     }),
-  //   ],
-  //   DateTime.utc(2023, 07, 04): [
-  //     Event(checkInOutData: {
-  //       'checkIn': '09:00 AM',
-  //       'status': 1,
-  //     }),
-  //     Event(checkInOutData: {
-  //       'checkIn': '10:00 AM',
-  //       'status': 1,
-  //     }),
-  //     Event(checkInOutData: {
-  //       'checkIn': '17:00 PM',
-  //       'status': 0,
-  //     }),
-  //   ],
-  //   DateTime.utc(2023, 07, 05): [
-  //     Event(checkInOutData: {
-  //       'checkIn': '5:00 AM',
-  //       'status': 0,
-  //     }),
-  //     Event(checkInOutData: {
-  //       'checkIn': '10:00 AM',
-  //       'status': 1,
-  //     }),
-  //     Event(checkInOutData: {
-  //       'checkIn': '17:00 PM',
-  //       'status': 0,
-  //     }),
-  //   ],
-  //   // Thêm các ngày khác tại đây (nếu cần)
-  // };
-  late Map<DateTime, List<Event>> selectedEvents = {};
-  // checkInOutData.cast<DateTime, List<Event>>();
+  final checkInOutData = {
+    DateTime.utc(2023, 07, 03): [
+      Event(checkInOutData: {
+        'checkIn': '09:00 AM',
+        'status': 1,
+      }),
+      Event(checkInOutData: {
+        'checkIn': '10:00 AM',
+        'status': 1,
+      }),
+      Event(checkInOutData: {
+        'checkIn': '17:00 PM',
+      }),
+    ],
+    DateTime.utc(2023, 07, 04): [
+      Event(checkInOutData: {
+        'checkIn': '09:00 AM',
+        'status': 1,
+      }),
+      Event(checkInOutData: {
+        'checkIn': '10:00 AM',
+        'status': 1,
+      }),
+      Event(checkInOutData: {
+        'checkIn': '17:00 PM',
+        'status': 1,
+      }),
+    ],
+    DateTime.utc(2023, 07, 05): [
+      Event(checkInOutData: {
+        'checkIn': '5:00 AM',
+        'status': 0,
+      }),
+      Event(checkInOutData: {
+        'checkIn': '10:00 AM',
+        'status': 1,
+      }),
+      Event(checkInOutData: {
+        'checkIn': '17:00 PM',
+        'status': 0,
+      }),
+    ],
+    // Thêm các ngày khác tại đây (nếu cần)
+  };
+  late Map<DateTime, List<Event>> selectedEvents =
+      checkInOutData.cast<DateTime, List<Event>>();
   // Khởi tạo ngày Check-In
   @override
   void initState() {
@@ -172,7 +173,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(
                       child: TableCalendar(
-                        rowHeight: 40,
+                        availableCalendarFormats: const {
+                          CalendarFormat.month: "Tháng",
+                          CalendarFormat.twoWeeks: "2 Tuần",
+                          CalendarFormat.week: "Tuần"
+                        },
+                        rowHeight: 45,
                         focusedDay: focusedDay,
                         firstDay: DateTime.utc(2010, 10, 16),
                         lastDay: DateTime.utc(2030, 3, 14),
@@ -196,16 +202,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Style màu sắc + chữ trong Calendar //
                         calendarStyle: CalendarStyle(
                           markersAlignment: Alignment.bottomCenter,
-                          markersMaxCount: 1,
-                          rangeEndTextStyle: TextStyle(color: Colors.blue),
+                          markersMaxCount: 4,
+                          rangeEndTextStyle:
+                              const TextStyle(color: Colors.blue),
                           // Style Text Khi Chọn //
-                          selectedTextStyle:
-                              TextStyle(color: Colors.white, fontSize: 16),
+                          selectedTextStyle: TextStyle(
+                              color: Constants().whiteTextColor, fontSize: 14),
                           // Style Text Khi Chọn //
                           // Hiển Thị Today //
                           isTodayHighlighted: true,
+                          todayTextStyle: TextStyle(
+                              color: Constants().whiteTextColor, fontSize: 14),
                           // Style Today //
-                          todayDecoration: BoxDecoration(
+                          todayDecoration: const BoxDecoration(
                             color: Colors.red,
                             shape: BoxShape.circle,
                           ),
@@ -237,20 +246,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           rangeStartDecoration: const BoxDecoration(
                             shape: BoxShape.circle,
                           ),
-
-                          rangeEndDecoration: BoxDecoration(
+                          rangeEndDecoration: const BoxDecoration(
                             shape: BoxShape.circle,
                           ),
-                          rangeHighlightColor: Color.fromARGB(255, 74, 255, 33),
+                          rangeHighlightColor:
+                              const Color.fromARGB(255, 74, 255, 33),
                           // Style Text Ngày cuối tuần //
                           weekendTextStyle: TextStyle(
-                              color: Color.fromARGB(255, 147, 181, 255),
-                              fontSize: 16,
+                              color: Constants().warningColor,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold),
                           // Style Text Ngày Lễ //
                           defaultTextStyle: TextStyle(
                               color: Constants().textColor,
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold),
                         ),
                         daysOfWeekStyle: DaysOfWeekStyle(
@@ -301,8 +310,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                   color: Colors.yellow,
                                 ),
-                                width: 7,
-                                height: 7,
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 5.5),
+                                width: 5,
+                                height: 5,
                               ));
                             }
                             if (status == 2) {
@@ -316,7 +327,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 height: 5,
                               ));
                             }
-
                             return Column(
                               children: markers,
                             );
@@ -324,64 +334,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    ElevatedButton(
-                        onPressed: () {
-                          databaseService.uploadFirebase1();
-                        },
-                        child: const Text("Upload")),
-                    ElevatedButton(
-                        onPressed: getDataFromFirestore,
-                        child: const Text("Upload")),
-                    ElevatedButton(
-                        onPressed: () {
-                          selectedEvents[selectedDay] = [
-                            Event(checkInOutData: {
-                              'checkIn': '09:00 AM',
-                              'status': 1,
-                            })
-                          ];
-                        },
-                        child: const Text("test")),
-                    ElevatedButton(
-                        onPressed: () {
-                          selectedEvents[selectedDay] = [
-                            Event(checkInOutData: {
-                              'checkIn': '09:00 AM',
-                              'status': 1,
-                            })
-                          ];
-                        },
-                        child: const Text("test")),
-                    ElevatedButton(
-                        onPressed: () {
-                          selectedEvents[selectedDay] = [
-                            Event(checkInOutData: {
-                              'checkIn': '09:00 AM',
-                              'status': 1,
-                            })
-                          ];
-                        },
-                        child: const Text("test")),
-                    ElevatedButton(
-                        onPressed: () {
-                          selectedEvents[selectedDay] = [
-                            Event(checkInOutData: {
-                              'checkIn': '09:00 AM',
-                              'status': 1,
-                            })
-                          ];
-                        },
-                        child: const Text("test")),
-                    ElevatedButton(
-                        onPressed: () {
-                          selectedEvents[selectedDay] = [
-                            Event(checkInOutData: {
-                              'checkIn': '09:00 AM',
-                              'status': 1,
-                            })
-                          ];
-                        },
-                        child: const Text("test")),
                   ],
                 ),
               ),
@@ -425,7 +377,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   IconWidgets(
                     iconPath: FontAwesomeIcons.fileAlt,
                     text: "Log Check",
-                    onPressed: () {},
+                    onPressed: () {
+                      nextScreenReplace(context, const LoginPage());
+                    },
                   ),
                   IconWidgets(
                     iconPath: FontAwesomeIcons.wifi,

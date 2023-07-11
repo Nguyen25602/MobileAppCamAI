@@ -14,3 +14,11 @@ class Constants {
   Color warningColor = const Color(0xFFffa600);
   Color whiteTextColor = const Color(0xFFFFFFFF);
 }
+
+class MarginValue {
+  static double small = 8;
+  static double medium = 15;
+  static double large = 20;
+  static double extraLarge = 25;
+  static double exxxLarge = 40;
+}
