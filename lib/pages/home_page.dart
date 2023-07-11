@@ -156,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'GOOD MORNING, NGUYÊN!',
                       style: TextStyle(
                           fontFamily: 'Roboto',
-                          color: Constants().textColor,
+                          color: Constants.textColor,
                           fontWeight: FontWeight.w400,
                           fontSize: 14),
                     ),
@@ -167,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'Một ngày làm việc vui vẻ nha !',
                       style: TextStyle(
                           fontFamily: 'Roboto',
-                          color: Constants().textColor,
+                          color: Constants.textColor,
                           fontWeight: FontWeight.w400,
                           fontSize: 12),
                     ),
@@ -207,12 +207,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               const TextStyle(color: Colors.blue),
                           // Style Text Khi Chọn //
                           selectedTextStyle: TextStyle(
-                              color: Constants().whiteTextColor, fontSize: 14),
+                              color: Constants.whiteTextColor, fontSize: 14),
                           // Style Text Khi Chọn //
                           // Hiển Thị Today //
                           isTodayHighlighted: true,
                           todayTextStyle: TextStyle(
-                              color: Constants().whiteTextColor, fontSize: 14),
+                              color: Constants.whiteTextColor, fontSize: 14),
                           // Style Today //
                           todayDecoration: const BoxDecoration(
                             color: Colors.red,
@@ -253,27 +253,27 @@ class _HomeScreenState extends State<HomeScreen> {
                               const Color.fromARGB(255, 74, 255, 33),
                           // Style Text Ngày cuối tuần //
                           weekendTextStyle: TextStyle(
-                              color: Constants().warningColor,
+                              color: Constants.warningColor,
                               fontSize: 14,
                               fontWeight: FontWeight.bold),
                           // Style Text Ngày Lễ //
                           defaultTextStyle: TextStyle(
-                              color: Constants().textColor,
+                              color: Constants.textColor,
                               fontSize: 14,
                               fontWeight: FontWeight.bold),
                         ),
                         daysOfWeekStyle: DaysOfWeekStyle(
                             weekdayStyle:
-                                TextStyle(color: Constants().textColor)),
+                                TextStyle(color: Constants.textColor)),
                         headerStyle: HeaderStyle(
                           leftChevronIcon: FaIcon(
                             FontAwesomeIcons.chevronLeft,
-                            color: Constants().textColor,
+                            color: Constants.textColor,
                             size: 14,
                           ),
                           rightChevronIcon: FaIcon(
                             FontAwesomeIcons.chevronRight,
-                            color: Constants().textColor,
+                            color: Constants.textColor,
                             size: 14,
                           ),
                           // Button Format
@@ -282,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               false, //Ngăn không cho Format Show trước
                           //Title Header Calendar Style
                           titleTextStyle: TextStyle(
-                              color: Constants().textColor,
+                              color: Constants.textColor,
                               fontFamily: "Roboto",
                               fontWeight: FontWeight.bold,
                               fontSize: 14),
@@ -358,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 height: 3, // Chiều cao của đường thẳng
                 width: double.infinity, // Đặt độ rộng thành vô hạn
-                color: Constants().lineColor, // Màu sắc của đường thẳng
+                color: Constants.lineColor, // Màu sắc của đường thẳng
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -6,13 +6,13 @@ class Constants {
   static String messagingSenderId = "371718645806";
   static String projectId = "mobileappcloudgo";
   final primaryColor = const Color(0xFFFFFFFF);
-  Color textColor = const Color(0xFF333333);
-  Color lineColor = const Color.fromARGB(132, 190, 190, 190);
-  Color enableButton = const Color(0xFF008ecf);
-  Color dangerousColor = const Color(0xFFde425b);
-  Color successfulColor = const Color(0xFF35bf8e);
-  Color warningColor = const Color(0xFFffa600);
-  Color whiteTextColor = const Color(0xFFFFFFFF);
+  static Color textColor = const Color(0xFF333333);
+  static Color lineColor = const Color.fromARGB(132, 190, 190, 190);
+  static Color enableButton = const Color(0xFF008ecf);
+  static Color dangerousColor = const Color(0xFFde425b);
+  static Color successfulColor = const Color(0xFF35bf8e);
+  static Color warningColor = const Color(0xFFffa600);
+  static Color whiteTextColor = const Color(0xFFFFFFFF);
 }
 
 class MarginValue {

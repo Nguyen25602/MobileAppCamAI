@@ -72,15 +72,14 @@ class _IconWidgetsState extends State<IconWidgets> {
                   FaIcon(
                     widget.iconPath,
                     size: 24,
-                    color: Constants().textColor,
+                    color: Constants.textColor,
                   ),
                   const SizedBox(
                     height: 5,
                   ),
                   Text(
                     widget.text,
-                    style:
-                        TextStyle(color: Constants().textColor, fontSize: 12),
+                    style: TextStyle(color: Constants.textColor, fontSize: 12),
                   )
                 ],
               )
@@ -89,15 +88,15 @@ class _IconWidgetsState extends State<IconWidgets> {
                   FaIcon(
                     widget.iconPath,
                     size: 24,
-                    color: Constants().enableButton,
+                    color: Constants.enableButton,
                   ),
                   const SizedBox(
                     height: 5,
                   ),
                   Text(
                     widget.text,
-                    style: TextStyle(
-                        color: Constants().enableButton, fontSize: 12),
+                    style:
+                        TextStyle(color: Constants.enableButton, fontSize: 12),
                   )
                 ],
               ));

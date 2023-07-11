@@ -152,11 +152,11 @@ class _CheckGPSState extends State<CheckGPS> {
                           style: ElevatedButton.styleFrom(
                               shape: const StadiumBorder(),
                               disabledBackgroundColor:
-                                  Constants().successfulColor),
+                                  Constants.successfulColor),
                           child: Text(
                             'GPS ON',
                             style: TextStyle(
-                                color: Constants().whiteTextColor,
+                                color: Constants.whiteTextColor,
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -166,11 +166,11 @@ class _CheckGPSState extends State<CheckGPS> {
                           style: ElevatedButton.styleFrom(
                               shape: const StadiumBorder(),
                               disabledBackgroundColor:
-                                  Constants().dangerousColor),
+                                  Constants.dangerousColor),
                           child: Text(
                             'GPS OFF',
                             style: TextStyle(
-                                color: Constants().whiteTextColor,
+                                color: Constants.whiteTextColor,
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -181,11 +181,11 @@ class _CheckGPSState extends State<CheckGPS> {
                           style: ElevatedButton.styleFrom(
                               shape: const StadiumBorder(),
                               disabledBackgroundColor:
-                                  Constants().successfulColor),
+                                  Constants.successfulColor),
                           child: Text(
                             'ACCESS ON',
                             style: TextStyle(
-                                color: Constants().whiteTextColor,
+                                color: Constants.whiteTextColor,
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -195,11 +195,11 @@ class _CheckGPSState extends State<CheckGPS> {
                           style: ElevatedButton.styleFrom(
                               shape: const StadiumBorder(),
                               disabledBackgroundColor:
-                                  Constants().dangerousColor),
+                                  Constants.dangerousColor),
                           child: Text(
                             'ACCESS OFF',
                             style: TextStyle(
-                                color: Constants().whiteTextColor,
+                                color: Constants.whiteTextColor,
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -242,7 +242,7 @@ class _CheckGPSState extends State<CheckGPS> {
                 child: Text(
                   "Vị trí hiện tại :",
                   style: TextStyle(
-                      color: Constants().textColor,
+                      color: Constants.textColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                       fontFamily: "Roboto"),
@@ -255,14 +255,14 @@ class _CheckGPSState extends State<CheckGPS> {
                     ? Text(
                         "GPS không hoạt động vui lòng kiểm tra.",
                         style: TextStyle(
-                            color: Constants().textColor,
+                            color: Constants.textColor,
                             fontFamily: "Roboto",
                             fontSize: 12),
                       )
                     : Text(
                         address,
                         style: TextStyle(
-                            color: Constants().textColor,
+                            color: Constants.textColor,
                             fontFamily: "Roboto",
                             fontSize: 12),
                       ),
@@ -278,7 +278,7 @@ class _CheckGPSState extends State<CheckGPS> {
                       Text(
                         "Khoảng cách :",
                         style: TextStyle(
-                            color: Constants().textColor,
+                            color: Constants.textColor,
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),
@@ -286,7 +286,7 @@ class _CheckGPSState extends State<CheckGPS> {
                         //Tính khoảng cách
                         "$distance meters",
                         style: TextStyle(
-                          color: Constants().textColor,
+                          color: Constants.textColor,
                           fontSize: 12,
                         ),
                       )
@@ -448,7 +448,7 @@ class _CheckGPSState extends State<CheckGPS> {
               Container(
                 height: 3, // Chiều cao của đường thẳng
                 width: double.infinity, // Đặt độ rộng thành vô hạn
-                color: Constants().lineColor, // Màu sắc của đường thẳng
+                color: Constants.lineColor, // Màu sắc của đường thẳng
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
