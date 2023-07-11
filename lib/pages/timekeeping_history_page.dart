@@ -47,7 +47,7 @@ class _TimekeepingHistoryPageState extends State<TimekeepingHistoryPage> {
                 lastDay: DateTime(2023,12,30),
                 calendarFormat: _format,
                 startingDayOfWeek: StartingDayOfWeek.monday,
-                headerVisible: false,
+                headerVisible: true,
                 calendarStyle:CalendarStyle(
                   markersMaxCount: 1,
                   todayDecoration:const BoxDecoration(

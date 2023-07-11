@@ -171,7 +171,16 @@ class LoginPageState extends State<LoginPage> {
 //form text decoration
 InputDecoration decoration({String hintText = ""}) {
   return InputDecoration(
+    border:const OutlineInputBorder(
+      borderSide: BorderSide(width: 1)
+    ),
     hintText: hintText,
+    hintStyle: TextStyle(
+      fontSize: 12,
+      color: Constants.textColor,
+      fontFamily: 'roboto',
+      fontWeight: FontWeight.w100
+    ),
     labelStyle:
         const TextStyle(color: Colors.black, fontWeight: FontWeight.w400),
     focusedBorder: const OutlineInputBorder(
