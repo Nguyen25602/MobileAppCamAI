@@ -16,7 +16,7 @@ class LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -24,7 +24,7 @@ class LoginPageState extends State<LoginPage> {
           padding: EdgeInsets.only(
               left: MarginValue.large,
               right: MarginValue.large,
-              top: MarginValue.large),
+              top: MarginValue.small),
           child: Form(
             key: formKey,
             child: Column(
@@ -43,27 +43,28 @@ class LoginPageState extends State<LoginPage> {
                   ),
                   Container(
                     margin: EdgeInsets.only(top: MarginValue.medium),
-                    child: const Text(
+                    child: Text(
                       "Cloudgo xin chào",
                       style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w800,
-                          fontSize: 30),
+                        color: Constants.textColor,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w800,
+                        fontSize: 30),
                     ),
                   ),
                   Container(
                     margin: EdgeInsets.only(top: MarginValue.medium),
-                    child: const Text(
-                      "Mời bạn đăng nhập hoặc đăng ký bằng email của bạn",
+                    child: Text(
+                      "Mời bạn đăng nhập bằng email của bạn",
                       style: TextStyle(
-                          color: Colors.black,
+                          color: Constants.textColor,
                           fontFamily: "Roboto",
                           fontWeight: FontWeight.w400,
                           fontSize: 18),
                     ),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 1,
                   ),
                   Container(
                     margin: EdgeInsets.only(top: MarginValue.exxxLarge),
@@ -71,8 +72,8 @@ class LoginPageState extends State<LoginPage> {
                       "Tài khoản",
                       style: TextStyle(
                           fontFamily: "Roboto",
-                          fontSize: 20,
-                          fontWeight: FontWeight.w300),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w200),
                     ),
                   ),
                   Container(
@@ -95,8 +96,8 @@ class LoginPageState extends State<LoginPage> {
                       "Mật khẩu",
                       style: TextStyle(
                           fontFamily: "Roboto",
-                          fontSize: 20,
-                          fontWeight: FontWeight.w300),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w200),
                     ),
                   ),
                   Container(
@@ -120,7 +121,7 @@ class LoginPageState extends State<LoginPage> {
                           style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
-                              backgroundColor: Theme.of(context).primaryColor),
+                              backgroundColor: Constants.enableButton),
                           child: Container(
                             padding: EdgeInsets.all(MarginValue.medium),
                             child: const Text(
@@ -136,39 +137,20 @@ class LoginPageState extends State<LoginPage> {
                         Container(
                           margin: EdgeInsets.symmetric(
                               vertical: MarginValue.medium),
-                          child: const Text(
-                            "Bạn chưa có tài khoản ?",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 270,
-                          child: ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFCFAC93),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20))),
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.accessibility_new_sharp,
-                              color: Color.fromARGB(131, 74, 114, 70),
-                            ),
-                            label: Container(
-                              padding: EdgeInsets.all(MarginValue.medium),
-                              child: const Text(
-                                "ĐĂNG KÝ NGAY",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontFamily: "Roboto",
-                                  fontWeight: FontWeight.w500,
-                                ),
+                          child: TextButton(
+                            onPressed: () {
+                              
+                            },
+                            child: Text(
+                              "Quên mật khẩu?",
+                              style: TextStyle(
+                                color: Constants.enableButton,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   )
