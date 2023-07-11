@@ -60,7 +60,7 @@ class LoginPageState extends State<LoginPage> {
                           color: Constants.textColor,
                           fontFamily: "Roboto",
                           fontWeight: FontWeight.w400,
-                          fontSize: 18),
+                          fontSize: 15),
                     ),
                   ),
                   const SizedBox(
