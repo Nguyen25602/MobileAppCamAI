@@ -10,6 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocode/geocode.dart';
+import 'package:intl/intl.dart';
 
 class CheckGPS extends StatefulWidget {
   const CheckGPS({super.key});
@@ -19,11 +20,13 @@ class CheckGPS extends StatefulWidget {
 }
 
 class _CheckGPSState extends State<CheckGPS> {
+  bool _isCheckIn = false;
   GeoCode geoCode = GeoCode();
   bool isExpanded = false;
   bool isChanged = false;
   bool checkDistance = false;
   String address = "";
+  String TimeNow = "";
   final GlobalKey<ScaffoldState> _hello = GlobalKey<ScaffoldState>();
   bool servicestatus = false;
   bool haspermission = false;
@@ -303,7 +306,7 @@ class _CheckGPSState extends State<CheckGPS> {
                         borderRadius:
                             BorderRadius.circular(20), // Đặt bo góc cho button
                       ),
-                      disabledBackgroundColor: const Color(0XFF465475),
+                      disabledBackgroundColor: Constants.enableButton,
                       disabledForegroundColor: Colors.white,
                     ),
                     child: checkDistance
@@ -361,7 +364,14 @@ class _CheckGPSState extends State<CheckGPS> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          _isCheckIn = true;
+                          DateTime now = DateTime.now();
+                          var formatterTime = DateFormat('kk:mm');
+                          TimeNow = formatterTime.format(now);
+                        });
+                      },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.fromLTRB(
                             10, 15, 10, 15), // Đặt padding của button là 0
@@ -369,12 +379,12 @@ class _CheckGPSState extends State<CheckGPS> {
                           borderRadius: BorderRadius.circular(
                               20), // Đặt bo góc cho button
                         ),
-                        backgroundColor: const Color(0XFF465475),
+                        backgroundColor: Constants.enableButton,
                       ),
                       child: const Row(
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(left: 10),
+                            padding: EdgeInsets.only(left: 5),
                             child: Text(
                               'CHECK-IN',
                               style: TextStyle(
@@ -421,20 +431,33 @@ class _CheckGPSState extends State<CheckGPS> {
                           borderRadius: BorderRadius.circular(
                               20), // Đặt bo góc cho button
                         ),
-                        backgroundColor: Colors.white,
+                        backgroundColor: Constants.enableButton,
                       ),
                       child: const Padding(
                         padding: EdgeInsets.only(left: 5, right: 5),
                         child: FaIcon(
                           FontAwesomeIcons.locationArrow,
-                          color: Colors.green,
+                          color: Colors.white,
                           size: 20,
                         ),
                       ),
                     ),
                   ],
                 ),
-              )
+              ),
+              if (_isCheckIn)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Đã Check - In thành công vào lúc $TimeNow",
+                      style: TextStyle(
+                          color: Constants.textColor,
+                          fontFamily: "Roboto",
+                          fontSize: 14),
+                    )
+                  ],
+                )
             ],
           ),
         ),

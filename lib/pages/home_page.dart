@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
-import 'package:cloudgo_mobileapp/pages/event.dart';
 import 'package:cloudgo_mobileapp/pages/login_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/database_service.dart';
 import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
+import 'package:cloudgo_mobileapp/widgets/calendar_widget.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,80 +19,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final DatabaseService databaseService = DatabaseService();
   QuerySnapshot? querySnapshot;
-  CalendarFormat format = CalendarFormat.month;
-  DateTime selectedDay = DateTime.now();
-  DateTime focusedDay = DateTime.now();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool isExpanded = false;
   bool isChanged = false;
   bool flag = false;
-  int _hellocuccung(DateTime date) {
-    final events = selectedEvents[date];
-    if (events != null && events.isNotEmpty) {
-      return events[0].checkInOutData['status'];
-    }
-    return 0; // Mặc định là status = 0
-  }
 
   BorderRadiusGeometry radius = const BorderRadius.only(
     topLeft: Radius.circular(24.0),
     topRight: Radius.circular(24.0),
   );
-  final checkInOutData = {
-    DateTime.utc(2023, 07, 03): [
-      Event(checkInOutData: {
-        'checkIn': '09:00 AM',
-        'status': 1,
-      }),
-      Event(checkInOutData: {
-        'checkIn': '10:00 AM',
-        'status': 1,
-      }),
-      Event(checkInOutData: {
-        'checkIn': '17:00 PM',
-      }),
-    ],
-    DateTime.utc(2023, 07, 04): [
-      Event(checkInOutData: {
-        'checkIn': '09:00 AM',
-        'status': 1,
-      }),
-      Event(checkInOutData: {
-        'checkIn': '10:00 AM',
-        'status': 1,
-      }),
-      Event(checkInOutData: {
-        'checkIn': '17:00 PM',
-        'status': 1,
-      }),
-    ],
-    DateTime.utc(2023, 07, 05): [
-      Event(checkInOutData: {
-        'checkIn': '5:00 AM',
-        'status': 0,
-      }),
-      Event(checkInOutData: {
-        'checkIn': '10:00 AM',
-        'status': 1,
-      }),
-      Event(checkInOutData: {
-        'checkIn': '17:00 PM',
-        'status': 0,
-      }),
-    ],
-    // Thêm các ngày khác tại đây (nếu cần)
-  };
-  late Map<DateTime, List<Event>> selectedEvents =
-      checkInOutData.cast<DateTime, List<Event>>();
-  // Khởi tạo ngày Check-In
   @override
   void initState() {
     super.initState();
     getDate();
-  }
-
-  List<Event> _getEventsfromDay(DateTime date) {
-    return selectedEvents[date] ?? [];
   }
 
   void getDate() async {
@@ -171,178 +109,209 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.w400,
                           fontSize: 12),
                     ),
-                    SizedBox(
-                      child: TableCalendar(
-                        availableCalendarFormats: const {
-                          CalendarFormat.month: "Tháng",
-                          CalendarFormat.twoWeeks: "2 Tuần",
-                          CalendarFormat.week: "Tuần"
-                        },
-                        rowHeight: 45,
-                        focusedDay: focusedDay,
-                        firstDay: DateTime.utc(2010, 10, 16),
-                        lastDay: DateTime.utc(2030, 3, 14),
-                        calendarFormat: format,
-                        onFormatChanged: (CalendarFormat a) {
-                          setState(() {
-                            format = a;
-                          });
-                        },
-                        startingDayOfWeek: StartingDayOfWeek.monday,
-                        daysOfWeekVisible: true,
-
-                        //Day Changed
-                        onDaySelected: (DateTime selectDay, DateTime focusDay) {
-                          setState(() {
-                            selectedDay = selectDay;
-                            print(selectedDay);
-                            focusedDay = focusDay;
-                          });
-                        },
-                        // Style màu sắc + chữ trong Calendar //
-                        calendarStyle: CalendarStyle(
-                          markersAlignment: Alignment.bottomCenter,
-                          markersMaxCount: 4,
-                          rangeEndTextStyle:
-                              const TextStyle(color: Colors.blue),
-                          // Style Text Khi Chọn //
-                          selectedTextStyle: TextStyle(
-                              color: Constants.whiteTextColor, fontSize: 14),
-                          // Style Text Khi Chọn //
-                          // Hiển Thị Today //
-                          isTodayHighlighted: true,
-                          todayTextStyle: TextStyle(
-                              color: Constants.whiteTextColor, fontSize: 14),
-                          // Style Today //
-                          todayDecoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
+                    const CalendarWidget(),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton.icon(
+                            icon: const Icon(Icons.analytics_sharp, size: 20),
+                            label: Text('Thống kê chấm công',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Constants.textColor,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.bold)),
+                            onPressed: null,
                           ),
-                          // Style Ngày chọn //
-                          selectedDecoration: const BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
+                          TextButton.icon(
+                            icon: const Icon(
+                              Icons.list,
+                              size: 20,
+                              color: Color(0xff9DB6F8),
+                            ),
+                            label: const Text('Tháng này',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xff9DB6F8),
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.bold)),
+                            onPressed: null,
                           ),
-                          // Style Các Ngày Thường //
-                          defaultDecoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          // Style Các ngày t7 CN //
-                          weekendDecoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          // Style Các ngày Lễ //
-                          holidayDecoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          // Style ngày ngoài tháng
-                          outsideDecoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          withinRangeDecoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.red,
-                          ),
-                          rangeStartDecoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          rangeEndDecoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          rangeHighlightColor:
-                              const Color.fromARGB(255, 74, 255, 33),
-                          // Style Text Ngày cuối tuần //
-                          weekendTextStyle: TextStyle(
-                              color: Constants.warningColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold),
-                          // Style Text Ngày Lễ //
-                          defaultTextStyle: TextStyle(
-                              color: Constants.textColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        daysOfWeekStyle: DaysOfWeekStyle(
-                            weekdayStyle:
-                                TextStyle(color: Constants.textColor)),
-                        headerStyle: HeaderStyle(
-                          leftChevronIcon: FaIcon(
-                            FontAwesomeIcons.chevronLeft,
-                            color: Constants.textColor,
-                            size: 14,
-                          ),
-                          rightChevronIcon: FaIcon(
-                            FontAwesomeIcons.chevronRight,
-                            color: Constants.textColor,
-                            size: 14,
-                          ),
-                          // Button Format
-                          titleCentered: true, // Text Date nằm giữa
-                          formatButtonShowsNext:
-                              false, //Ngăn không cho Format Show trước
-                          //Title Header Calendar Style
-                          titleTextStyle: TextStyle(
-                              color: Constants.textColor,
-                              fontFamily: "Roboto",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14),
-                          formatButtonDecoration: BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          formatButtonTextStyle: const TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        selectedDayPredicate: (DateTime date) {
-                          return isSameDay(selectedDay, date);
-                        },
-                        eventLoader: _getEventsfromDay,
-                        calendarBuilders: CalendarBuilders(
-                          markerBuilder: (context, day, events) {
-                            final status = _hellocuccung(day);
-                            final List<Widget> markers = [];
-                            if (status == 1) {
-                              markers.add(Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.yellow,
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 10),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              MaterialButton(
+                                onPressed: null,
+                                disabledColor: Constants.successfulColor,
+                                textColor: Colors.white,
+                                padding: const EdgeInsets.all(16),
+                                shape: const CircleBorder(),
+                                child: Icon(
+                                  Icons.check,
+                                  size: 20,
+                                  color: Constants.whiteTextColor,
                                 ),
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 5.5),
-                                width: 5,
-                                height: 5,
-                              ));
-                            }
-                            if (status == 2) {
-                              markers.add(Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.red,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Số ngày làm trong tháng: 20",
+                                    style: TextStyle(
+                                        fontFamily: "roboto",
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                        color: Constants.textColor),
+                                  ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  Text(
+                                    "Đạt KPI",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                        fontFamily: "roboto",
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                        color: Constants.textColor),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Constants.textColor,
+                                  )),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 10),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              MaterialButton(
+                                onPressed: null,
+                                disabledColor: Constants.warningColor,
+                                textColor: Colors.white,
+                                padding: const EdgeInsets.all(16),
+                                shape: const CircleBorder(),
+                                child: Icon(
+                                  Icons.sentiment_dissatisfied,
+                                  size: 20,
+                                  color: Constants.whiteTextColor,
                                 ),
-                                width: 5,
-                                height: 5,
-                              ));
-                            }
-                            return Column(
-                              children: markers,
-                            );
-                          },
-                        ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Số ngày trễ trong tháng: 2",
+                                    style: TextStyle(
+                                        fontFamily: "roboto",
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                        color: Constants.textColor),
+                                  ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  Text(
+                                    "Đạt Yêu Cầu",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                        fontFamily: "roboto",
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                        color: Constants.textColor),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Constants.textColor,
+                                  )),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 10),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              MaterialButton(
+                                onPressed: null,
+                                disabledColor: Constants.dangerousColor,
+                                textColor: Colors.white,
+                                padding: const EdgeInsets.all(16),
+                                shape: const CircleBorder(),
+                                child: Icon(
+                                  Icons.close,
+                                  size: 20,
+                                  color: Constants.whiteTextColor,
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Số ngày nghĩ trong tháng: 1",
+                                    style: TextStyle(
+                                        fontFamily: "roboto",
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal,
+                                        color: Constants.textColor),
+                                  ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  Text(
+                                    "Đạt Yêu Cầu",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                        fontFamily: "roboto",
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal,
+                                        color: Constants.textColor),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Constants.textColor,
+                                  )),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ],
-                ),
-              ),
-              ..._getEventsfromDay(selectedDay).map(
-                (Event event) => ListTile(
-                  title: Text(
-                    event.toString(),
-                    style: const TextStyle(color: Colors.white),
-                  ),
                 ),
               ),
             ],

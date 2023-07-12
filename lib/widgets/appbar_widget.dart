@@ -115,68 +115,63 @@ class _AppBarWidgetState extends State<AppBarWidget> {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return FractionallySizedBox(
-          widthFactor: 1,
-          child: AlertDialog(
-            insetPadding:
-                const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-            alignment: Alignment.topCenter,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-            title: const SizedBox(
-              width: double.infinity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image(image: AssetImage("assets/Logo_CloudGo.png")),
-                  Icon(Icons.close),
-                ],
-              ),
-            ),
-            content: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  ElevatedButton(
-                    child: const Text('Button 1'),
-                    onPressed: () {
-                      // Hành động khi nhấn Button 1
-                    },
-                  ),
-                  ElevatedButton(
-                    child: const Text('Button 2'),
-                    onPressed: () {
-                      // Hành động khi nhấn Button 2
-                    },
-                  ),
-                  ElevatedButton(
-                    child: const Text('Button 3'),
-                    onPressed: () {
-                      // Hành động khi nhấn Button 3
-                    },
-                  ),
-                ]),
-            actions: <Widget>[
-              TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                child: const Text('Disable'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.labelLarge,
-                ),
-                child: const Text('Enable'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+        return AlertDialog(
+          insetPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
           ),
+          title: const SizedBox(
+            width: double.infinity,
+            child: Row(
+              children: [
+                Image(image: AssetImage("assets/Logo_CloudGo.png")),
+                Icon(Icons.close),
+              ],
+            ),
+          ),
+          content: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ElevatedButton(
+                  child: const Text('Button 1'),
+                  onPressed: () {
+                    // Hành động khi nhấn Button 1
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text('Button 2'),
+                  onPressed: () {
+                    // Hành động khi nhấn Button 2
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text('Button 3'),
+                  onPressed: () {
+                    // Hành động khi nhấn Button 3
+                  },
+                ),
+              ]),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Disable'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Enable'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         );
       },
     );
@@ -191,7 +186,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
           child: Container(
             height: 3, // Chiều cao của đường thẳng
             width: double.infinity, // Đặt độ rộng thành vô hạn
-            color: Constants().lineColor, // Màu sắc của đường thẳng
+            color: Constants.lineColor, // Màu sắc của đường thẳng
           ),
         ),
         actions: [
@@ -200,7 +195,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
             icon: Icon(
               Icons.notifications_active,
               size: 24,
-              color: Constants().textColor,
+              color: Constants.textColor,
             ),
           )
         ],
@@ -210,7 +205,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
         title: Text(
           widget.titlebar,
           style: GoogleFonts.robotoCondensed(
-            color: Constants().textColor,
+            color: Constants.textColor,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),

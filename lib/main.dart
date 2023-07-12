@@ -1,4 +1,4 @@
-import 'package:cloudgo_mobileapp/pages/home_page.dart';
+import 'package:cloudgo_mobileapp/pages/welcome_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
       ),
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
+      home: const WelcomePage(),
     );
   }
 }

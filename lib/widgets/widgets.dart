@@ -2,17 +2,18 @@ import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-const textInputDecoration = InputDecoration(
-  labelStyle: TextStyle(
-      color: Color.fromARGB(255, 254, 255, 255), fontWeight: FontWeight.w400),
+var textInputDecoration = InputDecoration(
+  contentPadding: EdgeInsets.all(10),
+  labelStyle:
+      TextStyle(color: Constants.textColor, fontWeight: FontWeight.w400),
   focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Color.fromARGB(255, 0, 255, 162), width: 2),
+    borderSide: BorderSide(color: Constants.successfulColor, width: 2),
   ),
   enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Color.fromARGB(255, 245, 46, 6), width: 2),
+    borderSide: BorderSide(color: Constants.enableButton, width: 2),
   ),
   errorBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Color(0xFFee7b64), width: 2),
+    borderSide: BorderSide(color: Constants.dangerousColor, width: 2),
   ),
 );
 
@@ -29,7 +30,7 @@ void showSnackbar(context, color, message) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(
       message,
-      style: const TextStyle(fontSize: 14),
+      style: const TextStyle(fontSize: 12),
     ),
     backgroundColor: color,
     duration: const Duration(seconds: 10),
