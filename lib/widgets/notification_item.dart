@@ -14,7 +14,7 @@ abstract class Notification {
         mainAxisSize: MainAxisSize.max,
         children: [
           leadingIcon,
-          SizedBox(width: 10,),
+          const SizedBox(width: 10,),
           Flexible(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -34,12 +34,14 @@ abstract class Notification {
                       TextSpan(text: text4,
                         style: TextStyle(fontWeight: FontWeight.bold))
                     ]
-                  )
+                  ),
+                  style: TextStyle(color: Constants.textColor),
                 ),
-                SizedBox(height: 5,),
+                const SizedBox(height: 5,),
                 Text(
                   time,
-                  style:const TextStyle(
+                  style: TextStyle(
+                    color: Constants.textColor,
                     fontSize: 12,
                     fontFamily: 'roboto',
                     fontWeight: FontWeight.w300

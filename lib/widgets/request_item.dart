@@ -49,9 +49,9 @@ class _RequestItemState extends State<RequestItem> {
                             Text(
                               "  ${widget._requestItem.name}",
                               overflow: TextOverflow.ellipsis,
-                              style:const TextStyle(
-                                color: Colors.black,
-                                fontSize: 12,
+                              style:TextStyle(
+                                color: Constants.textColor,
+                                fontSize: 14,
                                 fontFamily: 'Roboto',
                                 fontWeight:FontWeight.normal,
                               ),
@@ -136,9 +136,9 @@ Text label(String title) {
 Text information(String infor) {
   return Text(
     infor,
-    style:const TextStyle(
-      color: Colors.black,
-      fontSize: 15,
+    style: TextStyle(
+      color: Constants.textColor,
+      fontSize: 14,
       fontFamily: 'Roboto',
       fontWeight: FontWeight.w400,
       letterSpacing: 0.30,
