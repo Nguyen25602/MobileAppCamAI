@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
 import 'package:cloudgo_mobileapp/pages/login_page.dart';
+import 'package:cloudgo_mobileapp/pages/test1.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/database_service.dart';
 import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
@@ -353,7 +354,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   IconWidgets(
                     iconPath: FontAwesomeIcons.wifi,
                     text: "Check Wi-Fi",
-                    onPressed: () {},
+                    onPressed: () {
+                      nextScreen(context, const Test1());
+                    },
                   ),
                 ],
               ),

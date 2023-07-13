@@ -44,6 +44,7 @@ dependencies:
   network_info_plus: ^4.0.1
   sliding_up_panel: ^2.0.0+1
   table_calendar: ^3.0.9
+  wifi_scan: ^0.4.0+1
 
 dev_dependencies:
   flutter_lints: ^2.0.0
