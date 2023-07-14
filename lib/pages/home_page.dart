@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
-import 'package:cloudgo_mobileapp/pages/login_page.dart';
 import 'package:cloudgo_mobileapp/pages/test1.dart';
+import 'package:cloudgo_mobileapp/pages/timekeeping_history_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/database_service.dart';
 import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
@@ -9,6 +9,8 @@ import 'package:cloudgo_mobileapp/widgets/calendar_widget.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+final monthList = List.generate(12, (index) => index + 1);
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int selectedMonth = DateTime.now().month;
   final DatabaseService databaseService = DatabaseService();
   QuerySnapshot? querySnapshot;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -60,11 +63,15 @@ class _HomeScreenState extends State<HomeScreen> {
         String checkIn = data['checkIn'];
         String checkOut = data['checkOut'];
 
+        // ignore: avoid_print
         print('Ngày: $date');
+        // ignore: avoid_print
         print('Check-in: $checkIn');
+        // ignore: avoid_print
         print('Check-out: $checkOut');
       }
     }).catchError((error) {
+      // ignore: avoid_print
       print('Lỗi khi lấy dữ liệu từ Firestore: $error');
     });
   }
@@ -110,7 +117,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.w400,
                           fontSize: 12),
                     ),
-                    const CalendarWidget(),
+                    CalendarWidget(
+                      selectedMonth: selectedMonth,
+                    ),
                     Container(
                       margin: const EdgeInsets.symmetric(
                           vertical: 0, horizontal: 10),
@@ -133,13 +142,44 @@ class _HomeScreenState extends State<HomeScreen> {
                               size: 20,
                               color: Color(0xff9DB6F8),
                             ),
-                            label: const Text('Tháng này',
-                                style: TextStyle(
+                            label: Text(
+                                'Tháng ${selectedMonth == DateTime.now().month ? 'này' : selectedMonth}',
+                                style: const TextStyle(
                                     fontSize: 14,
                                     color: Color(0xff9DB6F8),
                                     fontFamily: 'Roboto',
                                     fontWeight: FontWeight.bold)),
-                            onPressed: null,
+                            onPressed: () {
+                              showModalBottomSheet(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        topRight: Radius.circular(20))),
+                                context: context,
+                                builder: (context) {
+                                  return Container(
+                                    height: 250,
+                                    padding: EdgeInsets.all(MarginValue.small),
+                                    child: ListView.builder(
+                                      itemCount: monthList.length,
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          title:
+                                              Text('tháng ${monthList[index]}'),
+                                          onTap: () {
+                                            setState(() {
+                                              //request data
+                                              selectedMonth = monthList[index];
+                                              Navigator.pop(context);
+                                            });
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -345,10 +385,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                   IconWidgets(
+                    // ignore: deprecated_member_use
                     iconPath: FontAwesomeIcons.fileAlt,
                     text: "Log Check",
                     onPressed: () {
-                      nextScreenReplace(context, const LoginPage());
+                      nextScreenReplace(context, TimekeepingHistoryPage());
                     },
                   ),
                   IconWidgets(

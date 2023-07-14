@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+// ignore: must_be_immutable
 class CalendarWidget extends StatefulWidget {
-  const CalendarWidget({super.key});
+  CalendarWidget({super.key, this.selectedMonth});
+  int? selectedMonth = DateTime.now().month;
 
   @override
   State<CalendarWidget> createState() => _CalendarWidgetState();
@@ -76,6 +78,11 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   // Khởi tạo ngày Check-In
   @override
   Widget build(BuildContext context) {
+    if (widget.selectedMonth != null) {
+      setState(() {
+        focusedDay = DateTime(DateTime.now().year, widget.selectedMonth!);
+      });
+    }
     return SizedBox(
       child: TableCalendar(
         availableCalendarFormats: const {
@@ -100,6 +107,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         onDaySelected: (DateTime selectDay, DateTime focusDay) {
           setState(() {
             selectedDay = selectDay;
+            // ignore: avoid_print
             print(selectedDay);
             focusedDay = focusDay;
           });

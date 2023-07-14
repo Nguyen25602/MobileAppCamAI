@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 var textInputDecoration = InputDecoration(
-  contentPadding: EdgeInsets.all(10),
+  contentPadding: const EdgeInsets.all(10),
   labelStyle:
       TextStyle(color: Constants.textColor, fontWeight: FontWeight.w400),
   focusedBorder: OutlineInputBorder(
@@ -53,6 +53,7 @@ class IconWidgets extends StatefulWidget {
     Key? key,
     required this.iconPath,
     required this.text,
+    // ignore: avoid_init_to_null
     this.onPressed = null,
     this.vcolor = Colors.white,
     this.enable = false,

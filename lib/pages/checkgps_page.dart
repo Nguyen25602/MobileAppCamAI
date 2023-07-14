@@ -26,7 +26,7 @@ class _CheckGPSState extends State<CheckGPS> {
   bool isChanged = false;
   bool checkDistance = false;
   String address = "";
-  String TimeNow = "";
+  String timeNow = "";
   final GlobalKey<ScaffoldState> _hello = GlobalKey<ScaffoldState>();
   bool servicestatus = false;
   bool haspermission = false;
@@ -369,7 +369,7 @@ class _CheckGPSState extends State<CheckGPS> {
                           _isCheckIn = true;
                           DateTime now = DateTime.now();
                           var formatterTime = DateFormat('kk:mm');
-                          TimeNow = formatterTime.format(now);
+                          timeNow = formatterTime.format(now);
                         });
                       },
                       style: ElevatedButton.styleFrom(
@@ -450,7 +450,7 @@ class _CheckGPSState extends State<CheckGPS> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Đã Check - In thành công vào lúc $TimeNow",
+                      "Đã Check - In thành công vào lúc $timeNow",
                       style: TextStyle(
                           color: Constants.textColor,
                           fontFamily: "Roboto",
@@ -488,6 +488,7 @@ class _CheckGPSState extends State<CheckGPS> {
                     text: "GPS Check",
                   ),
                   IconWidgets(
+                    // ignore: deprecated_member_use
                     iconPath: FontAwesomeIcons.fileAlt,
                     text: "Log Check",
                     onPressed: () {},

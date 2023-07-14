@@ -1,4 +1,7 @@
+import 'package:cloudgo_mobileapp/pages/login_page.dart';
+import 'package:cloudgo_mobileapp/pages/request_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
+import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -25,7 +28,7 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
             height: 15,
           ),
           const Text(
-            "userName",
+            "Hoàng Nguyên",
             textAlign: TextAlign.center,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -42,21 +45,26 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
             selected: true,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: const Icon(Icons.group),
-            title: const Text(
-              "Nhóm của bạn",
-              style: TextStyle(color: Colors.black),
+            leading: Icon(
+              Icons.group,
+              color: Constants.textColor,
+            ),
+            title: Text(
+              "Hồ sơ cá nhân",
+              style: TextStyle(color: Constants.textColor),
             ),
           ),
           // Tab
           ListTile(
-            onTap: () {},
+            onTap: () {
+              nextScreen(context, const RequestPage());
+            },
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: const Icon(Icons.group),
-            title: const Text(
-              "Hồ Sơ Của Bạn",
-              style: TextStyle(color: Colors.black),
+            leading: Icon(Icons.pending_actions, color: Constants.textColor),
+            title: Text(
+              "Đăng ký nghĩ phép",
+              style: TextStyle(color: Constants.textColor),
             ),
           ),
           // Tab Logout
@@ -67,7 +75,8 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                   barrierDismissible: false,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: const Text("Đăng Xuất"),
+                      title: Text("Đăng Xuất",
+                          style: TextStyle(color: Constants.textColor)),
                       content: const Text("Bạn Muốn Đăng Xuất ?"),
                       actions: [
                         IconButton(
@@ -80,7 +89,9 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                           ),
                         ),
                         IconButton(
-                          onPressed: () async {},
+                          onPressed: () {
+                            nextScreen(context, const LoginPage());
+                          },
                           icon: const Icon(
                             Icons.done,
                             color: Colors.blue,
@@ -92,10 +103,10 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
             },
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: const Icon(Icons.exit_to_app),
-            title: const Text(
+            leading: Icon(Icons.exit_to_app, color: Constants.textColor),
+            title: Text(
               "Đăng Xuất",
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: Constants.textColor),
             ),
           ),
         ],

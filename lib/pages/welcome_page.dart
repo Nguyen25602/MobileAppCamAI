@@ -13,7 +13,6 @@ class WelcomePage extends StatefulWidget {
 class _SignupPageState extends State<WelcomePage> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Timer(
         const Duration(seconds: 2),
@@ -32,7 +31,7 @@ class _SignupPageState extends State<WelcomePage> {
             children: [Image.asset("assets/big_logo.png")],
           ),
           Container(
-            margin: EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+            margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
             child: Text(
               "Giải pháp chuyển đổi số toàn diện cho tiếp thị, bán hàng và chăm sóc khách hàng",
               style: TextStyle(

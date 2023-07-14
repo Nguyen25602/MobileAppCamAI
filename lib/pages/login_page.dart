@@ -82,7 +82,7 @@ class LoginPageState extends State<LoginPage> {
                     child: TextFormField(
                       decoration: textInputDecoration.copyWith(
                           labelText: "Nhập Email Của Bạn",
-                          labelStyle: TextStyle(fontSize: 12),
+                          labelStyle: const TextStyle(fontSize: 12),
                           prefixIcon: Icon(
                             Icons.email,
                             color: Constants.textColor,
