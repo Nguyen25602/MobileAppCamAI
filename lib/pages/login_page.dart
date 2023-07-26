@@ -45,7 +45,7 @@ class LoginPageState extends State<LoginPage> {
                   Container(
                     margin: EdgeInsets.only(top: MarginValue.medium),
                     child: Text(
-                      "Cloudgo xin chào",
+                      "CloudGO xin chào",
                       style: TextStyle(
                           color: Constants.textColor,
                           fontFamily: 'Roboto',
@@ -86,7 +86,6 @@ class LoginPageState extends State<LoginPage> {
                           prefixIcon: Icon(
                             Icons.email,
                             color: Constants.textColor,
-                            size: 12,
                           )),
                       onChanged: (value) => email = value,
                       validator: (val) {

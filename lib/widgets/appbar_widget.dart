@@ -1,4 +1,5 @@
 import 'package:cloudgo_mobileapp/pages/login_page.dart';
+import 'package:cloudgo_mobileapp/pages/notification_page.dart';
 import 'package:cloudgo_mobileapp/pages/request_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
@@ -202,7 +203,9 @@ class _AppBarWidgetState extends State<AppBarWidget> {
         ),
         actions: [
           IconButton(
-            onPressed: () => dialogBuilder(context),
+            onPressed: () {
+              nextScreen(context, NotificationPage());
+            },
             icon: Icon(
               Icons.notifications_active,
               size: 24,
