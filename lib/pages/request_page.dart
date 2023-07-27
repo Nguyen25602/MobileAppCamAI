@@ -1,36 +1,41 @@
 import 'package:cloudgo_mobileapp/pages/addrequest_page.dart';
+import 'package:cloudgo_mobileapp/pages/detailrequest_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
-import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:cloudgo_mobileapp/widgets/request_item.dart';
 import 'package:cloudgo_mobileapp/object/Request.dart';
-
+import '../widgets/widgets.dart';
 class RequestPage extends StatefulWidget {
   const RequestPage({super.key});
 
   @override
-  State<RequestPage> createState() => RequestPageState();
+  State <RequestPage> createState() =>  RequestPageState();
 }
 
-class RequestPageState extends State<RequestPage>
-    with SingleTickerProviderStateMixin {
+class  RequestPageState extends State<RequestPage> with SingleTickerProviderStateMixin{
   late TabController _controller;
   List<String> name = ["name1", "name2", "name3", "name4"];
+  final items =const [
+    Icons.house_outlined,
+    Icons.photo_filter,
+    Icons.content_paste_search_outlined,
+    Icons.notifications_active_outlined,
+  ];
+  int _bottomIndex = 2;
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: 4, vsync: this);
   }
-
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFF9F7F6),
         centerTitle: true,
-        title: const Text(
-          "YÊU CẦU",
-          style: TextStyle(
+        title:const Text("YÊU CẦU NGHỈ PHÉP",
+          style:  TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontFamily: 'Roboto',
@@ -38,61 +43,76 @@ class RequestPageState extends State<RequestPage>
             letterSpacing: 0.40,
           ),
         ),
-        bottom: TabBar(isScrollable: true, controller: _controller, tabs: [
-          tabLabel("Đơn của tôi"),
-          tabLabel("Chờ duyệt"),
-          tabLabel("Chấp thuận"),
-          tabLabel("Từ chối")
-        ]),
+        actions: [
+          IconButton(onPressed: () => nextScreen(context,const AddRequestPage()), icon:const Icon(Icons.add, color: Constants.enableButton,))
+        ],
+        bottom: TabBar(
+          isScrollable: true,
+          controller: _controller ,
+          tabs: [
+            tabLabel("Tất cả đơn"),
+            tabLabel("Chờ duyệt"),
+            tabLabel("Chấp thuận"),
+            tabLabel("Từ chối")
+          ]),
       ),
       body: Container(
-        decoration: const BoxDecoration(color: Color(0x93D6DCED)),
-        child: TabBarView(controller: _controller, children: [
-          myRequestTab(context, name),
-          myRequestTab(context, name),
-          myRequestTab(context, name),
-          myRequestTab(context, name),
-        ]),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.amber,
-        onPressed: () {
-          nextScreen(context, const AddRequestPage());
-        },
-        child: const Icon(
-          Icons.add,
+        
+        child: TabBarView(
+          controller: _controller,
+          children: [
+            myRequestTab(context, name),
+            myRequestTab(context, name),
+            myRequestTab(context, name),
+            myRequestTab(context, name),
+          ]
         ),
       ),
     );
   }
 
   Text tabLabel(String label) {
-    return Text(
-      label,
-      style: const TextStyle(
+    return Text(label,
+      style:const TextStyle(
         color: Colors.black,
         fontSize: 14,
         fontFamily: 'Roboto',
         fontWeight: FontWeight.w400,
         letterSpacing: 0.30,
-      ),
+        ),
     );
   }
-
-  Widget myRequestTab(BuildContext context, List<String> listItem) => Container(
-        margin: EdgeInsets.only(top: MarginValue.medium),
-        child: ListView.builder(
-          itemCount: listItem.length,
-          itemBuilder: (context, index) {
-            return RequestItem(
-                item: Request(
-              name: listItem[index],
-              start: DateTime(2023, 10, 23),
-              end: DateTime(2023, 10, 30),
-              reason: "lấy vợ",
-              type: TimeOffType.noSalary,
-            ));
-          },
-        ),
-      );
+  Widget myRequestTab(BuildContext context, List<String> listItem)
+   
+  => Container(
+    margin:const EdgeInsets.only(top: MarginValue.medium, left: MarginValue.small),
+    child: ListView.separated(
+      itemCount: listItem.length,
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap:()=> nextScreen(context, DetailRequestPage(request: Request(
+              name: listItem[index], 
+              start: DateTime(2023, 10,23), 
+              end: DateTime(2023,10,23),
+              reason: "lấy vợ", 
+              type: TimeOffType.workFromHome, 
+              state: StateOFRequest.reject
+              )
+            )
+          ),
+          child: RequestItem(
+            item: Request(
+              name: listItem[index], 
+              start: DateTime(2023, 10,23), 
+              end: DateTime(2023,10,23),
+              reason: "lấy vợ", 
+              type: TimeOffType.workFromHome, 
+              state: StateOFRequest.reject
+            )
+          ),
+        );
+      },
+      separatorBuilder: (context, index) =>const Divider(thickness: 2.0, color: Constants.lineColor,),
+    ),
+  );
 }

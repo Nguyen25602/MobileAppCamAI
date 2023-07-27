@@ -1,7 +1,11 @@
+import 'package:cloudgo_mobileapp/object/User.dart';
 import 'package:cloudgo_mobileapp/pages/home_page.dart';
+import 'package:cloudgo_mobileapp/pages/main_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
+import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -180,11 +184,22 @@ class LoginPageState extends State<LoginPage> {
 
   login() {
     if (formKey.currentState!.validate()) {
-      if (email == "test@gmail.com" && password == "test123") {
-        nextScreenReplace(context, const HomeScreen());
-      } else {
-        showSnackbar(context, Colors.red, "Không Đăng Nhập Được");
-      }
+      loginEmployee(email, password).then((response) {
+        if (response != null) {
+          User user = User.fromMap(response);
+          nextScreenReplace(
+            context,
+            ChangeNotifierProvider(
+                create: (context) => UserProvider(
+                      user: user,
+                    ),
+                child: const MainPage()),
+          );
+        } else {
+          // Handle the error here
+          showSnackbar(context, Colors.red, "Vui lòng kiểm tra lại thông tin");
+        }
+      });
     }
   }
 }

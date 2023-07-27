@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloudgo_mobileapp/object/User.dart';
 import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
 import 'package:cloudgo_mobileapp/pages/test1.dart';
 import 'package:cloudgo_mobileapp/pages/timekeeping_history_page.dart';
@@ -9,12 +10,12 @@ import 'package:cloudgo_mobileapp/widgets/calendar_widget.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 final monthList = List.generate(12, (index) => index + 1);
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -78,11 +79,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var userProvider = Provider.of<UserProvider>(context);
+    User user = userProvider.user;
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBarWidget(
         titlebar: 'DASHBOARD',
         scaffoldKey: scaffoldKey,
+        user: user,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -99,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 5,
                     ),
                     Text(
-                      'GOOD MORNING, NGUYÊN!',
+                      'GOOD MORNING, ${user.firstName}!',
                       style: TextStyle(
                           fontFamily: 'Roboto',
                           color: Constants.textColor,
@@ -354,52 +358,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: Theme.of(context).primaryColor,
-        child: SizedBox(
-          height: 62,
-          child: Column(
-            children: [
-              Container(
-                height: 3, // Chiều cao của đường thẳng
-                width: double.infinity, // Đặt độ rộng thành vô hạn
-                color: Constants.lineColor, // Màu sắc của đường thẳng
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  const IconWidgets(
-                    iconPath: FontAwesomeIcons.house,
-                    text: "Home",
-                  ),
-                  IconWidgets(
-                    iconPath: FontAwesomeIcons.mapLocation,
-                    text: "GPS Check",
-                    onPressed: () {
-                      nextScreen(context, const CheckGPS());
-                    },
-                  ),
-                  IconWidgets(
-                    // ignore: deprecated_member_use
-                    iconPath: FontAwesomeIcons.fileAlt,
-                    text: "Log Check",
-                    onPressed: () {
-                      nextScreenReplace(context, TimekeepingHistoryPage());
-                    },
-                  ),
-                  IconWidgets(
-                    iconPath: FontAwesomeIcons.wifi,
-                    text: "Check Wi-Fi",
-                    onPressed: () {
-                      nextScreen(context, const Test1());
-                    },
-                  ),
-                ],
               ),
             ],
           ),

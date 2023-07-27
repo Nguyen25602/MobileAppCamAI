@@ -1,6 +1,9 @@
+import 'package:cloudgo_mobileapp/object/TimeKeeping.dart';
+
 class CheckIn {
   DateTime _date;
-  CheckIn({required DateTime date}): _date = date;
+  TypeDevice _device;
+  CheckIn({required DateTime date, required TypeDevice device}): _date = date, _device = device;
 
   String _getDate(DateTime date) {
     return "${date.year}/${date.month}/${date.day}";
@@ -11,7 +14,8 @@ class CheckIn {
 
   String get date => _getDate(_date);
   String get time => _getTime(_date);
-
+  DateTime get dateTime => _date;
+  TypeDevice get device => _device;
   String formatDate() {
     if(_getDate(_date) == _getDate(DateTime.now())) {
       return "hôm nay";

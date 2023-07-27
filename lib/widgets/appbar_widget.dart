@@ -1,37 +1,54 @@
+import 'package:cloudgo_mobileapp/object/User.dart';
+import 'package:cloudgo_mobileapp/pages/information_page.dart';
 import 'package:cloudgo_mobileapp/pages/login_page.dart';
 import 'package:cloudgo_mobileapp/pages/notification_page.dart';
 import 'package:cloudgo_mobileapp/pages/request_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
+import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
   final String titlebar;
   final GlobalKey<ScaffoldState> scaffoldKey;
+  final User? user;
   const AppBarWidget({
+    required this.user,
     required this.titlebar,
     required this.scaffoldKey,
     Key? key,
   }) : super(key: key);
 
   static Drawer buildDrawer(BuildContext context) {
+    var userProvider = Provider.of<UserProvider>(context);
+    User user = userProvider.user;
     return Drawer(
       child: ListView(
         padding: const EdgeInsets.symmetric(vertical: 50),
         children: <Widget>[
-          Icon(
-            Icons.account_circle,
-            size: 150,
-            color: Colors.grey[700],
+          Container(
+            height: 150,
+            margin: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: NetworkImage(
+                    "http://192.168.31.33/onlinecrm${user.avatar}"), // Đặt URL hình ảnh của bạn ở đây
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           const SizedBox(
             height: 15,
           ),
-          const Text(
-            "Hoàng Nguyên",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold),
+          Consumer<UserProvider>(
+            builder: (context, value, _) => Text(
+              value.user.name,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
           const SizedBox(
             height: 30,
@@ -41,7 +58,15 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
           ),
           // Tab Group
           ListTile(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChangeNotifierProvider(
+                            create: (context) => UserProvider(user: user),
+                            builder: (context, child) => InformationPage(),
+                          )));
+            },
             selectedColor: Theme.of(context).primaryColor,
             selected: true,
             contentPadding:
@@ -91,7 +116,24 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            nextScreen(context, const LoginPage());
+                            logoutEmployee(user.token).then((value) => {
+                                  if (value != null)
+                                    {
+                                      if (value["success"] == "1")
+                                        {
+                                          showSnackbar(context, Colors.red,
+                                              "Đăng xuất thành công"),
+                                          nextScreenRemove(
+                                              context, const LoginPage())
+                                        }
+                                      else
+                                        {
+                                          showSnackbar(context, Colors.blue,
+                                              "Đăng xuất thất bại"),
+                                          Navigator.pop(context),
+                                        }
+                                    }
+                                });
                           },
                           icon: const Icon(
                             Icons.done,
@@ -230,11 +272,12 @@ class _AppBarWidgetState extends State<AppBarWidget> {
           },
           child: Container(
             margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              image: const DecorationImage(
-                image: AssetImage("assets/logo.png"),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                "http://192.168.31.33/onlinecrm${widget.user?.avatar}",
+                fit: BoxFit.cover,
               ),
-              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ),

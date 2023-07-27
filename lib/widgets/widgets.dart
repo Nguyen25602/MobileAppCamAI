@@ -26,12 +26,18 @@ void nextScreenReplace(context, page) {
       context, MaterialPageRoute(builder: (context) => page));
 }
 
+void nextScreenRemove(context, page) {
+  Navigator.pushAndRemoveUntil(
+      context, MaterialPageRoute(builder: (context) => page), (route) => false);
+}
+
 void showSnackbar(context, color, message) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(
       message,
       style: const TextStyle(fontSize: 12),
     ),
+    behavior: SnackBarBehavior.floating,
     backgroundColor: color,
     duration: const Duration(seconds: 10),
     action: SnackBarAction(

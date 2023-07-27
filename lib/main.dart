@@ -1,9 +1,11 @@
+import 'package:cloudgo_mobileapp/object/User.dart';
 import 'package:cloudgo_mobileapp/pages/welcome_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +24,9 @@ void main() async {
     // ignore: avoid_print
     print("Đã kết nối");
   }
-  runApp(const MyApp());
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -33,7 +37,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         fontFamily: GoogleFonts.roboto().fontFamily,
-        primaryColor: Constants().primaryColor,
+        primaryColor: Constants.primaryColor,
         scaffoldBackgroundColor: Colors.white,
       ),
       debugShowCheckedModeBanner: false,

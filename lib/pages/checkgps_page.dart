@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 //NGUYEN CREATE //
 import 'dart:async';
+import 'package:cloudgo_mobileapp/object/User.dart';
 import 'package:cloudgo_mobileapp/pages/home_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
@@ -11,6 +12,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocode/geocode.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class CheckGPS extends StatefulWidget {
   const CheckGPS({super.key});
@@ -128,6 +130,8 @@ class _CheckGPSState extends State<CheckGPS> {
   );
   @override
   Widget build(BuildContext context) {
+    var userProvider = Provider.of<UserProvider>(context);
+    User user = userProvider.user;
     distance = Geolocator.distanceBetween(_kCloudGo.target.latitude,
             _kCloudGo.target.longitude, position.latitude, position.longitude)
         .toInt(); //Tính khoảng cách
@@ -139,6 +143,7 @@ class _CheckGPSState extends State<CheckGPS> {
       appBar: AppBarWidget(
         titlebar: 'CHECK-IN GPS',
         scaffoldKey: _hello,
+        user: user,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -458,48 +463,6 @@ class _CheckGPSState extends State<CheckGPS> {
                     )
                   ],
                 )
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: Theme.of(context).primaryColor,
-        child: SizedBox(
-          height: 62,
-          child: Column(
-            children: [
-              Container(
-                height: 3, // Chiều cao của đường thẳng
-                width: double.infinity, // Đặt độ rộng thành vô hạn
-                color: Constants.lineColor, // Màu sắc của đường thẳng
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconWidgets(
-                    iconPath: FontAwesomeIcons.house,
-                    text: "Home",
-                    onPressed: () {
-                      nextScreen(context, const HomeScreen());
-                    },
-                  ),
-                  const IconWidgets(
-                    iconPath: FontAwesomeIcons.mapLocation,
-                    text: "GPS Check",
-                  ),
-                  IconWidgets(
-                    // ignore: deprecated_member_use
-                    iconPath: FontAwesomeIcons.fileAlt,
-                    text: "Log Check",
-                    onPressed: () {},
-                  ),
-                  IconWidgets(
-                    iconPath: FontAwesomeIcons.wifi,
-                    text: "Check Wi-Fi",
-                    onPressed: () {},
-                  ),
-                ],
-              ),
             ],
           ),
         ),
