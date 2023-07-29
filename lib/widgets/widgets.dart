@@ -2,8 +2,8 @@ import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-var textInputDecoration = InputDecoration(
-  contentPadding: const EdgeInsets.all(10),
+var textInputDecoration = const InputDecoration(
+  contentPadding: EdgeInsets.all(10),
   labelStyle:
       TextStyle(color: Constants.textColor, fontWeight: FontWeight.w400),
   focusedBorder: OutlineInputBorder(
@@ -87,7 +87,8 @@ class _IconWidgetsState extends State<IconWidgets> {
                   ),
                   Text(
                     widget.text,
-                    style: TextStyle(color: Constants.textColor, fontSize: 12),
+                    style: const TextStyle(
+                        color: Constants.textColor, fontSize: 12),
                   )
                 ],
               )
@@ -103,8 +104,8 @@ class _IconWidgetsState extends State<IconWidgets> {
                   ),
                   Text(
                     widget.text,
-                    style:
-                        TextStyle(color: Constants.enableButton, fontSize: 12),
+                    style: const TextStyle(
+                        color: Constants.enableButton, fontSize: 12),
                   )
                 ],
               ));

@@ -32,7 +32,7 @@ class _SignupPageState extends State<WelcomePage> {
           ),
           Container(
             margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
-            child: Text(
+            child: const Text(
               "Giải pháp chuyển đổi số toàn diện cho tiếp thị, bán hàng và chăm sóc khách hàng",
               style: TextStyle(
                   fontSize: 16,
@@ -44,8 +44,8 @@ class _SignupPageState extends State<WelcomePage> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        padding: const EdgeInsets.only(bottom: 20),
+      bottomNavigationBar: const BottomAppBar(
+        padding: EdgeInsets.only(bottom: 20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -62,5 +62,3 @@ class _SignupPageState extends State<WelcomePage> {
     );
   }
 }
-
-void demo() {}

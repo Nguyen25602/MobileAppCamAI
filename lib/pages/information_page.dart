@@ -1,4 +1,6 @@
 import 'package:cloudgo_mobileapp/object/User.dart';
+import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
+import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:image_picker/image_picker.dart';
@@ -19,13 +21,16 @@ class _InformationPageState extends State<InformationPage> {
   final GlobalKey<ScaffoldState> _infoKey = GlobalKey<ScaffoldState>();
   final List<String> _avatarPaths = ['assets/logo.png'];
   String? _selectedGender;
-  String _userAvatar = 'assets/logo.png';
-  String _name = 'Hoàng Phước Gia Nguyên';
-  String _user = 'nguyen.hoang';
-  String _number = '0979074677';
-  String _email = 'hoangnguyen@gmail.com';
-  String _address = '37 Nguyễn Thị Thi';
-  String _sex = 'Nam';
+  String _userAvatar = "";
+  String _name = "";
+  String _first_name = "";
+  String _last_name = "";
+  String _user = '';
+  String _number = '';
+  String _email = '';
+  String _address = '';
+  String _sex = '';
+
   bool _changeava = true;
   int _count = 0;
   bool button1valiable = true;
@@ -111,8 +116,8 @@ class _InformationPageState extends State<InformationPage> {
     return Scaffold(
       key: _infoKey,
       appBar: AppBar(
-        leading: BackButton(),
-        title: Text("THÔNG TIN CÁ NHÂN"),
+        leading: const BackButton(),
+        title: const Text("THÔNG TIN CÁ NHÂN"),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -189,7 +194,7 @@ class _InformationPageState extends State<InformationPage> {
                                               ),
                                             )
                                           : Text(
-                                              '${_name}',
+                                              userProvider.user!.name,
                                               style: const TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold),
@@ -216,7 +221,7 @@ class _InformationPageState extends State<InformationPage> {
                                         },
                                         decoration: InputDecoration(
                                           labelText: button1valiable
-                                              ? 'Username      : ${userProvider.user.gmail}'
+                                              ? 'Username      : ${userProvider.user!.userName}'
                                               : 'Username',
                                           labelStyle:
                                               const TextStyle(fontSize: 14),
@@ -232,7 +237,7 @@ class _InformationPageState extends State<InformationPage> {
                                         },
                                         decoration: InputDecoration(
                                           labelText: button1valiable
-                                              ? 'Số điện thoại : ${_number}'
+                                              ? 'Số điện thoại : ${userProvider.user!.mobile}'
                                               : 'Số điện thoại',
                                           labelStyle:
                                               const TextStyle(fontSize: 14),
@@ -248,7 +253,7 @@ class _InformationPageState extends State<InformationPage> {
                                         },
                                         decoration: InputDecoration(
                                           labelText: button1valiable
-                                              ? 'Email              : ${_email}'
+                                              ? 'Email              : ${userProvider.user!.gmail}'
                                               : 'Email',
                                           labelStyle:
                                               const TextStyle(fontSize: 14),
@@ -260,7 +265,7 @@ class _InformationPageState extends State<InformationPage> {
                                               enabled: button2valiable,
                                               decoration: InputDecoration(
                                                 labelText:
-                                                    'Giới tính         : ${_sex}',
+                                                    'Giới tính         : ${userProvider.user!.gender}',
                                                 labelStyle: const TextStyle(
                                                     fontSize: 14),
                                               ),
@@ -272,7 +277,7 @@ class _InformationPageState extends State<InformationPage> {
                                                   _textEditingController4,
                                               decoration: InputDecoration(
                                                 labelText: button1valiable
-                                                    ? 'Ngày sinh      : ${_selectedDay}/${_selectedMonth}/${_selectedYear}'
+                                                    ? 'Ngày sinh      : ${userProvider.user!.birthday}'
                                                     : 'Ngày sinh',
                                                 labelStyle: const TextStyle(
                                                     fontSize: 14),
@@ -289,7 +294,7 @@ class _InformationPageState extends State<InformationPage> {
                                         },
                                         decoration: InputDecoration(
                                           labelText: button1valiable
-                                              ? 'Địa chỉ           : ${_address}'
+                                              ? 'Địa chỉ           : ${userProvider.user!.temporaryAddress}'
                                               : 'Địa chỉ',
                                           labelStyle:
                                               const TextStyle(fontSize: 14),
@@ -323,8 +328,8 @@ class _InformationPageState extends State<InformationPage> {
                               padding: const EdgeInsets.all(0),
                             ),
                             child: _changeava
-                                ? Image.asset(
-                                    _userAvatar,
+                                ? Image.network(
+                                    "http://192.168.1.28/onlinecrm${userProvider.user!.avatar}",
                                     height: 100,
                                     width: 100,
                                     fit: BoxFit.cover,
@@ -346,13 +351,48 @@ class _InformationPageState extends State<InformationPage> {
                     height: desiredHeight * 0.1,
                     width: desiredWidth * 0.9,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         setState(() {
                           button1valiable = true;
                           button2valiable = false;
                         });
                         _clearTextField();
                         userProvider.updateName(_name);
+                        List<String> nameParts = _name.split(" ");
+                        if (nameParts.length >= 2) {
+                          // Lấy Họ và tên đệm
+                          _first_name = nameParts
+                              .sublist(0, nameParts.length - 1)
+                              .join(" ");
+
+                          // Lấy Tên cuối cùng
+                          _last_name = nameParts.last;
+
+                          print("Họ và tên đệm: $_first_name");
+                          print("Tên: $_last_name");
+                        }
+                        final Map<String, dynamic> requestData = {
+                          "RequestAction": "SaveProfile",
+                          "Data": {
+                            "mobile": _number,
+                            "avatar": _avatarPaths,
+                            "firstname": _last_name,
+                            "lastname": _first_name,
+                            "user_name_app": _user,
+                            "temporary_address": _address,
+                            "email": _email
+                          },
+                          "id": userProvider.user!.id,
+                        };
+                        changeProfileEmployee(
+                                userProvider.user!.token, requestData)
+                            .then((value) => {
+                                  if (value == "1")
+                                    {
+                                      showSnackbar(context, Colors.red,
+                                          "Thay Đổi Thành Công")
+                                    }
+                                });
                       },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
@@ -398,8 +438,8 @@ class _InformationPageState extends State<InformationPage> {
         ),
         Row(
           children: [
-            _buildGenderRadioButton('Nam', 'Nam'),
-            _buildGenderRadioButton('Nữ', 'Nữ'),
+            _buildGenderRadioButton('Nam', 'Male'),
+            _buildGenderRadioButton('Nữ', 'Female'),
             _buildGenderRadioButton('Khác', 'Khác'),
           ],
         ),

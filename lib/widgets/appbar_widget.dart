@@ -1,3 +1,4 @@
+import 'package:cloudgo_mobileapp/helper/helper_function.dart';
 import 'package:cloudgo_mobileapp/object/User.dart';
 import 'package:cloudgo_mobileapp/pages/information_page.dart';
 import 'package:cloudgo_mobileapp/pages/login_page.dart';
@@ -23,7 +24,7 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
 
   static Drawer buildDrawer(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context);
-    User user = userProvider.user;
+    User? user = userProvider.user;
     return Drawer(
       child: ListView(
         padding: const EdgeInsets.symmetric(vertical: 50),
@@ -35,7 +36,7 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
               shape: BoxShape.circle,
               image: DecorationImage(
                 image: NetworkImage(
-                    "http://192.168.31.33/onlinecrm${user.avatar}"), // Đặt URL hình ảnh của bạn ở đây
+                    "http://192.168.1.28/onlinecrm${user?.avatar}"), // Đặt URL hình ảnh của bạn ở đây
                 fit: BoxFit.cover,
               ),
             ),
@@ -45,7 +46,7 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
           ),
           Consumer<UserProvider>(
             builder: (context, value, _) => Text(
-              value.user.name,
+              value.user!.name,
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -59,23 +60,17 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
           // Tab Group
           ListTile(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                            create: (context) => UserProvider(user: user),
-                            builder: (context, child) => InformationPage(),
-                          )));
+              nextScreen(context, const InformationPage());
             },
             selectedColor: Theme.of(context).primaryColor,
             selected: true,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: Icon(
+            leading: const Icon(
               Icons.group,
               color: Constants.textColor,
             ),
-            title: Text(
+            title: const Text(
               "Hồ sơ cá nhân",
               style: TextStyle(color: Constants.textColor),
             ),
@@ -87,8 +82,9 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
             },
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: Icon(Icons.pending_actions, color: Constants.textColor),
-            title: Text(
+            leading:
+                const Icon(Icons.pending_actions, color: Constants.textColor),
+            title: const Text(
               "Đăng ký nghĩ phép",
               style: TextStyle(color: Constants.textColor),
             ),
@@ -101,7 +97,7 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                   barrierDismissible: false,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text("Đăng Xuất",
+                      title: const Text("Đăng Xuất",
                           style: TextStyle(color: Constants.textColor)),
                       content: const Text("Bạn Muốn Đăng Xuất ?"),
                       actions: [
@@ -116,11 +112,16 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            logoutEmployee(user.token).then((value) => {
+                            logoutEmployee(user!.token).then((value) => {
                                   if (value != null)
                                     {
                                       if (value["success"] == "1")
                                         {
+                                          HelperFunctions
+                                              .saveUserLoggedInStatus(false),
+                                          HelperFunctions.saveAccessTokenSF(""),
+                                          HelperFunctions.saveUserNameSF(""),
+                                          HelperFunctions.saveEmployeeIdSF(""),
                                           showSnackbar(context, Colors.red,
                                               "Đăng xuất thành công"),
                                           nextScreenRemove(
@@ -146,8 +147,8 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
             },
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            leading: Icon(Icons.exit_to_app, color: Constants.textColor),
-            title: Text(
+            leading: const Icon(Icons.exit_to_app, color: Constants.textColor),
+            title: const Text(
               "Đăng Xuất",
               style: TextStyle(color: Constants.textColor),
             ),
@@ -248,7 +249,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
             onPressed: () {
               nextScreen(context, NotificationPage());
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.notifications_active,
               size: 24,
               color: Constants.textColor,
@@ -275,7 +276,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.network(
-                "http://192.168.31.33/onlinecrm${widget.user?.avatar}",
+                "http://192.168.1.28/onlinecrm${widget.user?.avatar}",
                 fit: BoxFit.cover,
               ),
             ),

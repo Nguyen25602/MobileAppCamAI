@@ -1,12 +1,13 @@
+import 'package:cloudgo_mobileapp/object/User.dart';
 import 'package:cloudgo_mobileapp/pages/checkIn_history_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/widgets/timekeeping_item.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../widgets/appbar_widget.dart';
 import '../widgets/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
 import 'package:cloudgo_mobileapp/object/TimeKeeping.dart';
 import 'package:intl/intl.dart';
 
@@ -57,10 +58,12 @@ class _TimekeepingHistoryPageState extends State<TimekeepingHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    var userProvider = Provider.of<UserProvider>(context);
+    User? user = userProvider.user;
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBarWidget(
-        user: null,
+        user: user,
         scaffoldKey: scaffoldKey,
         titlebar: "LỊCH SỬ CHẤM CÔNG",
       ),

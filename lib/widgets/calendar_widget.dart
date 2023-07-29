@@ -113,10 +113,10 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           });
         },
         // Style màu sắc + chữ trong Calendar //
-        calendarStyle: CalendarStyle(
+        calendarStyle: const CalendarStyle(
           markersAlignment: Alignment.bottomCenter,
           markersMaxCount: 4,
-          rangeEndTextStyle: const TextStyle(color: Colors.blue),
+          rangeEndTextStyle: TextStyle(color: Colors.blue),
           // Style Text Khi Chọn //
           selectedTextStyle:
               TextStyle(color: Constants.whiteTextColor, fontSize: 14),
@@ -126,20 +126,20 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           todayTextStyle:
               TextStyle(color: Constants.whiteTextColor, fontSize: 14),
           // Style Today //
-          todayDecoration: const BoxDecoration(
+          todayDecoration: BoxDecoration(
             color: Colors.red,
             shape: BoxShape.circle,
           ),
           // Style Ngày chọn //
-          selectedDecoration: const BoxDecoration(
+          selectedDecoration: BoxDecoration(
             color: Colors.blue,
             shape: BoxShape.circle,
           ),
-          withinRangeDecoration: const BoxDecoration(
+          withinRangeDecoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.red,
           ),
-          rangeHighlightColor: const Color.fromARGB(255, 74, 255, 33),
+          rangeHighlightColor: Color.fromARGB(255, 74, 255, 33),
           // Style Text Ngày cuối tuần //
           weekendTextStyle: TextStyle(
               color: Constants.warningColor,
@@ -151,15 +151,15 @@ class _CalendarWidgetState extends State<CalendarWidget> {
               fontSize: 14,
               fontWeight: FontWeight.bold),
         ),
-        daysOfWeekStyle: DaysOfWeekStyle(
+        daysOfWeekStyle: const DaysOfWeekStyle(
             weekdayStyle: TextStyle(color: Constants.textColor)),
         headerStyle: HeaderStyle(
-          leftChevronIcon: FaIcon(
+          leftChevronIcon: const FaIcon(
             FontAwesomeIcons.chevronLeft,
             color: Constants.textColor,
             size: 14,
           ),
-          rightChevronIcon: FaIcon(
+          rightChevronIcon: const FaIcon(
             FontAwesomeIcons.chevronRight,
             color: Constants.textColor,
             size: 14,
@@ -168,7 +168,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           titleCentered: true, // Text Date nằm giữa
           formatButtonShowsNext: false, //Ngăn không cho Format Show trước
           //Title Header Calendar Style
-          titleTextStyle: TextStyle(
+          titleTextStyle: const TextStyle(
               color: Constants.textColor,
               fontFamily: "Roboto",
               fontWeight: FontWeight.bold,

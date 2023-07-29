@@ -1,15 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloudgo_mobileapp/object/User.dart';
-import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
-import 'package:cloudgo_mobileapp/pages/test1.dart';
-import 'package:cloudgo_mobileapp/pages/timekeeping_history_page.dart';
+// import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
+// import 'package:cloudgo_mobileapp/pages/test1.dart';
+// import 'package:cloudgo_mobileapp/pages/timekeeping_history_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
-import 'package:cloudgo_mobileapp/utils/database_service.dart';
 import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
 import 'package:cloudgo_mobileapp/widgets/calendar_widget.dart';
-import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:provider/provider.dart';
 
 final monthList = List.generate(12, (index) => index + 1);
@@ -22,7 +20,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedMonth = DateTime.now().month;
-  final DatabaseService databaseService = DatabaseService();
   QuerySnapshot? querySnapshot;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   bool isExpanded = false;
@@ -33,54 +30,11 @@ class _HomeScreenState extends State<HomeScreen> {
     topLeft: Radius.circular(24.0),
     topRight: Radius.circular(24.0),
   );
-  @override
-  void initState() {
-    super.initState();
-    getDate();
-  }
-
-  void getDate() async {
-    try {
-      QuerySnapshot? snapshot = await databaseService.getDateTime();
-      setState(() {
-        querySnapshot = snapshot;
-      });
-    } catch (e) {
-      showSnackbar(context, Colors.red, 'Lỗi khi lấy dữ liệu từ Firestore: $e');
-    }
-  }
-
-  void getDataFromFirestore() {
-    CollectionReference collectionRef =
-        FirebaseFirestore.instance.collection('checkInOutData');
-
-    collectionRef.get().then((QuerySnapshot querySnapshot) {
-      List<QueryDocumentSnapshot> documents = querySnapshot.docs;
-      for (int i = 0; i < documents.length; i++) {
-        DocumentSnapshot documentSnapshot = documents[i];
-        String date = documentSnapshot.id;
-        Map<String, dynamic> data =
-            documentSnapshot.data() as Map<String, dynamic>;
-        String checkIn = data['checkIn'];
-        String checkOut = data['checkOut'];
-
-        // ignore: avoid_print
-        print('Ngày: $date');
-        // ignore: avoid_print
-        print('Check-in: $checkIn');
-        // ignore: avoid_print
-        print('Check-out: $checkOut');
-      }
-    }).catchError((error) {
-      // ignore: avoid_print
-      print('Lỗi khi lấy dữ liệu từ Firestore: $error');
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context);
-    User user = userProvider.user;
+    User? user = userProvider.user;
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBarWidget(
@@ -102,18 +56,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(
                       height: 5,
                     ),
-                    Text(
-                      'GOOD MORNING, ${user.firstName}!',
-                      style: TextStyle(
-                          fontFamily: 'Roboto',
-                          color: Constants.textColor,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14),
+                    Consumer<UserProvider>(
+                      builder: (context, userProvider, child) => Text(
+                        'GOOD MORNING, ${userProvider.user!.name}!',
+                        style: const TextStyle(
+                            fontFamily: 'Roboto',
+                            color: Constants.textColor,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14),
+                      ),
                     ),
                     const SizedBox(
                       height: 2,
                     ),
-                    Text(
+                    const Text(
                       'Một ngày làm việc vui vẻ nha !',
                       style: TextStyle(
                           fontFamily: 'Roboto',
@@ -132,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           TextButton.icon(
                             icon: const Icon(Icons.analytics_sharp, size: 20),
-                            label: Text('Thống kê chấm công',
+                            label: const Text('Thống kê chấm công',
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Constants.textColor,
@@ -163,7 +119,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 builder: (context) {
                                   return Container(
                                     height: 250,
-                                    padding: EdgeInsets.all(MarginValue.small),
+                                    padding:
+                                        const EdgeInsets.all(MarginValue.small),
                                     child: ListView.builder(
                                       itemCount: monthList.length,
                                       itemBuilder: (context, index) {
@@ -196,19 +153,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              MaterialButton(
+                              const MaterialButton(
                                 onPressed: null,
                                 disabledColor: Constants.successfulColor,
                                 textColor: Colors.white,
-                                padding: const EdgeInsets.all(16),
-                                shape: const CircleBorder(),
+                                padding: EdgeInsets.all(16),
+                                shape: CircleBorder(),
                                 child: Icon(
                                   Icons.check,
                                   size: 20,
                                   color: Constants.whiteTextColor,
                                 ),
                               ),
-                              Column(
+                              const Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
@@ -219,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fontWeight: FontWeight.normal,
                                         color: Constants.textColor),
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     height: 15,
                                   ),
                                   Text(
@@ -235,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               IconButton(
                                   onPressed: () {},
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.arrow_forward_ios,
                                     color: Constants.textColor,
                                   )),
@@ -252,19 +209,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              MaterialButton(
+                              const MaterialButton(
                                 onPressed: null,
                                 disabledColor: Constants.warningColor,
                                 textColor: Colors.white,
-                                padding: const EdgeInsets.all(16),
-                                shape: const CircleBorder(),
+                                padding: EdgeInsets.all(16),
+                                shape: CircleBorder(),
                                 child: Icon(
                                   Icons.sentiment_dissatisfied,
                                   size: 20,
                                   color: Constants.whiteTextColor,
                                 ),
                               ),
-                              Column(
+                              const Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
@@ -275,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fontWeight: FontWeight.normal,
                                         color: Constants.textColor),
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     height: 15,
                                   ),
                                   Text(
@@ -291,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               IconButton(
                                   onPressed: () {},
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.arrow_forward_ios,
                                     color: Constants.textColor,
                                   )),
@@ -308,19 +265,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              MaterialButton(
+                              const MaterialButton(
                                 onPressed: null,
                                 disabledColor: Constants.dangerousColor,
                                 textColor: Colors.white,
-                                padding: const EdgeInsets.all(16),
-                                shape: const CircleBorder(),
+                                padding: EdgeInsets.all(16),
+                                shape: CircleBorder(),
                                 child: Icon(
                                   Icons.close,
                                   size: 20,
                                   color: Constants.whiteTextColor,
                                 ),
                               ),
-                              Column(
+                              const Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
@@ -331,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fontWeight: FontWeight.normal,
                                         color: Constants.textColor),
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     height: 15,
                                   ),
                                   Text(
@@ -347,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               IconButton(
                                   onPressed: () {},
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.arrow_forward_ios,
                                     color: Constants.textColor,
                                   )),

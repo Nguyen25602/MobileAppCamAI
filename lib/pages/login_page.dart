@@ -1,5 +1,6 @@
+import 'package:cloudgo_mobileapp/helper/helper_function.dart';
 import 'package:cloudgo_mobileapp/object/User.dart';
-import 'package:cloudgo_mobileapp/pages/home_page.dart';
+// import 'package:cloudgo_mobileapp/pages/home_page.dart';
 import 'package:cloudgo_mobileapp/pages/main_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
@@ -19,6 +20,7 @@ class LoginPageState extends State<LoginPage> {
   String password = "";
   @override
   Widget build(BuildContext context) {
+    var provider = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -26,7 +28,7 @@ class LoginPageState extends State<LoginPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
               left: MarginValue.large,
               right: MarginValue.large,
               top: MarginValue.small),
@@ -47,8 +49,8 @@ class LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: MarginValue.medium),
-                    child: Text(
+                    margin: const EdgeInsets.only(top: MarginValue.medium),
+                    child: const Text(
                       "CloudGO xin chào",
                       style: TextStyle(
                           color: Constants.textColor,
@@ -58,8 +60,8 @@ class LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: MarginValue.medium),
-                    child: Text(
+                    margin: const EdgeInsets.only(top: MarginValue.medium),
+                    child: const Text(
                       "Mời bạn đăng nhập bằng email của bạn",
                       style: TextStyle(
                           color: Constants.textColor,
@@ -72,7 +74,7 @@ class LoginPageState extends State<LoginPage> {
                     height: 1,
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: MarginValue.exxxLarge),
+                    margin: const EdgeInsets.only(top: MarginValue.exxxLarge),
                     child: const Text(
                       "Tài khoản",
                       style: TextStyle(
@@ -82,27 +84,20 @@ class LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: MarginValue.medium),
+                    margin: const EdgeInsets.only(top: MarginValue.medium),
                     child: TextFormField(
                       decoration: textInputDecoration.copyWith(
                           labelText: "Nhập Email Của Bạn",
                           labelStyle: const TextStyle(fontSize: 12),
-                          prefixIcon: Icon(
+                          prefixIcon: const Icon(
                             Icons.email,
                             color: Constants.textColor,
                           )),
                       onChanged: (value) => email = value,
-                      validator: (val) {
-                        return RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                .hasMatch(val!)
-                            ? null
-                            : "Vui lòng nhập đúng email của bạn";
-                      },
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: MarginValue.medium),
+                    margin: const EdgeInsets.only(top: MarginValue.medium),
                     child: const Text(
                       "Mật khẩu",
                       style: TextStyle(
@@ -112,13 +107,13 @@ class LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(
+                    margin: const EdgeInsets.only(
                         top: MarginValue.medium, bottom: MarginValue.medium),
                     child: TextFormField(
                       obscureText: true,
                       decoration: textInputDecoration.copyWith(
                           labelText: "Nhập Mật Khẩu",
-                          prefixIcon: Icon(
+                          prefixIcon: const Icon(
                             Icons.lock,
                             color: Constants.textColor,
                           )),
@@ -139,14 +134,14 @@ class LoginPageState extends State<LoginPage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            login();
+                            login(provider);
                           },
                           style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
                               backgroundColor: Constants.enableButton),
                           child: Container(
-                            padding: EdgeInsets.all(MarginValue.medium),
+                            padding: const EdgeInsets.all(MarginValue.medium),
                             child: const Text(
                               "ĐĂNG NHẬP",
                               style: TextStyle(
@@ -158,11 +153,11 @@ class LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: MarginValue.small),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: MarginValue.small),
                           child: TextButton(
                             onPressed: () {},
-                            child: Text(
+                            child: const Text(
                               "Quên mật khẩu?",
                               style: TextStyle(
                                 color: Constants.enableButton,
@@ -182,24 +177,40 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  login() {
+  login(UserProvider provider) {
     if (formKey.currentState!.validate()) {
-      loginEmployee(email, password).then((response) {
-        if (response != null) {
-          User user = User.fromMap(response);
-          nextScreenReplace(
-            context,
-            ChangeNotifierProvider(
-                create: (context) => UserProvider(
-                      user: user,
-                    ),
-                child: const MainPage()),
-          );
-        } else {
-          // Handle the error here
-          showSnackbar(context, Colors.red, "Vui lòng kiểm tra lại thông tin");
-        }
-      });
+      if (email.contains("@")) {
+        loginGmailEmployee(email, password).then((response) {
+          if (response != null) {
+            User user = User.fromMap(response);
+            provider.updateUserStart(user);
+            nextScreenReplace(
+              context,
+              const MainPage(),
+            );
+          } else {
+            // Handle the error here
+            showSnackbar(context, Colors.red,
+                "Gmail hoặc Password không đăng nhập được!!");
+          }
+        });
+      } else {
+        loginUsernameEmployee(email, password).then((response) {
+          if (response != null) {
+            User user = User.fromMap(response);
+            provider.updateUserStart(user);
+            HelperFunctions.saveUserLoggedInStatus(true);
+            HelperFunctions.saveAccessTokenSF(user.token);
+            HelperFunctions.saveUserNameSF(user.userName);
+            HelperFunctions.saveEmployeeIdSF(user.id);
+            nextScreenReplace(context, const MainPage());
+          } else {
+            // Handle the error here
+            showSnackbar(context, Colors.red,
+                "Username hoặc Password không đăng nhập được!!");
+          }
+        });
+      }
     }
   }
 }

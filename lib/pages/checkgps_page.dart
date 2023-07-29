@@ -2,7 +2,6 @@
 //NGUYEN CREATE //
 import 'dart:async';
 import 'package:cloudgo_mobileapp/object/User.dart';
-import 'package:cloudgo_mobileapp/pages/home_page.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
@@ -131,7 +130,7 @@ class _CheckGPSState extends State<CheckGPS> {
   @override
   Widget build(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context);
-    User user = userProvider.user;
+    User? user = userProvider.user;
     distance = Geolocator.distanceBetween(_kCloudGo.target.latitude,
             _kCloudGo.target.longitude, position.latitude, position.longitude)
         .toInt(); //Tính khoảng cách
@@ -161,7 +160,7 @@ class _CheckGPSState extends State<CheckGPS> {
                               shape: const StadiumBorder(),
                               disabledBackgroundColor:
                                   Constants.successfulColor),
-                          child: Text(
+                          child: const Text(
                             'GPS ON',
                             style: TextStyle(
                                 color: Constants.whiteTextColor,
@@ -175,7 +174,7 @@ class _CheckGPSState extends State<CheckGPS> {
                               shape: const StadiumBorder(),
                               disabledBackgroundColor:
                                   Constants.dangerousColor),
-                          child: Text(
+                          child: const Text(
                             'GPS OFF',
                             style: TextStyle(
                                 color: Constants.whiteTextColor,
@@ -190,7 +189,7 @@ class _CheckGPSState extends State<CheckGPS> {
                               shape: const StadiumBorder(),
                               disabledBackgroundColor:
                                   Constants.successfulColor),
-                          child: Text(
+                          child: const Text(
                             'ACCESS ON',
                             style: TextStyle(
                                 color: Constants.whiteTextColor,
@@ -204,7 +203,7 @@ class _CheckGPSState extends State<CheckGPS> {
                               shape: const StadiumBorder(),
                               disabledBackgroundColor:
                                   Constants.dangerousColor),
-                          child: Text(
+                          child: const Text(
                             'ACCESS OFF',
                             style: TextStyle(
                                 color: Constants.whiteTextColor,
@@ -247,7 +246,7 @@ class _CheckGPSState extends State<CheckGPS> {
               Container(
                 margin:
                     const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-                child: Text(
+                child: const Text(
                   "Vị trí hiện tại :",
                   style: TextStyle(
                       color: Constants.textColor,
@@ -260,7 +259,7 @@ class _CheckGPSState extends State<CheckGPS> {
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: address.isEmpty
-                    ? Text(
+                    ? const Text(
                         "GPS không hoạt động vui lòng kiểm tra.",
                         style: TextStyle(
                             color: Constants.textColor,
@@ -269,7 +268,7 @@ class _CheckGPSState extends State<CheckGPS> {
                       )
                     : Text(
                         address,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Constants.textColor,
                             fontFamily: "Roboto",
                             fontSize: 12),
@@ -283,7 +282,7 @@ class _CheckGPSState extends State<CheckGPS> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         "Khoảng cách :",
                         style: TextStyle(
                             color: Constants.textColor,
@@ -293,7 +292,7 @@ class _CheckGPSState extends State<CheckGPS> {
                       Text(
                         //Tính khoảng cách
                         "$distance meters",
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Constants.textColor,
                           fontSize: 12,
                         ),
@@ -456,7 +455,7 @@ class _CheckGPSState extends State<CheckGPS> {
                   children: [
                     Text(
                       "Đã Check - In thành công vào lúc $timeNow",
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Constants.textColor,
                           fontFamily: "Roboto",
                           fontSize: 14),
