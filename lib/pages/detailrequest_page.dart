@@ -1,28 +1,39 @@
 import 'package:cloudgo_mobileapp/object/Request.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DetailRequestPage extends StatelessWidget {
   const DetailRequestPage({super.key, required Request request})
-      : this._request = request;
+      : _request = request;
   final Request _request;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 1,
         backgroundColor: Theme.of(context).primaryColor,
         leading: const BackButton(
           color: Colors.black,
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(25.0),
-          child: Text(
-            _request.name,
-            style: const TextStyle(
-                fontSize: 18,
-                fontFamily: 'roboto',
-                fontWeight: FontWeight.w600,
-                color: Constants.textColor),
+          preferredSize: const Size.fromHeight(20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                _request.title,
+                style: const TextStyle(
+                    fontSize: FontSize.large,
+                    fontFamily: 'roboto',
+                    fontWeight: FontWeight.w800,
+                    color: Constants.textColor),
+              ),
+            ],
           ),
         ),
       ),
@@ -40,14 +51,15 @@ class DetailRequestPage extends StatelessWidget {
               "Thông tin chung",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 14,
+                fontSize: FontSize.large,
                 fontFamily: 'Roboto',
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w800,
                 letterSpacing: 0.28,
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(vertical: MarginValue.medium),
+              padding: const EdgeInsets.symmetric(
+                  vertical: MarginValue.medium, horizontal: MarginValue.medium),
               margin: const EdgeInsets.only(
                   bottom: MarginValue.medium, top: MarginValue.medium),
               decoration: const BoxDecoration(
@@ -58,9 +70,9 @@ class DetailRequestPage extends StatelessWidget {
               "Lý do",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 14,
+                fontSize: FontSize.large,
                 fontFamily: 'Roboto',
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w800,
                 letterSpacing: 0.28,
               ),
             ),
@@ -70,6 +82,7 @@ class DetailRequestPage extends StatelessWidget {
             TextFormField(
               readOnly: true,
               initialValue: _request.reason,
+              enabled: false,
               maxLines: 5,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
@@ -88,7 +101,7 @@ class DetailRequestPage extends StatelessWidget {
       text,
       style: const TextStyle(
           color: Colors.black,
-          fontSize: 14,
+          fontSize: FontSize.medium,
           fontFamily: 'Roboto',
           fontWeight: FontWeight.w200,
           letterSpacing: 0.28),
@@ -100,9 +113,9 @@ class DetailRequestPage extends StatelessWidget {
       text,
       style: const TextStyle(
           color: Colors.black,
-          fontSize: 14,
+          fontSize: FontSize.small,
           fontFamily: 'Roboto',
-          fontWeight: FontWeight.w400,
+          fontWeight: FontWeight.w600,
           letterSpacing: 0.28),
     );
   }
@@ -137,18 +150,19 @@ class DetailRequestPage extends StatelessWidget {
     return Table(
       children: [
         TableRow(children: [
-          _attribute(title: "Ngày tạo", content: "15/5/2023 15:00"),
+          _attribute(title: "Nhân viên", content: _request.name),
+          _attribute(
+              title: "Ngày tạo",
+              content:
+                  DateFormat("yyyy/MM/dd HH:mm").format(_request.createTime)),
+        ]),
+        _tableSpacer(15),
+        TableRow(children: [
+          _attribute(title: "Thời gian", content: _request.getTimeOff()),
           _attribute(
               title: "Loại nghỉ phép", content: _request.typeOff.formatString),
         ]),
-        _tableSpacer(10),
-        TableRow(children: [
-          _attribute(
-              title: "Thời gian",
-              content: _request.formatEndDateAndStartDate()),
-          const SizedBox()
-        ]),
-        _tableSpacer(10),
+        _tableSpacer(15),
         TableRow(children: [
           _attribute(title: "Tình trạng", content: _request.state.formatString),
           _attribute(

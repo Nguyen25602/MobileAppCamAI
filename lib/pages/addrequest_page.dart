@@ -1,7 +1,17 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:cloudgo_mobileapp/object/User.dart';
+import 'package:cloudgo_mobileapp/repository/RequestRepository.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../object/Request.dart';
+
+final managers = [
+  {"id": "1", "name": "Lâm Bùi", "gmail": "lam.cloudgo.com"},
+  {"id": "2", "name": "Tường Trần", "gmail": "tuongcrm.cloudgo.com"},
+  {"id": "3", "name": "Admin", "gmail": "adim.gmail.com"},
+  {"id": "4", "name": "Sự Nguyễn", "gmail": "nguyensu@gmail.cloudgo.com"},
+];
 
 class AddRequestPage extends StatefulWidget {
   const AddRequestPage({super.key});
@@ -15,9 +25,10 @@ class _AddRequestPageState extends State<AddRequestPage> {
   DateTime? _endDay = DateTime.now();
   String? _reason;
   TimeOffType _type = TimeOffType.workFromHome;
-  StateOFRequest _state = StateOFRequest.waitting;
-  DistanceOffType? _distanceOffType;
+  DistanceOffType? _distanceOffType = DistanceOffType.oneDay;
   Period? _period;
+  String? _title;
+  String? _idApprovedPerson;
 
   List<String> timeoffTypes = List.generate(TimeOffType.values.length,
       (index) => TimeOffType.values[index].formatString);
@@ -25,6 +36,8 @@ class _AddRequestPageState extends State<AddRequestPage> {
   final _timeOffController = TextEditingController();
   final _distanceOffTypeController = TextEditingController();
   final _periodController = TextEditingController();
+  // ignore: unused_field
+  final _approvdePersonController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -43,25 +56,19 @@ class _AddRequestPageState extends State<AddRequestPage> {
 
   @override
   Widget build(BuildContext context) {
+    var userProvider = Provider.of<UserProvider>(context);
+    User? user = userProvider.user;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            height: 3, // Chiều cao của đường thẳng
-            width: double.infinity, // Đặt độ rộng thành vô hạn
-            color: Constants.lineColor, // Màu sắc của đường thẳng
-          ),
-        ),
+        elevation: 2,
         backgroundColor: Theme.of(context).primaryColor,
         leading: const BackButton(
           color: Constants.textColor,
         ),
         centerTitle: true,
         title: const Text(
-          "NGHỈ PHÉP",
+          "TẠO NGHỈ PHÉP",
           style: TextStyle(
               color: Constants.textColor,
               fontSize: 18,
@@ -81,90 +88,39 @@ class _AddRequestPageState extends State<AddRequestPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: MarginValue.medium),
-                  child: const Text(
-                    "Trần Thiên Tường",
-                    style: TextStyle(
-                        color: Constants.textColor,
-                        fontFamily: 'roboto',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: MarginValue.medium),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        textFormComponent(
+                            "Tiêu đề",
+                            "",
+                            "",
+                            "Nhập tiêu đề",
+                            false,
+                            null,
+                            null,
+                            1,
+                            (newValue) => _title = newValue,
+                            null),
+                      ],
+                    )),
+                spacer(),
                 divider(),
                 Container(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: MarginValue.medium),
-                  child: textFormComponent(
-                      "Loại nghỉ phép",
-                      null,
-                      "",
-                      "Chọn loại nghỉ phép",
-                      true,
-                      const Icon(Icons.arrow_forward_ios_outlined),
-                      _timeOffTypeController,
-                      null,
-                      null, () async {
-                    await showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Center(
-                          child: AlertDialog(
-                            insetPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 0),
-                            alignment: Alignment.center,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            content: SizedBox(
-                              width: double.maxFinite,
-                              height: 150,
-                              child: ListView.builder(
-                                itemCount: timeoffTypes.length,
-                                itemBuilder: (context, index) {
-                                  return TextButton(
-                                      onPressed: () {
-                                        for (final value
-                                            in TimeOffType.values) {
-                                          if (timeoffTypes[index] ==
-                                              value.formatString) {
-                                            setState(() {
-                                              _type = value;
-                                              _timeOffTypeController.text =
-                                                  _type.formatString;
-                                              Navigator.of(context).pop();
-                                            });
-                                            break;
-                                          }
-                                        }
-                                      },
-                                      child: Text(timeoffTypes[index]));
-                                },
-                              ),
-                            ),
-                            title: const SizedBox(
-                              width: double.infinity,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Image(
-                                      image: AssetImage(
-                                          "assets/Logo_CloudGo.png")),
-                                  Icon(Icons.close),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }),
-                ),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: MarginValue.medium),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        label("Loại đơn nghỉ phép"),
+                        tableRadioButton(),
+                      ],
+                    )),
+                spacer(),
                 divider(),
                 Container(
                   margin: const EdgeInsets.symmetric(
@@ -173,18 +129,16 @@ class _AddRequestPageState extends State<AddRequestPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       label("Thời gian nghỉ"),
-                      const SizedBox(
-                        height: 20,
-                      ),
+                      spacer(MarginValue.medium),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SizedBox(
-                              width: 150,
+                            Flexible(
                               child: DropdownMenu<DistanceOffType>(
                                 controller: _distanceOffTypeController,
                                 label: const Text.rich(TextSpan(
                                     text: "Loại",
+                                    style: TextStyle(fontSize: FontSize.small),
                                     children: [
                                       TextSpan(
                                           text: "*",
@@ -211,14 +165,23 @@ class _AddRequestPageState extends State<AddRequestPage> {
                                         Period.morning.formatString;
                                   }
                                 }),
+                                inputDecorationTheme: InputDecorationTheme(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 0,
+                                        horizontal: MarginValue.small),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderSide: const BorderSide(width: 1),
+                                    )),
                               ),
                             ),
-                            SizedBox(
-                              width: 200,
+                            const Flexible(child: SizedBox()),
+                            Flexible(
                               child: DropdownMenu<Period>(
                                 controller: _periodController,
                                 label: const Text.rich(TextSpan(
                                     text: "Buổi",
+                                    style: TextStyle(fontSize: FontSize.small),
                                     children: [
                                       TextSpan(
                                           text: "*",
@@ -236,8 +199,19 @@ class _AddRequestPageState extends State<AddRequestPage> {
                                 }),
                                 enabled:
                                     _distanceOffType == DistanceOffType.halfDay,
+                                inputDecorationTheme: InputDecorationTheme(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 0,
+                                        horizontal: MarginValue.small),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      borderSide: const BorderSide(width: 1),
+                                    )),
                               ),
-                            )
+                            ),
+                            const SizedBox(
+                              width: MarginValue.medium,
+                            ),
                           ]),
                       const SizedBox(
                         height: 20,
@@ -279,9 +253,7 @@ class _AddRequestPageState extends State<AddRequestPage> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                spacer(),
                 divider(),
                 Container(
                   margin: const EdgeInsets.symmetric(
@@ -298,6 +270,53 @@ class _AddRequestPageState extends State<AddRequestPage> {
                       (newValue) => _reason = newValue,
                       null),
                 ),
+                spacer(),
+                divider(),
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: MarginValue.medium),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      label("Giao cho"),
+                      spacer(MarginValue.medium),
+                      DropdownButtonFormField<String>(
+                        value: _idApprovedPerson,
+                        items: managers
+                            .map((manager) => DropdownMenuItem(
+                                  value: manager["id"]!,
+                                  child: Text(
+                                    "${manager["name"]} - ${manager["gmail"]}",
+                                    style: const TextStyle(
+                                        color: Constants.textColor,
+                                        fontFamily: 'roboto',
+                                        fontSize: FontSize.small,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _idApprovedPerson = value;
+                          });
+                        },
+                        validator: (_) {
+                          return _idApprovedPerson == null
+                              ? "Chọn người gửi"
+                              : null;
+                        },
+                        decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: MarginValue.small),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: const BorderSide(width: 1),
+                            )),
+                      )
+                    ],
+                  ),
+                ),
+                spacer(MarginValue.large),
                 Center(
                   child: SizedBox(
                     width: 300,
@@ -305,6 +324,23 @@ class _AddRequestPageState extends State<AddRequestPage> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           //submit your request
+                          Request request = Request(
+                              idApprovedPerson: _idApprovedPerson!,
+                              title: _title!,
+                              name: user!.name,
+                              start: _startDay ?? DateTime.now(),
+                              end: _endDay ?? DateTime.now(),
+                              type: _type,
+                              distanceOffType:
+                                  _distanceOffType ?? DistanceOffType.oneDay,
+                              period: _period,
+                              reason: _reason ?? " ",
+                              createTime: DateTime.now());
+
+                          context
+                              .read<RequestRepository>()
+                              .sendRequest(request.toMap())
+                              .then((_) => Navigator.of(context).pop());
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -345,8 +381,14 @@ class _AddRequestPageState extends State<AddRequestPage> {
 
   Divider divider() {
     return const Divider(
-      color: Colors.black,
+      color: Constants.lineColor,
       thickness: 1,
+    );
+  }
+
+  SizedBox spacer([double height = MarginValue.small]) {
+    return SizedBox(
+      height: height,
     );
   }
 
@@ -377,21 +419,25 @@ class _AddRequestPageState extends State<AddRequestPage> {
       onTap: callBackOnTap,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'hãy nhập lí do nghỉ của bạn';
+          return '$labelText của bạn';
         }
         return null;
       },
       decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(
+            vertical: MarginValue.small, horizontal: MarginValue.small),
         suffixIcon: suffixIcon,
         hintText: hintText,
         hintStyle: const TextStyle(
-            fontFamily: 'roboto', fontSize: 12, fontWeight: FontWeight.w300),
+            fontFamily: 'roboto',
+            fontSize: FontSize.small,
+            fontWeight: FontWeight.w300),
         label: Text(
           labelText ?? "",
           style: const TextStyle(
               color: Colors.black,
               fontFamily: 'roboto',
-              fontSize: 12,
+              fontSize: FontSize.small,
               fontWeight: FontWeight.w300),
         ),
         floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -402,7 +448,7 @@ class _AddRequestPageState extends State<AddRequestPage> {
       style: const TextStyle(
           color: Constants.textColor,
           fontFamily: 'roboto',
-          fontSize: 12,
+          fontSize: FontSize.small,
           fontWeight: FontWeight.normal),
     );
   }
@@ -423,12 +469,51 @@ class _AddRequestPageState extends State<AddRequestPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             label(labelString),
-            const SizedBox(
-              height: 20,
-            ),
+            spacer(MarginValue.medium),
             textForm(initValue, hintText, labelText, isReadOnly, suffixIcon,
                 controller, maxLines, callBackOnChanged, callBackOnTap)
           ]),
+    );
+  }
+
+  Widget tableRadioButton() {
+    List<TableRow> listRow = [];
+    int count = 0;
+    List<Widget> itemInRow = [];
+    for (final element in TimeOffType.values) {
+      count += 1;
+      itemInRow.add(ListTile(
+        minLeadingWidth: 10,
+        horizontalTitleGap: 0,
+        title: Text(
+          element.formatString,
+          style: const TextStyle(fontSize: FontSize.medium),
+        ),
+        leading: Radio<TimeOffType>(
+            fillColor: MaterialStateColor.resolveWith((states) {
+              if (states.any((element) => element == MaterialState.selected)) {
+                return Constants.radioBtnSelectdColor;
+              }
+              return Constants.radioBtnBorderColor;
+            }),
+            value: element,
+            groupValue: _type,
+            onChanged: (newValue) => setState(() {
+                  _type = newValue!;
+                })),
+      ));
+      if (count == 2) {
+        listRow.add(TableRow(children: itemInRow));
+        count = 0;
+        itemInRow = [];
+      }
+    }
+    if (itemInRow.isNotEmpty) {
+      itemInRow.add(const SizedBox());
+      listRow.add(TableRow(children: itemInRow));
+    }
+    return Table(
+      children: listRow,
     );
   }
 }

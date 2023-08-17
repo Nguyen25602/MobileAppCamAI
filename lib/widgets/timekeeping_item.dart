@@ -31,7 +31,8 @@ class _TimeKeepingItemState extends State<TimeKeepingItem> {
           infomation: widget._timeKeeping.timeCheckIn),
       Attribute(
           icon: Icons.access_time_outlined,
-          infomation: '${widget._timeKeeping.workTime} hours'),
+          infomation:
+              '${widget._timeKeeping.workTime.toStringAsPrecision(2)} hours'),
       Attribute(
           icon: Icons.output_outlined,
           infomation: widget._timeKeeping.timeCheckOut),

@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 
 class Attribute extends StatelessWidget {
   const Attribute(
-    {super.key, 
-    required this.icon, 
-    required this.infomation, 
-    this.color =const Color.fromARGB(132, 156, 153, 153), 
-    this.style =const TextStyle(
-      color: Constants.textColor,
-      fontSize: 12,
-      fontFamily: 'roboto',
-      fontWeight: FontWeight.w300
-    )});
+      {super.key,
+      required this.icon,
+      required this.infomation,
+      this.color = Colors.black54,
+      this.style = const TextStyle(
+          color: Constants.textColor,
+          fontSize: FontSize.small,
+          fontFamily: 'roboto',
+          fontWeight: FontWeight.w400)});
   final Color color;
   final IconData icon;
   final String infomation;
@@ -24,11 +23,18 @@ class Attribute extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Icon(icon, color: color,),
-        const SizedBox(width: 5,),
+        Icon(
+          icon,
+          color: color,
+        ),
+        const SizedBox(
+          width: 15,
+        ),
         Text(
           infomation,
           style: style,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         )
       ],
     );

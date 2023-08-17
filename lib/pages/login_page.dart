@@ -1,7 +1,8 @@
 import 'package:cloudgo_mobileapp/helper/helper_function.dart';
 import 'package:cloudgo_mobileapp/object/User.dart';
-// import 'package:cloudgo_mobileapp/pages/home_page.dart';
 import 'package:cloudgo_mobileapp/pages/main_page.dart';
+import 'package:cloudgo_mobileapp/repository/CheckinRepository.dart';
+import 'package:cloudgo_mobileapp/repository/RequestRepository.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
@@ -134,7 +135,7 @@ class LoginPageState extends State<LoginPage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            login(provider);
+                            login(provider, context);
                           },
                           style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
@@ -177,17 +178,32 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  login(UserProvider provider) {
+  Future updateRepository(BuildContext context, String token, String name,
+      String employeeId) async {
+    await context
+        .read<CheckinRepository>()
+        .updateUserInformation(token, employeeId);
+    await context
+        .read<RequestRepository>()
+        .updateUserInformation(token, name, employeeId);
+  }
+
+  login(UserProvider provider, BuildContext context) {
     if (formKey.currentState!.validate()) {
       if (email.contains("@")) {
         loginGmailEmployee(email, password).then((response) {
           if (response != null) {
             User user = User.fromMap(response);
             provider.updateUserStart(user);
-            nextScreenReplace(
-              context,
-              const MainPage(),
-            );
+            HelperFunctions.saveUserLoggedInStatus(true);
+            HelperFunctions.saveAccessTokenSF(user.token);
+            HelperFunctions.saveUserNameSF(user.userName);
+            HelperFunctions.saveEmployeeIdSF(user.id);
+            updateRepository(context, user.token, user.name, user.id)
+                .then((value) => nextScreenReplace(
+                      context,
+                      const MainPage(),
+                    ));
           } else {
             // Handle the error here
             showSnackbar(context, Colors.red,
@@ -203,7 +219,11 @@ class LoginPageState extends State<LoginPage> {
             HelperFunctions.saveAccessTokenSF(user.token);
             HelperFunctions.saveUserNameSF(user.userName);
             HelperFunctions.saveEmployeeIdSF(user.id);
-            nextScreenReplace(context, const MainPage());
+            updateRepository(context, user.token, user.name, user.id)
+                .then((value) => nextScreenReplace(
+                      context,
+                      const MainPage(),
+                    ));
           } else {
             // Handle the error here
             showSnackbar(context, Colors.red,

@@ -1,42 +1,210 @@
 {
   "project_info": {
-    "project_number": "371718645806",
-    "project_id": "mobileappcloudgo",
-    "storage_bucket": "mobileappcloudgo.appspot.com"
+    "project_number": "195744590510",
+    "firebase_url": "https://cloudpro-crm.firebaseio.com",
+    "project_id": "cloudpro-crm",
+    "storage_bucket": "cloudpro-crm.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:371718645806:android:e26755997c2d3ef56457bf",
+        "mobilesdk_app_id": "1:195744590510:android:629a551b9a8fb338811b3f",
         "android_client_info": {
-          "package_name": "com.example.cloudgo_mobileapp"
+          "package_name": "com.cloudgo.checkinapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "371718645806-fb572306fimiq1ggaksrpallljjjg00k.apps.googleusercontent.com",
+          "client_id": "195744590510-srrrlagkmn55elvo3ce8o2c15gpue9vp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.cloudgo_mobileapp",
+            "package_name": "com.cloudgo.checkinapp",
             "certificate_hash": "b522b2e814ade1566a915cf6fb792df0cdaad1d2"
           }
         },
         {
-          "client_id": "371718645806-e8jeschkngqsam08daj3uvolnumonqc7.apps.googleusercontent.com",
+          "client_id": "195744590510-9obumge3bpigc4jur22pq4h7urqd4i4k.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCshhj_WUiuIJSIC0RTalmJk6J9U9cGje0"
+          "current_key": "AIzaSyAfpTB87yHghjNrN2d9vV6HMQVxBaeMHiY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "371718645806-e8jeschkngqsam08daj3uvolnumonqc7.apps.googleusercontent.com",
+              "client_id": "195744590510-9obumge3bpigc4jur22pq4h7urqd4i4k.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "195744590510-33f9msa2m36lnlfnj7qe7l7j2stkd7rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "vn.onlinecrm.customer.app"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195744590510:android:c060c6655eda9225811b3f",
+        "android_client_info": {
+          "package_name": "com.khangminh.salesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195744590510-9obumge3bpigc4jur22pq4h7urqd4i4k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfpTB87yHghjNrN2d9vV6HMQVxBaeMHiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195744590510-9obumge3bpigc4jur22pq4h7urqd4i4k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "195744590510-33f9msa2m36lnlfnj7qe7l7j2stkd7rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "vn.onlinecrm.customer.app"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195744590510:android:4c9ebb39dd9cabfc811b3f",
+        "android_client_info": {
+          "package_name": "vn.cloudpro.salesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195744590510-3nidn36fvjii8tgdfngu837cej91t9v4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.cloudpro.salesapp",
+            "certificate_hash": "5a686e9ba94eeafa6c617777dc04212ff3b6f9c0"
+          }
+        },
+        {
+          "client_id": "195744590510-qe69ojlqtglk7ek9dotc0o31lv5j2agu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.cloudpro.salesapp",
+            "certificate_hash": "803d9c90f591893ad7a35b9a223731b3ac7cfb96"
+          }
+        },
+        {
+          "client_id": "195744590510-9obumge3bpigc4jur22pq4h7urqd4i4k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfpTB87yHghjNrN2d9vV6HMQVxBaeMHiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195744590510-9obumge3bpigc4jur22pq4h7urqd4i4k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "195744590510-33f9msa2m36lnlfnj7qe7l7j2stkd7rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "vn.onlinecrm.customer.app"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195744590510:android:297ba230a58e29cb811b3f",
+        "android_client_info": {
+          "package_name": "vn.onlinecrm.customer.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195744590510-9obumge3bpigc4jur22pq4h7urqd4i4k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfpTB87yHghjNrN2d9vV6HMQVxBaeMHiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195744590510-9obumge3bpigc4jur22pq4h7urqd4i4k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "195744590510-33f9msa2m36lnlfnj7qe7l7j2stkd7rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "vn.onlinecrm.customer.app"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195744590510:android:b5fc50362cfe7a46811b3f",
+        "android_client_info": {
+          "package_name": "vn.systech.salesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195744590510-9obumge3bpigc4jur22pq4h7urqd4i4k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfpTB87yHghjNrN2d9vV6HMQVxBaeMHiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195744590510-9obumge3bpigc4jur22pq4h7urqd4i4k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "195744590510-33f9msa2m36lnlfnj7qe7l7j2stkd7rb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "vn.onlinecrm.customer.app"
+              }
             }
           ]
         }

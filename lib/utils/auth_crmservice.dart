@@ -1,3 +1,5 @@
+//
+//END
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -5,7 +7,7 @@ import 'package:http/http.dart' as http;
 Future<Map<String, dynamic>?> loginUsernameEmployee(
     String username, String password) async {
   const String apiUrl =
-      "http://192.168.1.28/onlinecrm/api/EmployeePortalApi.php";
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {
     "RequestAction": "LoginByUserName",
     "IsOpenId": 0,
@@ -39,7 +41,7 @@ Future<Map<String, dynamic>?> loginUsernameEmployee(
 Future<Map<String, dynamic>?> loginGmailEmployee(
     String email, String password) async {
   const String apiUrl =
-      "http://192.168.1.28/onlinecrm/api/EmployeePortalApi.php";
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {
     "RequestAction": "LoginByEmail",
     "IsOpenId": 0,
@@ -72,7 +74,7 @@ Future<Map<String, dynamic>?> loginGmailEmployee(
 //Logout bằng Token
 Future<Map<String, dynamic>?> logoutEmployee(String token) async {
   const String apiUrl =
-      "http://192.168.1.28/onlinecrm/api/EmployeePortalApi.php";
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {"RequestAction": "Logout"};
   final http.Response response = await http.post(
     Uri.parse(apiUrl),
@@ -97,7 +99,7 @@ Future<Map<String, dynamic>?> logoutEmployee(String token) async {
 Future<String?> changeProfileEmployee(
     String token, Map<String, dynamic> requestData) async {
   const String apiUrl =
-      "http://192.168.1.28/onlinecrm/api/EmployeePortalApi.php";
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
   final http.Response response = await http.post(
     Uri.parse(apiUrl),
     headers: {
@@ -121,7 +123,7 @@ Future<String?> changeProfileEmployee(
 Future<Map<String, dynamic>?> checkToken(
     String token, String employeeId) async {
   const String apiUrl =
-      "http://192.168.1.28/onlinecrm/api/EmployeePortalApi.php";
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {
     "RequestAction": "CheckToken",
     "token": token,
@@ -140,6 +142,170 @@ Future<Map<String, dynamic>?> checkToken(
 
   if (response.statusCode == 200) {
     Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  }
+  if (response.statusCode == 404) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  } else {
+    print("Error calling the API. Status code: ${response.statusCode}");
+    return null;
+  }
+}
+
+//Get Data CheckLogin
+Future<Map<String, dynamic>> getCheckLog(
+    String token, String employeeId) async {
+  const String apiUrl =
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  final Map<String, dynamic> requestData = {
+    "RequestAction": "GetCheckLog",
+    "employeeId": employeeId,
+    "token": token
+  };
+
+  final http.Response response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+      "Client": "Mobile",
+      "token": token
+    },
+    body: jsonEncode(requestData),
+  );
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  }
+  if (response.statusCode == 404) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  } else {
+    print("Error calling the API. Status code: ${response.statusCode}");
+    Map<String, dynamic> data = {"success": "1", "data": []};
+    return data;
+  }
+}
+
+//Add Data CheckLogin
+Future<Map<String, dynamic>> addCheckLog(
+    String token, Map<String, dynamic> requestData) async {
+  const String apiUrl =
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+
+  final http.Response response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+      "Client": "Mobile",
+      "token": token
+    },
+    body: jsonEncode(requestData),
+  );
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    print(data);
+    return data;
+  }
+  if (response.statusCode == 404) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  } else {
+    print("Error calling the API. Status code: ${response.statusCode}");
+
+    return {"success": "0"};
+  }
+}
+
+// Hoang Nguyen
+// SaveFCMToken -> Push Notification
+// 12/08/2023
+Future<Map<String, dynamic>?> saveFcmToken(
+    String token, Map<String, dynamic> requestData) async {
+  const String apiUrl =
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+
+  final http.Response response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+      "Client": "Mobile",
+      "token": token
+    },
+    body: jsonEncode(requestData),
+  );
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    print(data);
+    return data;
+  }
+  if (response.statusCode == 404) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  } else {
+    print("Error calling the API. Status code: ${response.statusCode}");
+    return null;
+  }
+}
+
+// Function Handle CPLeaving Mobile App -> CRM
+// Create 15/8/2023
+// Get Leaving by employeeID
+Future<Map<String, dynamic>> getLeaving(String token, String employeeId) async {
+  const String apiUrl =
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  final Map<String, dynamic> requestData = {
+    "RequestAction": "GetLeavingEmployee",
+    "employeeId": employeeId,
+    "token": token
+  };
+
+  final http.Response response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+      "Client": "Mobile",
+      "token": token
+    },
+    body: jsonEncode(requestData),
+  );
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  }
+  if (response.statusCode == 404) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  } else {
+    print("Error calling the API. Status code: ${response.statusCode}");
+    Map<String, dynamic> data = {"success": "0", "data": []};
+    return data;
+  }
+}
+
+// Add Leaving
+Future<Map<String, dynamic>?> addLeaving(
+    String token, Map<String, dynamic> requestData) async {
+  const String apiUrl =
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+
+  final http.Response response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+      "Client": "Mobile",
+      "token": token
+    },
+    body: jsonEncode(requestData),
+  );
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    print(data);
     return data;
   }
   if (response.statusCode == 404) {

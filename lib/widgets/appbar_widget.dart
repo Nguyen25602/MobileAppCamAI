@@ -2,8 +2,9 @@ import 'package:cloudgo_mobileapp/helper/helper_function.dart';
 import 'package:cloudgo_mobileapp/object/User.dart';
 import 'package:cloudgo_mobileapp/pages/information_page.dart';
 import 'package:cloudgo_mobileapp/pages/login_page.dart';
-import 'package:cloudgo_mobileapp/pages/notification_page.dart';
 import 'package:cloudgo_mobileapp/pages/request_page.dart';
+import 'package:cloudgo_mobileapp/repository/CheckinRepository.dart';
+import 'package:cloudgo_mobileapp/repository/RequestRepository.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
@@ -29,18 +30,24 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
       child: ListView(
         padding: const EdgeInsets.symmetric(vertical: 50),
         children: <Widget>[
-          Container(
-            height: 150,
-            margin: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: NetworkImage(
-                    "http://192.168.1.28/onlinecrm${user?.avatar}"), // Đặt URL hình ảnh của bạn ở đây
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+          user?.avatar == ""
+              ? Icon(
+                  Icons.account_circle,
+                  size: 150,
+                  color: Colors.grey[700],
+                )
+              : Container(
+                  height: 150,
+                  margin: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: NetworkImage(
+                          "http://192.168.31.33/onlinecrm${user?.avatar}"), // Đặt URL hình ảnh của bạn ở đây
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
           const SizedBox(
             height: 15,
           ),
@@ -112,16 +119,19 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            logoutEmployee(user!.token).then((value) => {
+                            logoutEmployee(user!.token).then((value) async => {
+                                  await HelperFunctions.saveUserLoggedInStatus(
+                                      false),
+                                  await HelperFunctions.saveAccessTokenSF(""),
+                                  await HelperFunctions.saveUserNameSF(""),
+                                  await HelperFunctions.saveEmployeeIdSF(""),
+                                  context.read<UserProvider>().clear(),
+                                  context.read<RequestRepository>().clear(),
+                                  context.read<CheckinRepository>().clear(),
                                   if (value != null)
                                     {
                                       if (value["success"] == "1")
                                         {
-                                          HelperFunctions
-                                              .saveUserLoggedInStatus(false),
-                                          HelperFunctions.saveAccessTokenSF(""),
-                                          HelperFunctions.saveUserNameSF(""),
-                                          HelperFunctions.saveEmployeeIdSF(""),
                                           showSnackbar(context, Colors.red,
                                               "Đăng xuất thành công"),
                                           nextScreenRemove(
@@ -133,6 +143,13 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                                               "Đăng xuất thất bại"),
                                           Navigator.pop(context),
                                         }
+                                    }
+                                  else
+                                    {
+                                      showSnackbar(context, Colors.red,
+                                          "Đã có thiết bị khác đăng nhập !!!"),
+                                      nextScreenRemove(
+                                          context, const LoginPage())
                                     }
                                 });
                           },
@@ -244,18 +261,6 @@ class _AppBarWidgetState extends State<AppBarWidget> {
             color: Constants.lineColor, // Màu sắc của đường thẳng
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              nextScreen(context, NotificationPage());
-            },
-            icon: const Icon(
-              Icons.notifications_active,
-              size: 24,
-              color: Constants.textColor,
-            ),
-          )
-        ],
         centerTitle: true,
         elevation: 0,
         backgroundColor: Theme.of(context).primaryColor,
@@ -275,10 +280,16 @@ class _AppBarWidgetState extends State<AppBarWidget> {
             margin: const EdgeInsets.all(10),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                "http://192.168.1.28/onlinecrm${widget.user?.avatar}",
-                fit: BoxFit.cover,
-              ),
+              child: widget.user?.avatar == ""
+                  ? Icon(
+                      Icons.account_circle,
+                      size: 35,
+                      color: Colors.grey[700],
+                    )
+                  : Image.network(
+                      "http://192.168.31.33/onlinecrm${widget.user?.avatar}",
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
         ),

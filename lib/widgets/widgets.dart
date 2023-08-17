@@ -1,6 +1,5 @@
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 var textInputDecoration = const InputDecoration(
   contentPadding: EdgeInsets.all(10),
@@ -17,6 +16,14 @@ var textInputDecoration = const InputDecoration(
   ),
 );
 
+void clearAllSnackBars(BuildContext context) {
+  ScaffoldMessenger.of(context).clearSnackBars();
+}
+
+void removeCurrentSnackBar(BuildContext context) {
+  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+}
+
 void nextScreen(context, page) {
   Navigator.push(context, MaterialPageRoute(builder: (context) => page));
 }
@@ -31,6 +38,7 @@ void nextScreenRemove(context, page) {
       context, MaterialPageRoute(builder: (context) => page), (route) => false);
 }
 
+// Show Detail App Bar
 void showSnackbar(context, color, message) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(
@@ -48,66 +56,45 @@ void showSnackbar(context, color, message) {
   ));
 }
 
-class IconWidgets extends StatefulWidget {
-  final IconData iconPath;
-  final String text;
-  final VoidCallback? onPressed;
-  final Color vcolor;
-  final bool enable;
-
-  const IconWidgets({
-    Key? key,
-    required this.iconPath,
-    required this.text,
-    // ignore: avoid_init_to_null
-    this.onPressed = null,
-    this.vcolor = Colors.white,
-    this.enable = false,
-  }) : super(key: key);
-
-  @override
-  State<IconWidgets> createState() => _IconWidgetsState();
-}
-
-class _IconWidgetsState extends State<IconWidgets> {
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-        onPressed: widget.enable ? null : widget.onPressed,
-        child: widget.onPressed != null
-            ? Column(
-                children: [
-                  FaIcon(
-                    widget.iconPath,
-                    size: 24,
-                    color: Constants.textColor,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    widget.text,
-                    style: const TextStyle(
-                        color: Constants.textColor, fontSize: 12),
-                  )
-                ],
-              )
-            : Column(
-                children: [
-                  FaIcon(
-                    widget.iconPath,
-                    size: 24,
-                    color: Constants.enableButton,
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    widget.text,
-                    style: const TextStyle(
-                        color: Constants.enableButton, fontSize: 12),
-                  )
-                ],
-              ));
-  }
+// Checkin Success || Error
+Future checkinStatusDialog(BuildContext context, String status) async {
+  String imageAssets =
+      status == "0" ? "assets/error_checkin.jpg" : "assets/success_checkin.png";
+  String text = status == "0" ? "Có lỗi xảy ra !" : "Chúc mừng";
+  String text2 =
+      status == "0" ? "Checkin thất bại" : "Bạn đã checkin thành công";
+  Color color = status == "0" ? Colors.red : Constants.successfulColor;
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image(
+              image: AssetImage(imageAssets),
+            ),
+            const SizedBox(
+              height: MarginValue.small,
+            ),
+            Text(
+              text,
+              style: TextStyle(fontSize: FontSize.veryLarge, color: color),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              text2,
+              style: TextStyle(fontSize: FontSize.large, color: color),
+              textAlign: TextAlign.center,
+            )
+          ],
+        ),
+      );
+    },
+  );
 }

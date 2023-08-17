@@ -1,7 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 //NGUYEN CREATE //
 import 'dart:async';
+import 'package:cloudgo_mobileapp/object/CheckIn.dart';
+import 'package:cloudgo_mobileapp/object/TimeKeeping.dart';
 import 'package:cloudgo_mobileapp/object/User.dart';
+import 'package:cloudgo_mobileapp/repository/CheckinRepository.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
@@ -51,6 +54,12 @@ class _CheckGPSState extends State<CheckGPS> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    positionStream.cancel();
+  }
+
   checkGps() async {
     //GPS Điện thoại có bật không
     servicestatus = await Geolocator.isLocationServiceEnabled();
@@ -91,21 +100,23 @@ class _CheckGPSState extends State<CheckGPS> {
   //Lấy vị trí của mình //
   getLocation() async {
     //Lấy vị trí 1 lần
-    position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+    // position = await Geolocator.getCurrentPosition(
+    //     desiredAccuracy: LocationAccuracy.high);
     // Lấy vị trí liên tục
-    // LocationSettings locationSettings = const LocationSettings(
-    //   accuracy: LocationAccuracy.high, //accuracy of the location data
-    //   distanceFilter: 100, //minimum distance (measured in meters) a
-    //   //device must move horizontally before an update event is generated;
-    // );
+    LocationSettings locationSettings = const LocationSettings(
+      accuracy: LocationAccuracy.high, //accuracy of the location data
+      distanceFilter: 100, //minimum distance (measured in meters) a
+      //device must move horizontally before an update event is generated;
+    );
 
-    // // ignore: unused_local_variable
-    // StreamSubscription<Position> positionStream =
-    //     Geolocator.getPositionStream(locationSettings: locationSettings)
-    //         .listen((Position position) {
-    //   setState(() {});
-    // });
+    // ignore: unused_local_variable
+    StreamSubscription<Position> positionStream =
+        Geolocator.getPositionStream(locationSettings: locationSettings)
+            .listen((Position newPosition) {
+      setState(() {
+        position = newPosition;
+      });
+    });
 
     Address findMe = await geoCode.reverseGeocoding(
         latitude: position.latitude, longitude: position.longitude);
@@ -129,6 +140,7 @@ class _CheckGPSState extends State<CheckGPS> {
   );
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     var userProvider = Provider.of<UserProvider>(context);
     User? user = userProvider.user;
     distance = Geolocator.distanceBetween(_kCloudGo.target.latitude,
@@ -157,28 +169,32 @@ class _CheckGPSState extends State<CheckGPS> {
                       ? ElevatedButton(
                           onPressed: null,
                           style: ElevatedButton.styleFrom(
-                              shape: const StadiumBorder(),
+                              padding: const EdgeInsets.all(0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
                               disabledBackgroundColor:
                                   Constants.successfulColor),
                           child: const Text(
                             'GPS ON',
                             style: TextStyle(
                                 color: Constants.whiteTextColor,
-                                fontSize: 12,
+                                fontSize: FontSize.verySmall,
                                 fontWeight: FontWeight.bold),
                           ),
                         )
                       : ElevatedButton(
                           onPressed: null,
                           style: ElevatedButton.styleFrom(
-                              shape: const StadiumBorder(),
+                              padding: const EdgeInsets.all(0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
                               disabledBackgroundColor:
                                   Constants.dangerousColor),
                           child: const Text(
                             'GPS OFF',
                             style: TextStyle(
                                 color: Constants.whiteTextColor,
-                                fontSize: 12,
+                                fontSize: FontSize.verySmall,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -186,28 +202,32 @@ class _CheckGPSState extends State<CheckGPS> {
                       ? ElevatedButton(
                           onPressed: null,
                           style: ElevatedButton.styleFrom(
-                              shape: const StadiumBorder(),
+                              padding: const EdgeInsets.all(0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
                               disabledBackgroundColor:
                                   Constants.successfulColor),
                           child: const Text(
                             'ACCESS ON',
                             style: TextStyle(
                                 color: Constants.whiteTextColor,
-                                fontSize: 12,
+                                fontSize: FontSize.verySmall,
                                 fontWeight: FontWeight.bold),
                           ),
                         )
                       : ElevatedButton(
                           onPressed: null,
                           style: ElevatedButton.styleFrom(
-                              shape: const StadiumBorder(),
+                              padding: const EdgeInsets.all(0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
                               disabledBackgroundColor:
                                   Constants.dangerousColor),
                           child: const Text(
                             'ACCESS OFF',
                             style: TextStyle(
                                 color: Constants.whiteTextColor,
-                                fontSize: 12,
+                                fontSize: FontSize.verySmall,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -215,7 +235,7 @@ class _CheckGPSState extends State<CheckGPS> {
               ),
               // Map //
               SizedBox(
-                height: 350,
+                height: height / 2.5,
                 child: GoogleMap(
                   trafficEnabled: true,
                   myLocationEnabled: true,
@@ -368,7 +388,14 @@ class _CheckGPSState extends State<CheckGPS> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        final checkIn = CheckIn(
+                            date: DateTime.now(), device: TypeDevice.gps);
+
+                        final data = checkIn.toMap();
+                        data["distance"] = distance.toString();
+                        data["place_name"] = address;
+                        await context.read<CheckinRepository>().checkIn(data);
                         setState(() {
                           _isCheckIn = true;
                           DateTime now = DateTime.now();
@@ -421,26 +448,6 @@ class _CheckGPSState extends State<CheckGPS> {
                         padding: EdgeInsets.only(left: 5, right: 5),
                         child: FaIcon(
                           FontAwesomeIcons.camera,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(
-                            15), // Đặt padding của button là 0
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              20), // Đặt bo góc cho button
-                        ),
-                        backgroundColor: Constants.enableButton,
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.only(left: 5, right: 5),
-                        child: FaIcon(
-                          FontAwesomeIcons.locationArrow,
                           color: Colors.white,
                           size: 20,
                         ),

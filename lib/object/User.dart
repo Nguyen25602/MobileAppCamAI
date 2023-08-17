@@ -11,7 +11,7 @@ class User {
   late String _mobile;
   late String _userName;
   late String _birthday;
-  late String _avatar;
+  late String? _avatar;
   late String _createdtime;
   late String _cpemployeeGender;
   late String _temporaryAddress;
@@ -37,7 +37,7 @@ class User {
   String get mobile => _mobile;
   String get temporaryAddress => _temporaryAddress;
   String get birthday => _birthday;
-  String get avatar => _avatar;
+  String? get avatar => _avatar;
   String get createdTime => _createdtime;
   String get gender => _cpemployeeGender;
   String get firstName => _firstName;
@@ -78,5 +78,9 @@ class UserProvider extends ChangeNotifier {
   void updateUserStart(User userNew) {
     user = userNew;
     notifyListeners();
+  }
+
+  void clear() {
+    user = null;
   }
 }
