@@ -15,7 +15,6 @@ class NotificationItem extends StatefulWidget {
 class _NotificationItemState extends State<NotificationItem> {
   @override
   Widget build(BuildContext context) {
-    final repository = Provider.of<NotificationRepository>(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
@@ -26,7 +25,7 @@ class _NotificationItemState extends State<NotificationItem> {
             if (!widget.item.isRead) {
               context
                   .read<NotificationRepository>()
-                  .setUnreadNotify(repository.unreadNotify - 1);
+                  .readNotification(widget.item.id);
               setState(() {
                 widget.item.isRead = true;
               });
@@ -34,7 +33,7 @@ class _NotificationItemState extends State<NotificationItem> {
           },
           tileColor: widget.item.isRead
               ? Constants.primaryColor
-              : const Color(0xffF8F8F8),
+              : Color.fromARGB(62, 121, 121, 121),
           contentPadding: const EdgeInsets.only(left: MarginValue.small),
           isThreeLine: false,
           title: Padding(

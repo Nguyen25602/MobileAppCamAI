@@ -21,6 +21,7 @@ class RequestPage extends StatefulWidget {
 class RequestPageState extends State<RequestPage>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
+  // ignore: unused_field
   late RequestRepository _requestRepository;
   final FilterRequest filter = FilterRequest();
 

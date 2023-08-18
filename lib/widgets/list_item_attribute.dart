@@ -1,3 +1,4 @@
+//widget để hiển thị các thuộc tính
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:flutter/material.dart';
 

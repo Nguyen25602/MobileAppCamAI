@@ -1,9 +1,12 @@
 import 'package:cloudgo_mobileapp/helper/helper_function.dart';
+import 'package:cloudgo_mobileapp/main.dart';
 import 'package:cloudgo_mobileapp/object/User.dart';
 import 'package:cloudgo_mobileapp/pages/information_page.dart';
 import 'package:cloudgo_mobileapp/pages/login_page.dart';
 import 'package:cloudgo_mobileapp/pages/request_page.dart';
+import 'package:cloudgo_mobileapp/pages/timekeeping_history_page.dart';
 import 'package:cloudgo_mobileapp/repository/CheckinRepository.dart';
+import 'package:cloudgo_mobileapp/repository/NotificationRepository.dart';
 import 'package:cloudgo_mobileapp/repository/RequestRepository.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
@@ -96,6 +99,30 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
               style: TextStyle(color: Constants.textColor),
             ),
           ),
+          ListTile(
+            onTap: () {},
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            leading:
+                const Icon(Icons.settings_outlined, color: Constants.textColor),
+            title: const Text(
+              "Cài đặt",
+              style: TextStyle(color: Constants.textColor),
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              nextScreen(context, const TimekeepingHistoryPage());
+            },
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            leading: const Icon(Icons.access_time_outlined,
+                color: Constants.textColor),
+            title: const Text(
+              "Xem lịch sử chấm công",
+              style: TextStyle(color: Constants.textColor),
+            ),
+          ),
           // Tab Logout
           ListTile(
             onTap: () async {
@@ -128,6 +155,10 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                                   context.read<UserProvider>().clear(),
                                   context.read<RequestRepository>().clear(),
                                   context.read<CheckinRepository>().clear(),
+                                  context
+                                      .read<NotificationRepository>()
+                                      .clear(),
+                                  isSigned = false,
                                   if (value != null)
                                     {
                                       if (value["success"] == "1")

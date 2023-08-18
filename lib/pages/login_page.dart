@@ -1,7 +1,9 @@
 import 'package:cloudgo_mobileapp/helper/helper_function.dart';
 import 'package:cloudgo_mobileapp/object/User.dart';
 import 'package:cloudgo_mobileapp/pages/main_page.dart';
+import 'package:cloudgo_mobileapp/pages/reset_pass.dart';
 import 'package:cloudgo_mobileapp/repository/CheckinRepository.dart';
+import 'package:cloudgo_mobileapp/repository/NotificationRepository.dart';
 import 'package:cloudgo_mobileapp/repository/RequestRepository.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
@@ -16,6 +18,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
+  bool isLoginSuccess = false;
+  User? user;
   final formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
@@ -134,8 +138,15 @@ class LoginPageState extends State<LoginPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            login(provider, context);
+                          onPressed: () async {
+                            FocusScope.of(context).unfocus();
+                            final res = await login(provider, context);
+                            if (res != null) {
+                              setState(() {
+                                // ignore: unnecessary_null_comparison
+                                isLoginSuccess = res != null;
+                              });
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
@@ -157,7 +168,9 @@ class LoginPageState extends State<LoginPage> {
                           margin: const EdgeInsets.symmetric(
                               vertical: MarginValue.small),
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              nextScreen(context, const ResetPass());
+                            },
                             child: const Text(
                               "Quên mật khẩu?",
                               style: TextStyle(
@@ -168,6 +181,25 @@ class LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
+                        isLoginSuccess
+                            ? FutureBuilder(
+                                future: updateInfomation(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback(
+                                      (_) => nextScreenReplace(
+                                          context, const MainPage()),
+                                    );
+                                  }
+
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                },
+                              )
+                            : Container(),
                       ],
                     ),
                   )
@@ -183,54 +215,52 @@ class LoginPageState extends State<LoginPage> {
     await context
         .read<CheckinRepository>()
         .updateUserInformation(token, employeeId);
+    // ignore: use_build_context_synchronously
     await context
         .read<RequestRepository>()
         .updateUserInformation(token, name, employeeId);
+    // ignore: use_build_context_synchronously
+    await context
+        .read<NotificationRepository>()
+        .updateUserInformation(token, employeeId);
   }
 
-  login(UserProvider provider, BuildContext context) {
+  Future updateInfomation() async {
+    await HelperFunctions.saveUserLoggedInStatus(true);
+    await HelperFunctions.saveAccessTokenSF(user!.token);
+    await HelperFunctions.saveUserNameSF(user!.userName);
+    await HelperFunctions.saveEmployeeIdSF(user!.id);
+    await updateRepository(context, user!.token, user!.name, user!.id);
+  }
+
+  Future<User?> login(UserProvider provider, BuildContext context) async {
     if (formKey.currentState!.validate()) {
       if (email.contains("@")) {
-        loginGmailEmployee(email, password).then((response) {
-          if (response != null) {
-            User user = User.fromMap(response);
-            provider.updateUserStart(user);
-            HelperFunctions.saveUserLoggedInStatus(true);
-            HelperFunctions.saveAccessTokenSF(user.token);
-            HelperFunctions.saveUserNameSF(user.userName);
-            HelperFunctions.saveEmployeeIdSF(user.id);
-            updateRepository(context, user.token, user.name, user.id)
-                .then((value) => nextScreenReplace(
-                      context,
-                      const MainPage(),
-                    ));
-          } else {
-            // Handle the error here
-            showSnackbar(context, Colors.red,
-                "Gmail hoặc Password không đăng nhập được!!");
-          }
-        });
+        final response = await loginGmailEmployee(email, password);
+        if (response != null) {
+          user = User.fromMap(response);
+          provider.updateUserStart(user!);
+          return user;
+        } else {
+          // Handle the error here
+          showSnackbar(context, Colors.red,
+              "Gmail hoặc Password không đăng nhập được!!");
+          return null;
+        }
       } else {
-        loginUsernameEmployee(email, password).then((response) {
-          if (response != null) {
-            User user = User.fromMap(response);
-            provider.updateUserStart(user);
-            HelperFunctions.saveUserLoggedInStatus(true);
-            HelperFunctions.saveAccessTokenSF(user.token);
-            HelperFunctions.saveUserNameSF(user.userName);
-            HelperFunctions.saveEmployeeIdSF(user.id);
-            updateRepository(context, user.token, user.name, user.id)
-                .then((value) => nextScreenReplace(
-                      context,
-                      const MainPage(),
-                    ));
-          } else {
-            // Handle the error here
-            showSnackbar(context, Colors.red,
-                "Username hoặc Password không đăng nhập được!!");
-          }
-        });
+        final response = await loginUsernameEmployee(email, password);
+        if (response != null) {
+          user = User.fromMap(response);
+          provider.updateUserStart(user!);
+          return user;
+        } else {
+          // Handle the error here
+          showSnackbar(context, Colors.red,
+              "Username hoặc Password không đăng nhập được!!");
+          return null;
+        }
       }
     }
+    return null;
   }
 }

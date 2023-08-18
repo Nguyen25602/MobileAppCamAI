@@ -1,4 +1,5 @@
 import 'package:cloudgo_mobileapp/object/User.dart';
+import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -21,14 +22,18 @@ class _InformationPageState extends State<InformationPage> {
   final GlobalKey<ScaffoldState> _infoKey = GlobalKey<ScaffoldState>();
   final List<String> _avatarPaths = ['assets/logo.png'];
   String? _selectedGender;
+  // ignore: unused_field
   String _userAvatar = "";
   String _name = "";
+  // ignore: non_constant_identifier_names
   String _first_name = "";
+  // ignore: non_constant_identifier_names
   String _last_name = "";
   String _user = '';
   String _number = '';
   String _email = '';
   String _address = '';
+  // ignore: unused_field
   String _sex = '';
 
   bool _changeava = true;
@@ -116,8 +121,18 @@ class _InformationPageState extends State<InformationPage> {
     return Scaffold(
       key: _infoKey,
       appBar: AppBar(
-        leading: const BackButton(),
-        title: const Text("THÔNG TIN CÁ NHÂN"),
+        leading: const BackButton(
+          color: Colors.black,
+        ),
+        backgroundColor: Constants.primaryColor,
+        title: const Text(
+          "THÔNG TIN CÁ NHÂN",
+          style: TextStyle(
+            color: Constants.textColor,
+            fontSize: 18,
+            fontFamily: "roboto",
+          ),
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -328,12 +343,17 @@ class _InformationPageState extends State<InformationPage> {
                               padding: const EdgeInsets.all(0),
                             ),
                             child: _changeava
-                                ? Image.network(
-                                    "http://192.168.1.28/onlinecrm${userProvider.user!.avatar}",
-                                    height: 100,
-                                    width: 100,
-                                    fit: BoxFit.cover,
-                                  )
+                                ? userProvider.user!.avatar != ""
+                                    ? Image.network(
+                                        "http://192.168.1.28/onlinecrm${userProvider.user!.avatar}",
+                                        height: 100,
+                                        width: 100,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : const Icon(
+                                        Icons.account_circle,
+                                        size: 100,
+                                      )
                                 : Image.file(
                                     File(_avatarPaths.last),
                                     height: 100,

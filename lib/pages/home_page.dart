@@ -1,29 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloudgo_mobileapp/helper/helper_function.dart';
 import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
 import 'package:cloudgo_mobileapp/pages/information_page.dart';
 import 'package:cloudgo_mobileapp/pages/request_page.dart';
-import 'package:cloudgo_mobileapp/pages/test_notification.dart';
 import 'package:cloudgo_mobileapp/pages/timekeeping_history_page.dart';
 import 'package:cloudgo_mobileapp/repository/CheckinRepository.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
-import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
-import 'package:cloudgo_mobileapp/utils/database_service.dart';
 import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../object/User.dart';
-
-// Hiển thị thông báo khi ẩn App
-Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message: ${message.messageId}");
-}
-
-final monthList = List.generate(12, (index) => index + 1);
-String token = "";
-String employeeId = "";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,72 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _initializeFirebaseApp();
-  }
-
-  Future<void> _initializeFirebaseApp() async {
-    try {
-      FirebaseMessaging messaging = FirebaseMessaging.instance;
-      FirebaseMessaging.onBackgroundMessage(
-          _firebaseMessagingBackgroundHandler);
-      NotificationSettings settings = await messaging.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true,
-      );
-      String? fcmToken = await messaging.getToken();
-
-      await HelperFunctions.getTokenFromSF().then((value) {
-        if (value != null) {
-          token = value;
-        }
-      });
-      await HelperFunctions.getEmployeeIdFromSF().then((value) {
-        if (value != null) {
-          employeeId = value;
-        }
-      });
-      Map<String, dynamic> requestData = {
-        "RequestAction": "SaveFcmToken",
-        "token": fcmToken,
-        "employeeId": employeeId
-      };
-      print('Token: $token');
-      await saveFcmToken(token, requestData);
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        print('Got a message whilst in the foreground!');
-        print('Message data: ${message.data}');
-
-        if (message.notification != null) {
-          print(
-              'Message also contained a notification: ${message.notification}');
-        }
-      });
-      print('User granted permission: ${settings.authorizationStatus}');
-      print('Firebase initialization successful!');
-    } catch (e) {
-      print('Firebase initialization failed: $e');
-    }
-  }
-
-  int selectedMonth = DateTime.now().month;
-  final DatabaseService databaseService = DatabaseService();
-  QuerySnapshot? querySnapshot;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  bool isExpanded = false;
-  bool isChanged = false;
-  bool flag = false;
-  BorderRadiusGeometry radius = const BorderRadius.only(
-    topLeft: Radius.circular(24.0),
-    topRight: Radius.circular(24.0),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -160,10 +80,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Container(
                             width: MediaQuery.of(context).size.width * 0.8,
-                            alignment: Alignment.centerLeft,
-                            child: const Text(
-                              'Ca hành chính (8:30 - 12:00, 13:30 - 17:30)',
-                              style: TextStyle(fontSize: 14),
+                            alignment: Alignment.center,
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Ca hành chính',
+                                  style: TextStyle(fontSize: 14),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  '(8:30 - 12:00, 13:30 - 17:30)',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
                           ),
                           SizedBox(
@@ -172,8 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: ElevatedButton(
                               onPressed: () {
                                 // getCheckLog(user!.token, user.id);
-                                nextScreen(context, const TestNotification());
-                                // nextScreen(context, const CheckGPS());
+                                nextScreen(context, const CheckGPS());
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
@@ -328,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Visibility(
       visible: isVisible,
       child: OutlinedButton(
-        onPressed: () {},
+        onPressed: callBack,
         style: OutlinedButton.styleFrom(
             elevation: 8.0,
             backgroundColor: Constants.primaryColor,

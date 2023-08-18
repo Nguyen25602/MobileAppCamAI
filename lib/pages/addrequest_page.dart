@@ -321,7 +321,7 @@ class _AddRequestPageState extends State<AddRequestPage> {
                   child: SizedBox(
                     width: 300,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           //submit your request
                           Request request = Request(
@@ -337,10 +337,10 @@ class _AddRequestPageState extends State<AddRequestPage> {
                               reason: _reason ?? " ",
                               createTime: DateTime.now());
 
-                          context
+                          await context
                               .read<RequestRepository>()
-                              .sendRequest(request.toMap())
-                              .then((_) => Navigator.of(context).pop());
+                              .sendRequest(request.toMap());
+                          Navigator.of(context).pop();
                         }
                       },
                       style: ElevatedButton.styleFrom(

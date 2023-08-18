@@ -14,7 +14,7 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
-
+  final _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -22,8 +22,23 @@ class _NotificationPageState extends State<NotificationPage>
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+    _controller.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final repository = Provider.of<NotificationRepository>(context);
+    _scrollController.addListener(
+      () {
+        if (_scrollController.offset ==
+            _scrollController.position.maxScrollExtent) {
+          repository.onSCrollDown();
+        }
+      },
+    );
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
@@ -81,22 +96,62 @@ class _NotificationPageState extends State<NotificationPage>
       body: TabBarView(controller: _controller, children: [
         Container(
             child: ListView.builder(
+                controller: _scrollController,
                 itemBuilder: (context, index) {
-                  return NotificationItem(item: repository.notifictions[index]);
+                  if (index < repository.notifictions.length) {
+                    return NotificationItem(
+                        item: repository.notifictions[index]);
+                  } else {
+                    return repository.nextOffSet != null
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: MarginValue.medium),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        : Container();
+                  }
                 },
                 itemCount: repository.notifictions.length)),
         Container(
             child: ListView.builder(
+                controller: _scrollController,
                 itemBuilder: (context, index) {
-                  return NotificationItem(
-                      item: repository.getListNotificationLeaving()[index]);
+                  if (index < repository.notifictions.length) {
+                    return NotificationItem(
+                        item: repository.notifictions[index]);
+                  } else {
+                    return repository.nextOffSet != null
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: MarginValue.medium),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        : Container();
+                  }
                 },
                 itemCount: repository.getListNotificationLeaving().length)),
         Container(
             child: ListView.builder(
+                controller: _scrollController,
                 itemBuilder: (context, index) {
-                  return NotificationItem(
-                      item: repository.getListNotificationCheckin()[index]);
+                  if (index < repository.notifictions.length) {
+                    return NotificationItem(
+                        item: repository.notifictions[index]);
+                  } else {
+                    return repository.nextOffSet != null
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: MarginValue.medium),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        : Container();
+                  }
                 },
                 itemCount: repository.getListNotificationCheckin().length)),
       ]),

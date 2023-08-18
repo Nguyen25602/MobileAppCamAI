@@ -51,6 +51,11 @@ class RequestRepository with ChangeNotifier {
     }
   }
 
+  Future updateWhenHaveNotification() async {
+    await _getData();
+    notifyListeners();
+  }
+
   int countApproveRequest(int? month) {
     return _requests
         .where((element) =>

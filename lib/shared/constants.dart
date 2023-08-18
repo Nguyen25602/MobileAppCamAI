@@ -22,6 +22,7 @@ class Constants {
 }
 
 class FontSize {
+  static const double verySmallxxx = 6;
   static const double verySmall = 8;
   static const double small = 12;
   static const double medium = 14;

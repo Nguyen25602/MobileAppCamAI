@@ -6,14 +6,16 @@ class Notification {
   final String message;
   final DateTime sendTime;
   bool isRead;
+  int id;
   IconData iconData = Icons.location_on_outlined;
 
-  Notification(this.message, this.sendTime, this.isRead);
+  Notification(this.message, this.sendTime, this.isRead, this.id);
   Notification.fromMap(Map<String, dynamic> data)
       : message = data["message"],
         sendTime = DateFormat("yyyy-MM-dd HH:mm:ss")
             .parse(data["data"]["created_time"]),
-        isRead = data["data"]["read"] == "1";
+        isRead = data["data"]["read"] == "1",
+        id = int.parse(data["data"]["id"]);
   String getCreateTimeRequest() {
     var now = DateTime.now();
     var createTime = sendTime;
@@ -32,16 +34,20 @@ class Notification {
 }
 
 class NotificationCheckin extends Notification {
-  NotificationCheckin(String message, DateTime dateTime, bool isRead)
-      : super(message, dateTime, isRead);
+  NotificationCheckin(String message, DateTime dateTime, bool isRead, int id)
+      : super(message, dateTime, isRead, id) {
+    super.iconData = Icons.location_on_outlined;
+  }
   NotificationCheckin.fromMap(Map<String, dynamic> data) : super.fromMap(data) {
     super.iconData = Icons.location_on_outlined;
   }
 }
 
 class NotificationLeaving extends Notification {
-  NotificationLeaving(String message, DateTime dateTime, bool isRead)
-      : super(message, dateTime, isRead);
+  NotificationLeaving(String message, DateTime dateTime, bool isRead, int id)
+      : super(message, dateTime, isRead, id) {
+    super.iconData = Icons.request_quote_outlined;
+  }
   NotificationLeaving.fromMap(Map<String, dynamic> data) : super.fromMap(data) {
     super.iconData = Icons.request_quote_outlined;
   }
@@ -49,9 +55,13 @@ class NotificationLeaving extends Notification {
 
 class NotificationApproveLeaving extends NotificationLeaving {
   final StateOFRequest stateOFRequest;
-  NotificationApproveLeaving(
-      String message, DateTime dateTime, this.stateOFRequest, bool isRead)
-      : super(message, dateTime, isRead);
+  NotificationApproveLeaving(String message, DateTime dateTime,
+      this.stateOFRequest, bool isRead, int id)
+      : super(message, dateTime, isRead, id) {
+    super.iconData = stateOFRequest == StateOFRequest.reject
+        ? Icons.highlight_off_outlined
+        : Icons.offline_pin_outlined;
+  }
   NotificationApproveLeaving.fromMap(Map<String, dynamic> data)
       : stateOFRequest =
             StateOFRequest.fromString(data["data"]["extra_data"]["status"]),

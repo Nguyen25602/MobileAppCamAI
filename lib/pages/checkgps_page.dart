@@ -13,7 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocode/geocode.dart';
-import 'package:intl/intl.dart';
+
 import 'package:provider/provider.dart';
 
 class CheckGPS extends StatefulWidget {
@@ -24,10 +24,8 @@ class CheckGPS extends StatefulWidget {
 }
 
 class _CheckGPSState extends State<CheckGPS> {
-  bool _isCheckIn = false;
   GeoCode geoCode = GeoCode();
-  bool isExpanded = false;
-  bool isChanged = false;
+
   bool checkDistance = false;
   String address = "";
   String timeNow = "";
@@ -69,11 +67,11 @@ class _CheckGPSState extends State<CheckGPS> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          showSnackbar(context, Colors.red,
-              "Vui lòng cấp quyền truy cấp vị trí của ứng dụng");
+          // showSnackbar(context, Colors.red,
+          //     "Vui lòng cấp quyền truy cấp vị trí của ứng dụng");
         } else if (permission == LocationPermission.deniedForever) {
-          showSnackbar(context, Colors.red,
-              "Vui lòng cấp quyền truy cấp vị trí của ứng dụng");
+          // showSnackbar(context, Colors.red,
+          //     "Vui lòng cấp quyền truy cấp vị trí của ứng dụng");
         } else {
           haspermission = true;
         }
@@ -86,10 +84,10 @@ class _CheckGPSState extends State<CheckGPS> {
           //refresh the UI
         });
         getLocation();
-        showSnackbar(context, Colors.red, "Cập nhật vị trí thành công");
+        // showSnackbar(context, Colors.red, "Cập nhật vị trí thành công");
       }
     } else {
-      showSnackbar(context, Colors.red, "Dịch vụ GPS không hoạt động");
+      // showSnackbar(context, Colors.red, "Dịch vụ GPS không hoạt động");
     }
 
     setState(() {
@@ -100,33 +98,39 @@ class _CheckGPSState extends State<CheckGPS> {
   //Lấy vị trí của mình //
   getLocation() async {
     //Lấy vị trí 1 lần
-    // position = await Geolocator.getCurrentPosition(
-    //     desiredAccuracy: LocationAccuracy.high);
+    position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     // Lấy vị trí liên tục
-    LocationSettings locationSettings = const LocationSettings(
-      accuracy: LocationAccuracy.high, //accuracy of the location data
-      distanceFilter: 100, //minimum distance (measured in meters) a
-      //device must move horizontally before an update event is generated;
-    );
+    // LocationSettings locationSettings = const LocationSettings(
+    //   accuracy: LocationAccuracy.high, //accuracy of the location data
+    //   distanceFilter: 100, //minimum distance (measured in meters) a
+    //   //device must move horizontally before an update event is generated;
+    // );
 
     // ignore: unused_local_variable
-    StreamSubscription<Position> positionStream =
-        Geolocator.getPositionStream(locationSettings: locationSettings)
-            .listen((Position newPosition) {
-      setState(() {
-        position = newPosition;
-      });
-    });
-
+    // StreamSubscription<Position> positionStream =
+    //     Geolocator.getPositionStream(locationSettings: locationSettings)
+    //         .listen((Position newPosition) {
+    //   setState(() {
+    //     position = newPosition;
+    //   });
+    // });
     Address findMe = await geoCode.reverseGeocoding(
         latitude: position.latitude, longitude: position.longitude);
-    setState(() {
-      address =
-          "${findMe.streetNumber.toString()} - ${findMe.streetAddress.toString()} - ${findMe.city.toString()} - ${findMe.countryName.toString()}";
-    });
-    setState(() {
-      //refresh UI on update
-    });
+    // ignore: unnecessary_null_comparison
+    if (findMe != null) {
+      setState(() {
+        address =
+            "${findMe.streetNumber.toString()} - ${findMe.streetAddress.toString()} - ${findMe.city.toString()} - ${findMe.countryName.toString()}";
+      });
+      setState(() {
+        //refresh UI on update
+      });
+    } else {
+      setState(() {
+        address = "No address found";
+      });
+    }
   }
 
   final Completer<GoogleMapController> _controller =
@@ -395,13 +399,10 @@ class _CheckGPSState extends State<CheckGPS> {
                         final data = checkIn.toMap();
                         data["distance"] = distance.toString();
                         data["place_name"] = address;
-                        await context.read<CheckinRepository>().checkIn(data);
-                        setState(() {
-                          _isCheckIn = true;
-                          DateTime now = DateTime.now();
-                          var formatterTime = DateFormat('kk:mm');
-                          timeNow = formatterTime.format(now);
-                        });
+                        String result = await context
+                            .read<CheckinRepository>()
+                            .checkIn(data);
+                        checkinStatusDialog(context, result);
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.fromLTRB(
@@ -456,19 +457,6 @@ class _CheckGPSState extends State<CheckGPS> {
                   ],
                 ),
               ),
-              if (_isCheckIn)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Đã Check - In thành công vào lúc $timeNow",
-                      style: const TextStyle(
-                          color: Constants.textColor,
-                          fontFamily: "Roboto",
-                          fontSize: 14),
-                    )
-                  ],
-                )
             ],
           ),
         ),

@@ -26,7 +26,7 @@ class DetailRequestPage extends StatelessWidget {
                 width: 10,
               ),
               Text(
-                _request.title,
+                "Tiêu đề: ${_request.title}",
                 style: const TextStyle(
                     fontSize: FontSize.large,
                     fontFamily: 'roboto',
@@ -48,7 +48,7 @@ class DetailRequestPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Thông tin chung",
+              "Thông tin chi tiết",
               style: TextStyle(
                 color: Colors.black,
                 fontSize: FontSize.large,
@@ -63,7 +63,9 @@ class DetailRequestPage extends StatelessWidget {
               margin: const EdgeInsets.only(
                   bottom: MarginValue.medium, top: MarginValue.medium),
               decoration: const BoxDecoration(
-                  border: Border.symmetric(horizontal: BorderSide())),
+                  border: Border.symmetric(
+                      horizontal:
+                          BorderSide(width: 0.5, color: Constants.lineColor))),
               child: _statisticTable(),
             ),
             const Text(
@@ -82,6 +84,12 @@ class DetailRequestPage extends StatelessWidget {
             TextFormField(
               readOnly: true,
               initialValue: _request.reason,
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: FontSize.small,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.28),
               enabled: false,
               maxLines: 5,
               decoration: InputDecoration(
@@ -103,7 +111,7 @@ class DetailRequestPage extends StatelessWidget {
           color: Colors.black,
           fontSize: FontSize.medium,
           fontFamily: 'Roboto',
-          fontWeight: FontWeight.w200,
+          fontWeight: FontWeight.w300,
           letterSpacing: 0.28),
     );
   }
@@ -115,7 +123,7 @@ class DetailRequestPage extends StatelessWidget {
           color: Colors.black,
           fontSize: FontSize.small,
           fontFamily: 'Roboto',
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w400,
           letterSpacing: 0.28),
     );
   }

@@ -251,6 +251,94 @@ Future<Map<String, dynamic>?> saveFcmToken(
   }
 }
 
+//Get Notification
+//Get Data CheckLogin
+Future<Map<String, dynamic>> getNotificationList(
+    String token, String employeeId, int? offset) async {
+  if (offset == null) {
+    return {
+      "success": "1",
+      "entry_list": [],
+      "unread_count": "0",
+      "paging": {"next_offset": ""}
+    };
+  }
+  const String apiUrl =
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  final Map<String, dynamic> requestData = {
+    "RequestAction": "GetNotificationList",
+    "employeeId": employeeId,
+    "Params": {
+      "paging": {"offset": offset}
+    }
+  };
+
+  final http.Response response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+      "Client": "Mobile",
+      "token": token
+    },
+    body: jsonEncode(requestData),
+  );
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  }
+  if (response.statusCode == 404) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  } else {
+    print("Error calling the API. Status code: ${response.statusCode}");
+    Map<String, dynamic> data = {
+      "success": "1",
+      "entry_list": [],
+      "unread_count": "0",
+      "paging": {"next_offset": ""}
+    };
+    return data;
+  }
+}
+
+//Get Data CheckLogin
+Future<Map<String, dynamic>> markNotificationsAsRead(
+    String token, String employeeId, int id) async {
+  const String apiUrl =
+      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  final Map<String, dynamic> requestData = {
+    "RequestAction": "MarkNotificationsAsRead",
+    "employeeId": employeeId,
+    "Params": {"target": id},
+  };
+
+  final http.Response response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+      "Client": "Mobile",
+      "token": token
+    },
+    body: jsonEncode(requestData),
+  );
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  }
+  if (response.statusCode == 404) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  } else {
+    print("Error calling the API. Status code: ${response.statusCode}");
+    Map<String, dynamic> data = {
+      "success": "0",
+    };
+    return data;
+  }
+}
+
 // Function Handle CPLeaving Mobile App -> CRM
 // Create 15/8/2023
 // Get Leaving by employeeID
