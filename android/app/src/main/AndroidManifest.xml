@@ -2,6 +2,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
     <application
         android:label="cloudgo_mobileapp"
         android:name="${applicationName}"
@@ -41,8 +43,8 @@
             android:name="flutterEmbedding"
             android:value="2" />
         <meta-data android:name="com.google.android.gms.maps.API_OPTIONS"
-            android:value="	AIzaSyDNI_ZWPqvdS6r6gPVO50I4TlYkfkZdXh8"/>
+            android:value="	AIzaSyDc7PnOq3Hxzq6dxeUVaY8WGLHIePl0swY"/>
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="	AIzaSyDNI_ZWPqvdS6r6gPVO50I4TlYkfkZdXh8"/>
+            android:value="	AIzaSyDc7PnOq3Hxzq6dxeUVaY8WGLHIePl0swY"/>
     </application>
 </manifest>

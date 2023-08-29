@@ -1,7 +1,17 @@
+//01/07/2023
+//Thiên Tường
+//Kiểu dữ liệu về chấm công sử dụng trên tầng UI
+
 import 'package:cloudgo_mobileapp/object/CheckIn.dart';
 import 'package:flutter/material.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 
+//Gồm các thuộc tính
+//Thời gian checkin
+//Thời gian checkout
+//thiết bị dùng để checkin
+//Tình trạng của ngày hôm đó (đúng giờ/ vắng)
+//Số giờ làm hôm đó
 class TimeKeeping {
   late DateTime? _checkIn;
   late DateTime? _checkOut;
@@ -16,6 +26,15 @@ class TimeKeeping {
     _state = _setState();
   }
 
+  //Thien Tuong
+  //tính toán thời gian làm hôm đó
+  /*
+  * Nếu như chưa checkout -> trả về 0
+  * Thời gian bắt đầu tính sẽ là max(8h30, checkin)
+  * Thời gian kết thúc tính sẽ là min(17h30, checkout)
+  * Nếu checkout sau 13h30 thì trừ đi 1.5h
+  * thời gian làm hôm đó = kết thúc - bắt đầu - (1.5 || 0)
+  */
   double? _calTime() {
     if (_checkOut == _checkIn) return 0;
     if (_checkOut != null) {
@@ -35,10 +54,12 @@ class TimeKeeping {
     return null;
   }
 
+  //Dữ liệu chấm công thuộc tháng nào
   int getMonth() {
     return _checkIn!.month;
   }
 
+  //thay đổi tình trạng của ngày chấm công (trễ/ sớm)
   StateOFDay _setState() {
     if (_checkIn == null && _checkOut == null) {
       return StateOFDay.off;
@@ -52,6 +73,7 @@ class TimeKeeping {
     return StateOFDay.late;
   }
 
+  //Kiểu tra xem hôm đó có về sớm không
   bool isGoHomeEarly() {
     if (_checkOut == null) {
       return false;
@@ -70,13 +92,15 @@ class TimeKeeping {
   }
 
   String get timeCheckIn => _getTime(_checkIn!);
-  String get timeCheckOut => _getTime(_checkOut!);
+  String get timeCheckOut =>
+      _getTime(_checkIn!) == _getTime(_checkOut!) ? "" : _getTime(_checkOut!);
   String get day => _getDay(_checkIn!);
   String get deviceCheckIn => _device.formatString;
   StateOFDay get state => _state;
   double get workTime => _time!;
 }
 
+//Các loại thiết bị cso thể dùng để checkin
 enum TypeDevice {
   camera(formatString: "CAMERA"),
   gps(formatString: "GPS"),
@@ -86,6 +110,7 @@ enum TypeDevice {
   final String formatString;
 }
 
+//Tình trạng của ngày chấm công hôm đó
 enum StateOFDay {
   late(formatString: "Trễ", color: Constants.warningColor),
   off(formatString: "Vắng", color: Constants.dangerousColor),

@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 
 import 'package:cloudgo_mobileapp/helper/helper_function.dart';
@@ -12,7 +11,6 @@ import 'package:cloudgo_mobileapp/pages/checkgps_page.dart';
 import 'package:cloudgo_mobileapp/pages/home_page.dart';
 import 'package:cloudgo_mobileapp/pages/notification_page.dart';
 import 'package:cloudgo_mobileapp/pages/request_page.dart';
-
 import 'package:cloudgo_mobileapp/pages/timekeeping_history_page.dart';
 import 'package:cloudgo_mobileapp/pages/welcome_page.dart';
 import 'package:cloudgo_mobileapp/repository/CheckinRepository.dart';
@@ -32,9 +30,6 @@ import 'package:provider/provider.dart';
 import 'package:cloudgo_mobileapp/object/Notification.dart' as ntf;
 
 // Hiển thị thông báo khi ẩn App
-Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message: ${message.messageId}");
-}
 
 Future updateRepository(
     BuildContext context, String token, String name, String employeeId) async {
@@ -53,8 +48,6 @@ class MainPage extends StatefulWidget {
   const MainPage({
     super.key,
   });
-  // final void Function(ntf.Notification notify) callBack1;
-  // final void Function() callBack2;
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -71,7 +64,39 @@ class _MainPageState extends State<MainPage> {
   Future<void> showNotificationToast(RemoteMessage message) async {
     String notificationTitle = message.notification?.title ?? "Notification";
     String notificationBody = message.notification?.body ?? "Empty body";
-
+    print("Handling a background message: Đây n");
+    Map<String, dynamic> extraData = jsonDecode(message.data['extra_data']);
+    Future.microtask(() {
+      if (extraData["action"] == "employee_checkin_mobileapp") {
+        context.read<NotificationRepository>().updateNotification(
+            ntf.NotificationCheckin(
+                message.data["raw_message"],
+                DateFormat("yyyy-MM-dd HH:mm:ss")
+                    .parse(extraData["checkin_time"]),
+                false,
+                int.parse(message.data["id"])));
+      } else {
+        if (extraData.containsKey("status")) {
+          context.read<NotificationRepository>().updateNotification(
+              ntf.NotificationApproveLeaving(
+                  message.data["raw_message"],
+                  DateFormat("yyyy-MM-dd HH:mm:ss").parse(
+                      extraData["created_time"]), // Fix Hoang Nguyen 21/08/2023
+                  StateOFRequest.fromString(extraData["created_time"]),
+                  false,
+                  int.parse(message.data["id"])));
+          context.read<RequestRepository>().updateWhenHaveNotification();
+        } else {
+          context.read<NotificationRepository>().updateNotification(
+              ntf.NotificationLeaving(
+                  message.data["raw_message"],
+                  DateFormat("yyyy-MM-dd HH:mm:ss")
+                      .parse(extraData["created_time"]),
+                  false,
+                  int.parse(message.data["id"])));
+        }
+      }
+    });
     Fluttertoast.showToast(
       msg: "$notificationTitle: $notificationBody",
       toastLength: Toast.LENGTH_LONG,
@@ -132,9 +157,9 @@ class _MainPageState extends State<MainPage> {
               context.read<NotificationRepository>().updateNotification(
                   ntf.NotificationApproveLeaving(
                       message.data["raw_message"],
-                      DateFormat("yyyy-MM-dd HH:mm:ss")
-                          .parse(message.data["created_time"]),
-                      StateOFRequest.fromString(extraData["status"]),
+                      DateFormat("yyyy-MM-dd HH:mm:ss").parse(extraData[
+                          "created_time"]), // Fix Hoang Nguyen 21/08/2023
+                      StateOFRequest.fromString(extraData["created_time"]),
                       false,
                       int.parse(message.data["id"])));
               context.read<RequestRepository>().updateWhenHaveNotification();
@@ -257,7 +282,7 @@ class _MainPageState extends State<MainPage> {
                     data["bssid"] = bssid;
                     String res =
                         await context.read<CheckinRepository>().checkIn(data);
-                    await checkinStatusDialog(context, res);
+                    await checkinStatusDialog(context, res, "WIFI");
                   },
                   child: const Text('Check - In'),
                 )
@@ -325,9 +350,8 @@ class _MainPageState extends State<MainPage> {
                             color: Constants.primaryColor,
                           ),
                           onTap: () {
-                            setState(() {
-                              _bottomIndex = 4;
-                            });
+                            // Fix By Hoang Nguyen 20/8/2023
+                            nextScreen(context, CheckGPS());
                           },
                         ),
                         //button checkin wifi
@@ -538,5 +562,41 @@ class _MainPageState extends State<MainPage> {
             gapLocation: GapLocation.center,
           ));
     }
+  }
+
+  Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    print("Handling a background message: ${message.messageId}");
+    Map<String, dynamic> extraData = jsonDecode(message.data['extra_data']);
+    Future.microtask(() {
+      if (extraData["action"] == "employee_checkin_mobileapp") {
+        context.read<NotificationRepository>().updateNotification(
+            ntf.NotificationCheckin(
+                message.data["raw_message"],
+                DateFormat("yyyy-MM-dd HH:mm:ss")
+                    .parse(extraData["checkin_time"]),
+                false,
+                int.parse(message.data["id"])));
+      } else {
+        if (extraData.containsKey("status")) {
+          context.read<NotificationRepository>().updateNotification(
+              ntf.NotificationApproveLeaving(
+                  message.data["raw_message"],
+                  DateFormat("yyyy-MM-dd HH:mm:ss").parse(
+                      extraData["created_time"]), // Fix Hoang Nguyen 21/08/2023
+                  StateOFRequest.fromString(extraData["created_time"]),
+                  false,
+                  int.parse(message.data["id"])));
+          context.read<RequestRepository>().updateWhenHaveNotification();
+        } else {
+          context.read<NotificationRepository>().updateNotification(
+              ntf.NotificationLeaving(
+                  message.data["raw_message"],
+                  DateFormat("yyyy-MM-dd HH:mm:ss")
+                      .parse(extraData["created_time"]),
+                  false,
+                  int.parse(message.data["id"])));
+        }
+      }
+    });
   }
 }

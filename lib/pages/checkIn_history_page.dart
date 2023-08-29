@@ -2,6 +2,7 @@ import 'package:cloudgo_mobileapp/repository/CheckinRepository.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/widgets/checkin_item.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -43,36 +44,38 @@ class _CheckinHistoryState extends State<CheckinHistory> {
         future: _start(context),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(
-              child: Text(
-                "Có lỗi đã xảy ra, vui lòng thử lại!",
-                style: TextStyle(color: Colors.red),
-              ),
+            return Center(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Lottie.asset("assets/404page.json", height: 200),
+                    const Text(
+                      "Có lỗi đã xảy ra, vui lòng thử lại!",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ]),
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
             return Consumer<CheckinRepository>(
               builder: (context, repository, child) {
                 if (repository.filterByDay(widget._day).isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image(
-                          image: AssetImage("assets/cannot_find_data.jpg"),
-                          height: 200,
-                        ),
-                        SizedBox(
+                        Lottie.asset("assets/canNotData.json", height: 200),
+                        const SizedBox(
                           height: MarginValue.small,
                         ),
-                        Text(
+                        const Text(
                           "Không tìm thấy dữ liệu của tháng này",
                           style: TextStyle(
                             fontSize: FontSize.large,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        Text(
+                        const Text(
                           "Dữ liệu có thể đã bị xóa hoặc có sự lỗi bất ngờ xảy ra!",
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: FontSize.small),

@@ -3,6 +3,7 @@ import 'package:cloudgo_mobileapp/object/User.dart';
 import 'package:cloudgo_mobileapp/repository/RequestRepository.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import '../object/Request.dart';
 
@@ -340,7 +341,8 @@ class _AddRequestPageState extends State<AddRequestPage> {
                           await context
                               .read<RequestRepository>()
                               .sendRequest(request.toMap());
-                          Navigator.of(context).pop();
+                          // ignore: use_build_context_synchronously
+                          showSuccessDialog(context);
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -514,6 +516,23 @@ class _AddRequestPageState extends State<AddRequestPage> {
     }
     return Table(
       children: listRow,
+    );
+  }
+
+  void showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        });
+
+        return Scaffold(
+          body: Center(child: Lottie.asset("assets/success.json", height: 300)),
+        );
+      },
     );
   }
 }

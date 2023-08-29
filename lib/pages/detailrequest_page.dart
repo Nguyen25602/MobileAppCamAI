@@ -7,34 +7,25 @@ class DetailRequestPage extends StatelessWidget {
   const DetailRequestPage({super.key, required Request request})
       : _request = request;
   final Request _request;
+
   @override
   Widget build(BuildContext context) {
+    bool checkState = _request.state == StateOFRequest.waitting ? true : false;
     return Scaffold(
       appBar: AppBar(
-        elevation: 1,
+        title: Text(
+          "Đơn: ${_request.title}",
+          style: const TextStyle(
+              fontSize: FontSize.veryLarge,
+              fontFamily: 'roboto',
+              fontWeight: FontWeight.w800,
+              color: Constants.textColor),
+        ),
+        centerTitle: true,
+        elevation: 0.5,
         backgroundColor: Theme.of(context).primaryColor,
         leading: const BackButton(
           color: Colors.black,
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(20.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                "Tiêu đề: ${_request.title}",
-                style: const TextStyle(
-                    fontSize: FontSize.large,
-                    fontFamily: 'roboto',
-                    fontWeight: FontWeight.w800,
-                    color: Constants.textColor),
-              ),
-            ],
-          ),
         ),
       ),
       body: Container(
@@ -97,7 +88,49 @@ class DetailRequestPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(width: 1)),
               ),
-            )
+            ),
+            !checkState
+                ? const SizedBox(
+                    height: 15,
+                  )
+                : Container(),
+            !checkState
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Người quản lý ghi chú: ",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: FontSize.large,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.28,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        readOnly: true,
+                        initialValue: _request.approvedDescription,
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: FontSize.small,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0.28),
+                        enabled: false,
+                        maxLines: 5,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(width: 1)),
+                        ),
+                      ),
+                    ],
+                  )
+                : Container()
           ],
         ),
       ),

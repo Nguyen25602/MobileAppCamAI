@@ -1,10 +1,22 @@
+//01/07/2023
+//Thiên Tường
+//Kiểu dữ liệu về thông báo sử dụng trên tầng UI
+
 import 'package:cloudgo_mobileapp/object/Request.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+//Gồm các thuộc tính thuộc tính:
+//Nôi dụng thông báo
+//Thời gian thông báo được gửi
+//Tình trạng đã đọc hay chưa
+//Id của thông báo được lưu trong database
+//Icon để hiện thị
+
 class Notification {
   final String message;
   final DateTime sendTime;
+  String categlory = "";
   bool isRead;
   int id;
   IconData iconData = Icons.location_on_outlined;
@@ -16,6 +28,9 @@ class Notification {
             .parse(data["data"]["created_time"]),
         isRead = data["data"]["read"] == "1",
         id = int.parse(data["data"]["id"]);
+
+  //Trả về chuỗi định dạng cho thời gian thông báo được nhận đi
+  //1 phút trước/ hôm qua/ 2 ngày trước ....
   String getCreateTimeRequest() {
     var now = DateTime.now();
     var createTime = sendTime;
@@ -33,6 +48,7 @@ class Notification {
   }
 }
 
+//Thông báo thuộc loại thông báo checkin
 class NotificationCheckin extends Notification {
   NotificationCheckin(String message, DateTime dateTime, bool isRead, int id)
       : super(message, dateTime, isRead, id) {
@@ -43,6 +59,7 @@ class NotificationCheckin extends Notification {
   }
 }
 
+//Thông báo thuộc loại thông báo đơn nghỉ phép
 class NotificationLeaving extends Notification {
   NotificationLeaving(String message, DateTime dateTime, bool isRead, int id)
       : super(message, dateTime, isRead, id) {
@@ -53,6 +70,9 @@ class NotificationLeaving extends Notification {
   }
 }
 
+//Thong báo thuộc loại thông báo duyệt đơn nghỉ phép
+//Là 1 TH đặc biệt của đơn nghỉ phép
+//Có thêm 1 thuộc tính là được từ chối hay đồng ý
 class NotificationApproveLeaving extends NotificationLeaving {
   final StateOFRequest stateOFRequest;
   NotificationApproveLeaving(String message, DateTime dateTime,
@@ -71,101 +91,3 @@ class NotificationApproveLeaving extends NotificationLeaving {
         : Icons.offline_pin_outlined;
   }
 }
-
-final dataExample = {
-  "success": "1",
-  "entry_list": [
-    {
-      "message": "Bạn đã checkin lúc 16-08-2023 03:52 PM bằng GPS",
-      "data": {
-        "id": "66",
-        "image": "",
-        "related_record_id": "2520",
-        "related_record_name": "Nguyễn Mai Anh",
-        "related_module_name": "CPEmployee",
-        "created_time": "2023-08-16 15:52:36",
-        "read": "1",
-        "extra_data": {
-          "action": "employee_checkin_mobileapp",
-          "checkin_time": "2023-08-16 15:52:32",
-          "device": "GPS"
-        }
-      }
-    },
-    {
-      "message":
-          "Administrator đã từ chối đơn nghĩ phép: asadas vào lúc 16-08-2023 15:08",
-      "data": {
-        "id": "65",
-        "image": "",
-        "related_record_id": "2520",
-        "related_record_name": "asadas",
-        "related_module_name": "CPLeaving",
-        "created_time": "2023-08-16 15:50:46",
-        "read": "1",
-        "extra_data": {
-          "action": "employee_leaving",
-          "created_time": "2023-08-16 15:08:46",
-          "title": "asadas",
-          "status": "Not approve",
-          "name_manage": "Administrator"
-        }
-      }
-    },
-    {
-      "message":
-          "Bạn đã gửi đơn 2132132131 thành công lúcv 16-08-2023 03:49 PM",
-      "data": {
-        "id": "64",
-        "image": "",
-        "related_record_id": "2520",
-        "related_record_name": "Nguyễn Mai Anh",
-        "related_module_name": "CPEmployee",
-        "created_time": "2023-08-16 15:49:52",
-        "read": "0",
-        "extra_data": {
-          "action": "employee_leaving",
-          "created_time": "2023-08-16 15:49:46",
-          "title": "2132132131"
-        }
-      }
-    },
-    {
-      "message":
-          "Bạn đã gửi đơn <strong>21321321</strong> thành công lúc <strong>16-08-2023 03:45 PM</strong>",
-      "data": {
-        "id": "63",
-        "image": "",
-        "related_record_id": "2520",
-        "related_record_name": "Nguyễn Mai Anh",
-        "related_module_name": "CPEmployee",
-        "created_time": "2023-08-16 15:46:10",
-        "read": "0",
-        "extra_data": {
-          "action": "employee_leaving",
-          "created_time": "2023-08-16 15:45:47",
-          "title": "21321321"
-        }
-      }
-    },
-    {
-      "message": "dscxcxz",
-      "data": {
-        "id": "62",
-        "image": "",
-        "related_record_id": "2520",
-        "related_record_name": "Nguyễn Mai Anh",
-        "related_module_name": "CPEmployee",
-        "created_time": "2023-08-16 15:39:04",
-        "read": "0",
-        "extra_data": {
-          "action": "employee_leaving",
-          "created_time": "2023-08-16 15:38:56",
-          "title": "asadas"
-        }
-      }
-    },
-  ],
-  "unread_count": "3",
-  "paging": {"next_offset": "20"}
-};

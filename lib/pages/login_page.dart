@@ -9,7 +9,11 @@ import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+
+String url = "";
+String urlGlobal = "http://$url/api/EmployeePortalApi.php";
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -193,9 +197,9 @@ class LoginPageState extends State<LoginPage> {
                                           context, const MainPage()),
                                     );
                                   }
-
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
+                                  return Center(
+                                    child: Lottie.asset('assets/process.json',
+                                        height: 100),
                                   );
                                 },
                               )
@@ -225,6 +229,35 @@ class LoginPageState extends State<LoginPage> {
         .updateUserInformation(token, employeeId);
   }
 
+  static void showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pop(context);
+        });
+
+        return Scaffold(
+            body: Center(
+                child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Lottie.asset("assets/error.json", height: 200),
+            const Text(
+              "Đăng nhập không thành công !!!",
+              style: TextStyle(
+                  color: Constants.textColor,
+                  fontSize: FontSize.veryLarge,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            )
+          ],
+        )));
+      },
+    );
+  }
+
   Future updateInfomation() async {
     await HelperFunctions.saveUserLoggedInStatus(true);
     await HelperFunctions.saveAccessTokenSF(user!.token);
@@ -243,8 +276,7 @@ class LoginPageState extends State<LoginPage> {
           return user;
         } else {
           // Handle the error here
-          showSnackbar(context, Colors.red,
-              "Gmail hoặc Password không đăng nhập được!!");
+          showSuccessDialog(context);
           return null;
         }
       } else {
@@ -255,8 +287,7 @@ class LoginPageState extends State<LoginPage> {
           return user;
         } else {
           // Handle the error here
-          showSnackbar(context, Colors.red,
-              "Username hoặc Password không đăng nhập được!!");
+          showSuccessDialog(context);
           return null;
         }
       }

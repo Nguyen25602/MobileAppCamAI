@@ -5,6 +5,7 @@ import 'package:cloudgo_mobileapp/repository/TimeKeepingRepository.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/widgets/timekeeping_item.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../widgets/widgets.dart';
@@ -20,7 +21,7 @@ class TimekeepingHistoryPage extends StatefulWidget {
 }
 
 class _TimekeepingHistoryPageState extends State<TimekeepingHistoryPage> {
-  CalendarFormat _format = CalendarFormat.month;
+  CalendarFormat _format = CalendarFormat.twoWeeks;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
@@ -266,6 +267,9 @@ class _TimekeepingHistoryPageState extends State<TimekeepingHistoryPage> {
                   ),
                 ],
               ),
+              const SizedBox(
+                height: 5,
+              ),
               Container(
                 padding: const EdgeInsets.only(
                     left: MarginValue.small, bottom: MarginValue.small),
@@ -299,7 +303,7 @@ class _TimekeepingHistoryPageState extends State<TimekeepingHistoryPage> {
                             .getDataByMonth(_selectedMonth!)
                             .isNotEmpty
                         ? SizedBox(
-                            height: 200,
+                            height: 400,
                             child: ListView.separated(
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) {
@@ -330,19 +334,16 @@ class _TimekeepingHistoryPageState extends State<TimekeepingHistoryPage> {
                                     .getDataByMonth(_selectedMonth!)
                                     .length),
                           )
-                        : const Center(
+                        : Center(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Image(
-                                  image:
-                                      AssetImage("assets/cannot_find_data.jpg"),
-                                  height: 200,
-                                ),
-                                SizedBox(
+                                Lottie.asset('assets/canNotData.json',
+                                    height: 200),
+                                const SizedBox(
                                   height: MarginValue.small,
                                 ),
-                                Text(
+                                const Text(
                                   "Không tìm thấy dữ liệu của tháng này",
                                   style: TextStyle(
                                     fontSize: FontSize.large,

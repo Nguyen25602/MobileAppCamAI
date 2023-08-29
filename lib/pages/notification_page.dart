@@ -118,9 +118,9 @@ class _NotificationPageState extends State<NotificationPage>
             child: ListView.builder(
                 controller: _scrollController,
                 itemBuilder: (context, index) {
-                  if (index < repository.notifictions.length) {
+                  if (index < repository.getListNotificationLeaving().length) {
                     return NotificationItem(
-                        item: repository.notifictions[index]);
+                        item: repository.getListNotificationLeaving()[index]);
                   } else {
                     return repository.nextOffSet != null
                         ? const Padding(
@@ -138,9 +138,9 @@ class _NotificationPageState extends State<NotificationPage>
             child: ListView.builder(
                 controller: _scrollController,
                 itemBuilder: (context, index) {
-                  if (index < repository.notifictions.length) {
+                  if (index < repository.getListNotificationCheckin().length) {
                     return NotificationItem(
-                        item: repository.notifictions[index]);
+                        item: repository.getListNotificationCheckin()[index]);
                   } else {
                     return repository.nextOffSet != null
                         ? const Padding(

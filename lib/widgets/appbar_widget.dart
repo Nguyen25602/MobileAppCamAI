@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloudgo_mobileapp/helper/helper_function.dart';
 import 'package:cloudgo_mobileapp/main.dart';
 import 'package:cloudgo_mobileapp/object/User.dart';
@@ -12,7 +14,7 @@ import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
@@ -46,7 +48,7 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       image: NetworkImage(
-                          "http://192.168.31.33/onlinecrm${user?.avatar}"), // Đặt URL hình ảnh của bạn ở đây
+                          "http://54.179.104.127${user?.avatar}"), // Đặt URL hình ảnh của bạn ở đây
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -163,10 +165,9 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                                     {
                                       if (value["success"] == "1")
                                         {
-                                          showSnackbar(context, Colors.red,
-                                              "Đăng xuất thành công"),
-                                          nextScreenRemove(
-                                              context, const LoginPage())
+                                          showSuccessDialog(context),
+                                          // nextScreenRemove(
+                                          //     context, const LoginPage())
                                         }
                                       else
                                         {
@@ -211,75 +212,26 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-}
 
-class _AppBarWidgetState extends State<AppBarWidget> {
-  Future<void> dialogBuilder(BuildContext context) {
-    return showDialog<void>(
+  static void showSuccessDialog(BuildContext context) {
+    showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          insetPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          title: const SizedBox(
-            width: double.infinity,
-            child: Row(
-              children: [
-                Image(image: AssetImage("assets/Logo_CloudGo.png")),
-                Icon(Icons.close),
-              ],
-            ),
-          ),
-          content: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ElevatedButton(
-                  child: const Text('Button 1'),
-                  onPressed: () {
-                    // Hành động khi nhấn Button 1
-                  },
-                ),
-                ElevatedButton(
-                  child: const Text('Button 2'),
-                  onPressed: () {
-                    // Hành động khi nhấn Button 2
-                  },
-                ),
-                ElevatedButton(
-                  child: const Text('Button 3'),
-                  onPressed: () {
-                    // Hành động khi nhấn Button 3
-                  },
-                ),
-              ]),
-          actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Disable'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: const Text('Enable'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pop(context);
+          nextScreenRemove(context, const LoginPage());
+        });
+
+        return Scaffold(
+          body: Center(child: Lottie.asset("assets/goodbye.json")),
         );
       },
     );
   }
+}
 
+class _AppBarWidgetState extends State<AppBarWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -297,10 +249,12 @@ class _AppBarWidgetState extends State<AppBarWidget> {
         backgroundColor: Theme.of(context).primaryColor,
         title: Text(
           widget.titlebar,
-          style: GoogleFonts.robotoCondensed(
-            color: Constants.textColor,
-            fontWeight: FontWeight.bold,
+          style: const TextStyle(
+            color: Colors.black,
             fontSize: 18,
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.40,
           ),
         ),
         leading: GestureDetector(
@@ -318,7 +272,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                       color: Colors.grey[700],
                     )
                   : Image.network(
-                      "http://192.168.31.33/onlinecrm${widget.user?.avatar}",
+                      "http://54.179.104.127${widget.user?.avatar}",
                       fit: BoxFit.cover,
                     ),
             ),

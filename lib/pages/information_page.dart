@@ -20,7 +20,7 @@ class InformationPage extends StatefulWidget {
 
 class _InformationPageState extends State<InformationPage> {
   final GlobalKey<ScaffoldState> _infoKey = GlobalKey<ScaffoldState>();
-  final List<String> _avatarPaths = ['assets/logo.png'];
+  final List<String> _avatarPaths = ['assets/cloudgo_icon.png'];
   String? _selectedGender;
   // ignore: unused_field
   String _userAvatar = "";
@@ -214,7 +214,6 @@ class _InformationPageState extends State<InformationPage> {
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                      const Text("Staff"),
                                     ],
                                   ),
                                 ),
@@ -345,7 +344,7 @@ class _InformationPageState extends State<InformationPage> {
                             child: _changeava
                                 ? userProvider.user!.avatar != ""
                                     ? Image.network(
-                                        "http://192.168.1.28/onlinecrm${userProvider.user!.avatar}",
+                                        "http://54.179.104.127${userProvider.user!.avatar}",
                                         height: 100,
                                         width: 100,
                                         fit: BoxFit.cover,

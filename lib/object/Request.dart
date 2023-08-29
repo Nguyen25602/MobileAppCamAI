@@ -1,7 +1,12 @@
+//01/07/2023
+//Thiên Tường
+//Kiểu dữ liệu về đơn nghỉ phép sử dụng trên tầng UI
 import 'package:flutter/material.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:intl/intl.dart';
 
+//Thien Tuong
+//Các loại nghỉ phép mà người dùng có thể chọn
 enum TimeOffType {
   annualLeave(formatString: "Nghỉ phép năm", formatStringEnglish: "On leave"),
   diseasedOff(formatString: "Nghỉ bệnh", formatStringEnglish: "Sick leave"),
@@ -15,6 +20,7 @@ enum TimeOffType {
 
   final String formatString;
   final String formatStringEnglish;
+  //trả về loại nghỉ phép từ 1 chuôi cho trước
   factory TimeOffType.fromString(String name) {
     if (name.compareTo("On leave") == 0) {
       return TimeOffType.annualLeave;
@@ -29,6 +35,7 @@ enum TimeOffType {
   }
 }
 
+//Các loại tình trạng của đơn nghỉ phép
 enum StateOFRequest {
   accept(
       formatString: "Đồng ý",
@@ -56,6 +63,7 @@ enum StateOFRequest {
   final IconData icon;
   final Color color;
 
+  //trả về tình trạng của đơn nghỉ phép từ 1 chuôi cho trước
   factory StateOFRequest.fromString(String name) {
     if (name.compareTo("Not approve") == 0) {
       return StateOFRequest.reject;
@@ -66,6 +74,7 @@ enum StateOFRequest {
   }
 }
 
+//Các loại thời gian nghỉ
 enum DistanceOffType {
   halfDay(formatString: "1/2 ngày", formatStringEnglish: "Half day"),
   oneDay(formatString: "1 ngày", formatStringEnglish: "A Day"),
@@ -76,6 +85,7 @@ enum DistanceOffType {
   final String formatString;
   final String formatStringEnglish;
 
+  //trả về loại ngày nghỉ từ 1 chuôi cho trước
   factory DistanceOffType.fromString(String name) {
     if (name.compareTo("Half day") == 0) {
       return DistanceOffType.halfDay;
@@ -86,6 +96,7 @@ enum DistanceOffType {
   }
 }
 
+//Buổi nghỉ khi loại thời gian nghỉ là nữa ngày
 enum Period {
   morning(formatString: "Buổi sáng", formatStringEnglish: "Morning"),
   afternoon(formatString: "Buổi chiều", formatStringEnglish: "Afternoon");
@@ -102,6 +113,17 @@ enum Period {
   }
 }
 
+//Gồm các thuộc tính
+//Tiêu đề đơn nghỉ phép
+//Tên người gửi
+//Ngày bắt đàu  //Nếu thời gian nghỉ là <= 1 ngày thì ngày bắt đầu giống ngày kết thúc
+//Ngày kết thúc
+//Lý do nghỉ
+//Tình trạng đơn nghỉ
+//Loại thời gian nghỉ (1 ngày/ nhiều ngày ...)
+//Buổi nghỉ (nếu có)
+//Thời gian đơn được tạo
+//Được duyệt bởi ai
 class Request {
   final String _title;
   late final String _name;
@@ -114,20 +136,21 @@ class Request {
   final Period? _period;
   final DateTime _createTime;
   final String _approvedBy;
-
-  Request(
-      {required String title,
-      required String name,
-      required DateTime start,
-      required DateTime end,
-      required TimeOffType type,
-      required String reason,
-      required DateTime createTime,
-      Period? period,
-      DistanceOffType distanceOffType = DistanceOffType.oneDay,
-      StateOFRequest state = StateOFRequest.waitting,
-      required String idApprovedPerson})
-      : _title = title,
+  // ignore: unused_field
+  String? _approvedDescription;
+  Request({
+    required String title,
+    required String name,
+    required DateTime start,
+    required DateTime end,
+    required TimeOffType type,
+    required String reason,
+    required DateTime createTime,
+    Period? period,
+    DistanceOffType distanceOffType = DistanceOffType.oneDay,
+    StateOFRequest state = StateOFRequest.waitting,
+    required String idApprovedPerson,
+  })  : _title = title,
         _name = name,
         _start = start,
         _end = end,
@@ -152,7 +175,8 @@ class Request {
             : Period.fromString(
                 data["cpleavingdetail_time"],
               ),
-        _approvedBy = "1" /*cần thêm dữ liệu về người được giao khi call api*/ {
+        _approvedBy = "1", //cần thêm dữ liệu về người được giao khi call api*/
+        _approvedDescription = data["approval_description"] {
     var dates = parseFromAndToDate(data['leaving_date']);
     if (dates.length == 1) {
       _start = _end = dates[0];
@@ -175,6 +199,7 @@ class Request {
   StateOFRequest get state => _state;
   DistanceOffType get distanceOffType => _distanceOffType;
   DateTime get createTime => _createTime;
+  String? get approvedDescription => _approvedDescription;
 
   int get numberOfLeavingDay {
     var from = DateTime(_start.year, _start.month, _start.day);
@@ -256,7 +281,7 @@ class Request {
         : "";
     dataRequest["created_time"] =
         DateFormat("yyyy-MM-dd HH:mm:ss").format(_createTime);
-    print("hehehehe" + dataRequest["created_time"]!);
+    print("Đã tạo đơn thành công" + dataRequest["created_time"]!);
     return dataRequest;
   }
 }

@@ -9,6 +9,8 @@ class NotificationRepository with mt.ChangeNotifier {
   late String _token;
   late String _employeeId;
   int _unreadNotification = 0;
+  //
+  //
   int? _nextOffSet = 0;
   List<Notification> notifictions = [];
 
@@ -37,6 +39,11 @@ class NotificationRepository with mt.ChangeNotifier {
   //call to add new notfication when you scroll down
   Future onSCrollDown() async {
     notifictions.addAll(await getData());
+    if (_nextOffSet == null) {
+      _unreadNotification =
+          notifictions.where((element) => !element.isRead).length;
+      notificationTemp = _unreadNotification;
+    }
     notifyListeners();
   }
 
@@ -61,10 +68,7 @@ class NotificationRepository with mt.ChangeNotifier {
     _nextOffSet = data["paging"]["next_offset"] == ""
         ? null
         : int.parse(data["paging"]["next_offset"]);
-    if (_nextOffSet != null) {
-      _unreadNotification = int.parse(data["unread_count"]);
-      notificationTemp = _unreadNotification;
-    }
+
     for (final entry in data["entry_list"]) {
       if (entry["data"]["extra_data"]["action"] ==
           "employee_checkin_mobileapp") {
@@ -77,6 +81,12 @@ class NotificationRepository with mt.ChangeNotifier {
         }
       }
     }
+
+    if (_nextOffSet != null) {
+      _unreadNotification = int.parse(data["unread_count"]);
+      notificationTemp = _unreadNotification;
+    }
+
     return res;
   }
 
@@ -98,11 +108,11 @@ class NotificationRepository with mt.ChangeNotifier {
     _token = token;
     _employeeId = employeeId;
     notifictions = await getData();
-  }
-
-  Future getNewData() async {
-    notifictions = await getData();
-    notifyListeners();
+    if (_nextOffSet == null) {
+      _unreadNotification =
+          notifictions.where((element) => !element.isRead).length;
+      notificationTemp = _unreadNotification;
+    }
   }
 
   List<Notification> getListNotificationCheckin() {

@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 //NGUYEN CREATE //
 import 'dart:async';
+import 'dart:io';
 import 'package:cloudgo_mobileapp/object/CheckIn.dart';
 import 'package:cloudgo_mobileapp/object/TimeKeeping.dart';
 import 'package:cloudgo_mobileapp/object/User.dart';
@@ -10,10 +11,11 @@ import 'package:cloudgo_mobileapp/widgets/appbar_widget.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geocode/geocode.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart' as animation;
 import 'package:provider/provider.dart';
 
 class CheckGPS extends StatefulWidget {
@@ -24,10 +26,26 @@ class CheckGPS extends StatefulWidget {
 }
 
 class _CheckGPSState extends State<CheckGPS> {
-  GeoCode geoCode = GeoCode();
+  // Config Camera by Hoang Nguyen
+  File? _image;
 
+  Future<void> _getImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+      print(_image);
+      print("gdsfdsfdsfdsf");
+      print(pickedFile.path);
+      await _showImageDialog();
+    }
+  }
+
+  // Config GPS by Hoang Nguyen
+  String _address = "";
   bool checkDistance = false;
-  String address = "";
   String timeNow = "";
   final GlobalKey<ScaffoldState> _hello = GlobalKey<ScaffoldState>();
   bool servicestatus = false;
@@ -35,10 +53,10 @@ class _CheckGPSState extends State<CheckGPS> {
   late LocationPermission permission;
   late Position position;
   late int distance;
-  late StreamSubscription<Position> positionStream;
 
   @override
   void initState() {
+    super.initState();
     checkGps();
     position = const Position(
         longitude: 0,
@@ -49,13 +67,12 @@ class _CheckGPSState extends State<CheckGPS> {
         heading: 0,
         speed: 0,
         speedAccuracy: 0);
-    super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
-    positionStream.cancel();
+    // positionStream.cancel();
   }
 
   checkGps() async {
@@ -100,36 +117,15 @@ class _CheckGPSState extends State<CheckGPS> {
     //Lấy vị trí 1 lần
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    // Lấy vị trí liên tục
-    // LocationSettings locationSettings = const LocationSettings(
-    //   accuracy: LocationAccuracy.high, //accuracy of the location data
-    //   distanceFilter: 100, //minimum distance (measured in meters) a
-    //   //device must move horizontally before an update event is generated;
-    // );
-
-    // ignore: unused_local_variable
-    // StreamSubscription<Position> positionStream =
-    //     Geolocator.getPositionStream(locationSettings: locationSettings)
-    //         .listen((Position newPosition) {
-    //   setState(() {
-    //     position = newPosition;
-    //   });
-    // });
-    Address findMe = await geoCode.reverseGeocoding(
-        latitude: position.latitude, longitude: position.longitude);
-    // ignore: unnecessary_null_comparison
-    if (findMe != null) {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    if (placemarks.isNotEmpty) {
+      Placemark firstPlace = placemarks.first;
       setState(() {
-        address =
-            "${findMe.streetNumber.toString()} - ${findMe.streetAddress.toString()} - ${findMe.city.toString()} - ${findMe.countryName.toString()}";
+        _address =
+            "${firstPlace.street}, ${firstPlace.locality}, ${firstPlace.country}";
       });
-      setState(() {
-        //refresh UI on update
-      });
-    } else {
-      setState(() {
-        address = "No address found";
-      });
+      print(_address);
     }
   }
 
@@ -144,6 +140,40 @@ class _CheckGPSState extends State<CheckGPS> {
   );
   @override
   Widget build(BuildContext context) {
+    if (servicestatus == false) {
+      return Scaffold(
+        body: Align(
+          alignment: Alignment.center,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                animation.Lottie.asset("assets/gpsStatus.json"),
+                SizedBox(height: 20),
+                Text(
+                  "Để xử dụng tính năng này",
+                  style: TextStyle(
+                    color: Constants.textColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  "Vui lòng bật GPS",
+                  style: TextStyle(
+                    color: Constants.textColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     double height = MediaQuery.of(context).size.height;
     var userProvider = Provider.of<UserProvider>(context);
     User? user = userProvider.user;
@@ -282,7 +312,7 @@ class _CheckGPSState extends State<CheckGPS> {
               // ADDRESS //
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: address.isEmpty
+                child: _address == ""
                     ? const Text(
                         "GPS không hoạt động vui lòng kiểm tra.",
                         style: TextStyle(
@@ -291,7 +321,7 @@ class _CheckGPSState extends State<CheckGPS> {
                             fontSize: 12),
                       )
                     : Text(
-                        address,
+                        _address,
                         style: const TextStyle(
                             color: Constants.textColor,
                             fontFamily: "Roboto",
@@ -313,76 +343,87 @@ class _CheckGPSState extends State<CheckGPS> {
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
                       ),
-                      Text(
-                        //Tính khoảng cách
-                        "$distance meters",
-                        style: const TextStyle(
-                          color: Constants.textColor,
-                          fontSize: 12,
-                        ),
-                      )
+                      servicestatus == true
+                          ? Text(
+                              //Tính khoảng cách
+                              "$distance meters",
+                              style: const TextStyle(
+                                color: Constants.textColor,
+                                fontSize: 12,
+                              ),
+                            )
+                          : const Text(
+                              //Tính khoảng cách
+                              "None",
+                              style: TextStyle(
+                                color: Constants.textColor,
+                                fontSize: 12,
+                              ),
+                            )
                     ],
                   ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  ElevatedButton(
-                    onPressed: null,
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.zero, // Đặt padding của button là 0
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(20), // Đặt bo góc cho button
-                      ),
-                      disabledBackgroundColor: Constants.enableButton,
-                      disabledForegroundColor: Colors.white,
+                  if (servicestatus)
+                    const SizedBox(
+                      width: 20,
                     ),
-                    child: checkDistance
-                        ? const Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text(
-                                  'Đủ điều kiện',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                  if (servicestatus)
+                    ElevatedButton(
+                      onPressed: null,
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero, // Đặt padding của button là 0
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              20), // Đặt bo góc cho button
+                        ),
+                        disabledBackgroundColor: Constants.enableButton,
+                        disabledForegroundColor: Colors.white,
+                      ),
+                      child: checkDistance
+                          ? const Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                  child: Text(
+                                    'Đủ điều kiện',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 10, right: 10),
-                                child: FaIcon(
-                                  FontAwesomeIcons.check,
-                                  color: Colors.yellow,
-                                  size: 14,
-                                ),
-                              ),
-                            ],
-                          )
-                        : const Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text(
-                                  'Khoảng cách lớn',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                                Padding(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.check,
+                                    color: Colors.yellow,
+                                    size: 14,
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 10, right: 10),
-                                child: FaIcon(
-                                  FontAwesomeIcons.xmark,
-                                  color: Colors.red,
-                                  size: 14,
+                              ],
+                            )
+                          : const Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                  child: Text(
+                                    'Khoảng cách lớn',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                  )
+                                Padding(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.xmark,
+                                    color: Colors.red,
+                                    size: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                    )
                 ]),
               ),
               Container(
@@ -398,11 +439,11 @@ class _CheckGPSState extends State<CheckGPS> {
 
                         final data = checkIn.toMap();
                         data["distance"] = distance.toString();
-                        data["place_name"] = address;
+                        data["place_name"] = _address;
                         String result = await context
                             .read<CheckinRepository>()
                             .checkIn(data);
-                        checkinStatusDialog(context, result);
+                        checkinStatusDialog(context, result, "GPS");
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.fromLTRB(
@@ -435,7 +476,7 @@ class _CheckGPSState extends State<CheckGPS> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => _getImage(ImageSource.camera),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(
                             15), // Đặt padding của button là 0
@@ -464,6 +505,38 @@ class _CheckGPSState extends State<CheckGPS> {
       drawer: AppBarWidget.buildDrawer(context),
     );
   }
-}
 
-void demo() {}
+  Future<void> _showImageDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Selected Image'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.file(_image!),
+              SizedBox(height: 20),
+              Text('Do you want to submit this image?'),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: animation.Lottie.asset('assets/cancle.json', height: 60),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: animation.Lottie.asset('assets/send.json', height: 60),
+              onPressed: () {
+                // Perform submission logic here
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}

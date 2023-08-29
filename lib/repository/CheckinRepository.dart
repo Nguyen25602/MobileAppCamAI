@@ -8,6 +8,8 @@ class CheckinRepository with ChangeNotifier {
   late String _token;
   late String _employeeId;
   bool isTodayCheckIn = false;
+  String checkinTime = "";
+  String checkoutTime = "";
   List<CheckIn> listData = [];
   CheckinRepository._create();
   static CheckinRepository create() {
@@ -19,6 +21,8 @@ class CheckinRepository with ChangeNotifier {
 
   void clear() {
     listData.clear();
+    checkinTime = "";
+    checkoutTime = "";
   }
 
   Future updateUserInformation(String token, String employeeId) async {
@@ -26,6 +30,8 @@ class CheckinRepository with ChangeNotifier {
     _employeeId = employeeId;
     listData = await getData();
     isTodayCheckIn = isCheckin();
+    checkinTime = timeCheckIn();
+    checkoutTime = timeCheckOut();
   }
 
 //this will be replaced by the function call get data
@@ -76,6 +82,8 @@ class CheckinRepository with ChangeNotifier {
     final result = await addCheckLog(_token, data);
     await getNewData();
     isTodayCheckIn = isCheckin();
+    checkinTime = timeCheckIn();
+    checkoutTime = timeCheckOut();
     notifyListeners();
     return result["success"];
   }
@@ -88,5 +96,17 @@ class CheckinRepository with ChangeNotifier {
     return listData
         .where((element) => isSameDay(element.dateTime, DateTime.now()))
         .isNotEmpty;
+  }
+
+  String timeCheckIn() {
+    var a = listData
+        .where((element) => isSameDay(element.dateTime, DateTime.now()));
+    return a.first.time;
+  }
+
+  String timeCheckOut() {
+    var a = listData
+        .where((element) => isSameDay(element.dateTime, DateTime.now()));
+    return a.last.time;
   }
 }

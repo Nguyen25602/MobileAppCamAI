@@ -1,5 +1,6 @@
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 var textInputDecoration = const InputDecoration(
   contentPadding: EdgeInsets.all(10),
@@ -57,12 +58,25 @@ void showSnackbar(context, color, message) {
 }
 
 // Checkin Success || Error
-Future checkinStatusDialog(BuildContext context, String status) async {
-  String imageAssets =
-      status == "0" ? "assets/error_checkin.jpg" : "assets/success_checkin.png";
-  String text = status == "0" ? "Có lỗi xảy ra !" : "Chúc mừng";
-  String text2 =
-      status == "0" ? "Checkin thất bại" : "Bạn đã checkin thành công";
+Future checkinStatusDialog(
+    BuildContext context, String status, String name) async {
+  String imageAssets = "";
+  String text = "";
+  String text2 = "";
+  if (name == "WIFI") {
+    imageAssets =
+        status == "0" ? "assets/wifiDisconnect.json" : "assets/success.json";
+    text = status == "0" ? "Vui lòng chọn đúng WIFI !" : "Chúc mừng";
+    text2 = status == "0" ? "Checkin thất bại" : "Bạn đã checkin thành công";
+  }
+  if (name == "GPS") {
+    imageAssets = status == "0" ? "assets/error.json" : "assets/success.json";
+    text = status == "0" ? "Vui lòng di chuyển đến Công Ty" : "Chúc mừng";
+    text2 = status == "0"
+        ? "Checkin thất bại - Khoảng cách xa"
+        : "Bạn đã checkin thành công";
+  }
+
   Color color = status == "0" ? Colors.red : Constants.successfulColor;
   return showDialog(
     context: context,
@@ -76,12 +90,7 @@ Future checkinStatusDialog(BuildContext context, String status) async {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image(
-              image: AssetImage(imageAssets),
-            ),
-            const SizedBox(
-              height: MarginValue.small,
-            ),
+            Lottie.asset(imageAssets, animate: true),
             Text(
               text,
               style: TextStyle(fontSize: FontSize.veryLarge, color: color),

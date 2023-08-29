@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:cloudgo_mobileapp/widgets/request_item.dart';
 import 'package:cloudgo_mobileapp/object/Request.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:provider/provider.dart';
 import '../widgets/widgets.dart';
@@ -67,11 +68,287 @@ class RequestPageState extends State<RequestPage>
         ),
         actions: [
           IconButton(
-              onPressed: () => nextScreen(context, const AddRequestPage()),
-              icon: const Icon(
-                Icons.add,
-                color: Constants.enableButton,
-              ))
+            icon: Lottie.asset("assets/filter.json", height: 40),
+            onPressed: () {
+              showModalBottomSheet(
+                isScrollControlled: true,
+                context: context,
+                builder: (BuildContext context) {
+                  TextEditingController fromDayController = TextEditingController(
+                      text: filter.fromDate == null
+                          ? null
+                          : "${filter.fromDate!.day}/${filter.fromDate!.month}/${filter.fromDate!.year}");
+                  TextEditingController toDayController = TextEditingController(
+                      text: filter.toDate == null
+                          ? null
+                          : "${filter.toDate!.day}/${filter.toDate!.month}/${filter.toDate!.year}");
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.9,
+                    child: Padding(
+                      padding: const EdgeInsets.all(MarginValue.small),
+                      child: StatefulBuilder(
+                        builder: (context, setBottomSheetState) =>
+                            Stack(children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Center(
+                                child: Text(
+                                  "Bộ lọc",
+                                  style: TextStyle(
+                                    color: Constants.textColor,
+                                    fontSize: FontSize.large,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              filterLabel("Loại nghỉ phép"),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: filter.timeOffTyeCondition.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    horizontalTitleGap: 0,
+                                    title: Text(
+                                      filter.timeOffTyeCondition[index]
+                                          .attributeName.formatString,
+                                      style: const TextStyle(
+                                          fontSize: FontSize.small,
+                                          fontWeight: FontWeight.w400,
+                                          color: Constants.textColor),
+                                    ),
+                                    leading: Checkbox(
+                                      value: filter
+                                          .timeOffTyeCondition[index].isCheck,
+                                      onChanged: (value) =>
+                                          setBottomSheetState(() {
+                                        filter.timeOffTyeCondition[index]
+                                            .check = value!;
+                                      }),
+                                      checkColor: Colors.white,
+                                      fillColor: MaterialStateColor.resolveWith(
+                                          (states) {
+                                        const Set<MaterialState>
+                                            interactiveStates = <MaterialState>{
+                                          MaterialState.pressed,
+                                          MaterialState.hovered,
+                                          MaterialState.focused,
+                                          MaterialState.selected
+                                        };
+                                        if (states
+                                            .any(interactiveStates.contains)) {
+                                          return Constants
+                                              .checkBoxSelectedColor;
+                                        }
+                                        return Constants.radioBtnBorderColor;
+                                      }),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(3.0)),
+                                    ),
+                                  );
+                                },
+                              ),
+                              filterLabel("Sắp xếp theo thời gian gửi"),
+                              ListTile(
+                                minLeadingWidth: 10,
+                                horizontalTitleGap: 0,
+                                leading: Radio<Sort>(
+                                  fillColor:
+                                      MaterialStateColor.resolveWith((states) {
+                                    if (states.any((element) =>
+                                        element == MaterialState.selected)) {
+                                      return Constants.radioBtnSelectdColor;
+                                    }
+                                    return Constants.radioBtnBorderColor;
+                                  }),
+                                  groupValue: filter.sort,
+                                  onChanged: (value) => setBottomSheetState(() {
+                                    filter.sort = value;
+                                  }),
+                                  value: Sort.increase,
+                                ),
+                                title: Text(
+                                  Sort.increase.formatString,
+                                  style: const TextStyle(
+                                      color: Constants.textColor,
+                                      fontSize: FontSize.small,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ),
+                              ListTile(
+                                minLeadingWidth: 10,
+                                horizontalTitleGap: 0,
+                                leading: Radio<Sort>(
+                                  fillColor:
+                                      MaterialStateColor.resolveWith((states) {
+                                    if (states.any((element) =>
+                                        element == MaterialState.selected)) {
+                                      return Constants.radioBtnSelectdColor;
+                                    }
+                                    return Constants.radioBtnBorderColor;
+                                  }),
+                                  groupValue: filter.sort,
+                                  onChanged: (value) => setBottomSheetState(() {
+                                    filter.sort = value;
+                                  }),
+                                  value: Sort.decrease,
+                                ),
+                                title: Text(
+                                  Sort.decrease.formatString,
+                                  style: const TextStyle(
+                                      color: Constants.textColor,
+                                      fontSize: FontSize.small,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ),
+                              filterLabel("Thời gian"),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              textForm(
+                                  null,
+                                  "từ ngày",
+                                  null,
+                                  true,
+                                  const Icon(Icons.calendar_month_outlined),
+                                  fromDayController,
+                                  null,
+                                  null, () async {
+                                List<DateTime?>? pickDate =
+                                    await showCalendarDatePicker2Dialog(
+                                        context: context,
+                                        config:
+                                            CalendarDatePicker2WithActionButtonsConfig(
+                                                calendarType:
+                                                    CalendarDatePicker2Type
+                                                        .single),
+                                        dialogSize: Size(
+                                            MediaQuery.of(context).size.width,
+                                            250));
+                                if (pickDate != null) {
+                                  filter.fromDate = pickDate[0];
+                                  fromDayController.text =
+                                      DateFormat("dd/MM/yyyy")
+                                          .format(filter.fromDate!);
+                                }
+                              }),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              textForm(
+                                  null,
+                                  "đến ngày",
+                                  null,
+                                  true,
+                                  const Icon(Icons.calendar_month_outlined),
+                                  toDayController,
+                                  null,
+                                  null, () async {
+                                List<DateTime?>? pickDate =
+                                    await showCalendarDatePicker2Dialog(
+                                        context: context,
+                                        config:
+                                            CalendarDatePicker2WithActionButtonsConfig(
+                                                calendarType:
+                                                    CalendarDatePicker2Type
+                                                        .single),
+                                        dialogSize: Size(
+                                            MediaQuery.of(context).size.width,
+                                            250));
+                                if (pickDate != null) {
+                                  filter.toDate = pickDate[0];
+                                  toDayController.text =
+                                      DateFormat("dd/MM/yyyy")
+                                          .format(filter.toDate!);
+                                }
+                              }),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.width *
+                                        1 /
+                                        8,
+                                    width: MediaQuery.of(context).size.width *
+                                        2 /
+                                        5,
+                                    child: OutlinedButton(
+                                        onPressed: () {
+                                          setBottomSheetState(
+                                            () {
+                                              filter.refresh();
+                                              fromDayController.clear();
+                                              toDayController.clear();
+                                            },
+                                          );
+                                        },
+                                        style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                                color: Constants
+                                                    .checkBoxSelectedColor)),
+                                        child: const Text(
+                                          "Đặt lại",
+                                          style: TextStyle(
+                                            color:
+                                                Constants.checkBoxSelectedColor,
+                                            fontSize: FontSize.medium,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        )),
+                                  ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.width *
+                                        1 /
+                                        8,
+                                    width: MediaQuery.of(context).size.width *
+                                        2 /
+                                        5,
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Constants
+                                                .checkBoxSelectedColor),
+                                        child: const Text(
+                                          "Áp dụng",
+                                          style: TextStyle(
+                                            color: Constants.primaryColor,
+                                            fontSize: FontSize.medium,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        )),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        ]),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
         ],
         bottom: TabBar(isScrollable: true, controller: _controller, tabs: [
           tabLabel("Tất cả đơn"),
@@ -109,6 +386,11 @@ class RequestPageState extends State<RequestPage>
             }
             return const Center(child: CircularProgressIndicator());
           }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => nextScreen(context, const AddRequestPage()),
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -143,311 +425,6 @@ class RequestPageState extends State<RequestPage>
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            OutlinedButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (BuildContext context) {
-                      TextEditingController fromDayController =
-                          TextEditingController(
-                              text: filter.fromDate == null
-                                  ? null
-                                  : "${filter.fromDate!.day}/${filter.fromDate!.month}/${filter.fromDate!.year}");
-                      TextEditingController toDayController = TextEditingController(
-                          text: filter.toDate == null
-                              ? null
-                              : "${filter.toDate!.day}/${filter.toDate!.month}/${filter.toDate!.year}");
-                      return SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.9,
-                        child: Padding(
-                          padding: const EdgeInsets.all(MarginValue.small),
-                          child: StatefulBuilder(
-                            builder: (context, setBottomSheetState) =>
-                                Stack(children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Center(
-                                    child: Text(
-                                      "Bộ lọc",
-                                      style: TextStyle(
-                                          color: Constants.textColor,
-                                          fontSize: FontSize.medium,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
-                                  filterLabel("Loại nghỉ phép"),
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount:
-                                        filter.timeOffTyeCondition.length,
-                                    itemBuilder: (context, index) {
-                                      return ListTile(
-                                        horizontalTitleGap: 0,
-                                        title: Text(
-                                          filter.timeOffTyeCondition[index]
-                                              .attributeName.formatString,
-                                          style: const TextStyle(
-                                              fontSize: FontSize.small,
-                                              fontWeight: FontWeight.w400,
-                                              color: Constants.textColor),
-                                        ),
-                                        leading: Checkbox(
-                                          value: filter
-                                              .timeOffTyeCondition[index]
-                                              .isCheck,
-                                          onChanged: (value) =>
-                                              setBottomSheetState(() {
-                                            filter.timeOffTyeCondition[index]
-                                                .check = value!;
-                                          }),
-                                          checkColor: Colors.white,
-                                          fillColor:
-                                              MaterialStateColor.resolveWith(
-                                                  (states) {
-                                            const Set<MaterialState>
-                                                interactiveStates =
-                                                <MaterialState>{
-                                              MaterialState.pressed,
-                                              MaterialState.hovered,
-                                              MaterialState.focused,
-                                              MaterialState.selected
-                                            };
-                                            if (states.any(
-                                                interactiveStates.contains)) {
-                                              return Constants
-                                                  .checkBoxSelectedColor;
-                                            }
-                                            return Constants
-                                                .radioBtnBorderColor;
-                                          }),
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(3.0)),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  filterLabel("Sắp xếp theo thời gian gửi"),
-                                  ListTile(
-                                    minLeadingWidth: 10,
-                                    horizontalTitleGap: 0,
-                                    leading: Radio<Sort>(
-                                      fillColor: MaterialStateColor.resolveWith(
-                                          (states) {
-                                        if (states.any((element) =>
-                                            element ==
-                                            MaterialState.selected)) {
-                                          return Constants.radioBtnSelectdColor;
-                                        }
-                                        return Constants.radioBtnBorderColor;
-                                      }),
-                                      groupValue: filter.sort,
-                                      onChanged: (value) =>
-                                          setBottomSheetState(() {
-                                        filter.sort = value;
-                                      }),
-                                      value: Sort.increase,
-                                    ),
-                                    title: Text(
-                                      Sort.increase.formatString,
-                                      style: const TextStyle(
-                                          color: Constants.textColor,
-                                          fontSize: FontSize.small,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                  ListTile(
-                                    minLeadingWidth: 10,
-                                    horizontalTitleGap: 0,
-                                    leading: Radio<Sort>(
-                                      fillColor: MaterialStateColor.resolveWith(
-                                          (states) {
-                                        if (states.any((element) =>
-                                            element ==
-                                            MaterialState.selected)) {
-                                          return Constants.radioBtnSelectdColor;
-                                        }
-                                        return Constants.radioBtnBorderColor;
-                                      }),
-                                      groupValue: filter.sort,
-                                      onChanged: (value) =>
-                                          setBottomSheetState(() {
-                                        filter.sort = value;
-                                      }),
-                                      value: Sort.decrease,
-                                    ),
-                                    title: Text(
-                                      Sort.decrease.formatString,
-                                      style: const TextStyle(
-                                          color: Constants.textColor,
-                                          fontSize: FontSize.small,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                  filterLabel("Thời gian"),
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
-                                  textForm(
-                                      null,
-                                      "từ ngày",
-                                      null,
-                                      true,
-                                      const Icon(Icons.calendar_month_outlined),
-                                      fromDayController,
-                                      null,
-                                      null, () async {
-                                    List<DateTime?>? pickDate =
-                                        await showCalendarDatePicker2Dialog(
-                                            context: context,
-                                            config:
-                                                CalendarDatePicker2WithActionButtonsConfig(
-                                                    calendarType:
-                                                        CalendarDatePicker2Type
-                                                            .single),
-                                            dialogSize: Size(
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                250));
-                                    if (pickDate != null) {
-                                      filter.fromDate = pickDate[0];
-                                      fromDayController.text =
-                                          DateFormat("dd/MM/yyyy")
-                                              .format(filter.fromDate!);
-                                    }
-                                  }),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  textForm(
-                                      null,
-                                      "đến ngày",
-                                      null,
-                                      true,
-                                      const Icon(Icons.calendar_month_outlined),
-                                      toDayController,
-                                      null,
-                                      null, () async {
-                                    List<DateTime?>? pickDate =
-                                        await showCalendarDatePicker2Dialog(
-                                            context: context,
-                                            config:
-                                                CalendarDatePicker2WithActionButtonsConfig(
-                                                    calendarType:
-                                                        CalendarDatePicker2Type
-                                                            .single),
-                                            dialogSize: Size(
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                250));
-                                    if (pickDate != null) {
-                                      filter.toDate = pickDate[0];
-                                      toDayController.text =
-                                          DateFormat("dd/MM/yyyy")
-                                              .format(filter.toDate!);
-                                    }
-                                  }),
-                                ],
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                1 /
-                                                8,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                2 /
-                                                5,
-                                        child: OutlinedButton(
-                                            onPressed: () {
-                                              setBottomSheetState(
-                                                () {
-                                                  filter.refresh();
-                                                  fromDayController.clear();
-                                                  toDayController.clear();
-                                                },
-                                              );
-                                            },
-                                            style: OutlinedButton.styleFrom(
-                                                side: const BorderSide(
-                                                    color: Constants
-                                                        .checkBoxSelectedColor)),
-                                            child: const Text(
-                                              "Đặt lại",
-                                              style: TextStyle(
-                                                color: Constants
-                                                    .checkBoxSelectedColor,
-                                                fontSize: FontSize.medium,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            )),
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                1 /
-                                                8,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                2 /
-                                                5,
-                                        child: ElevatedButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                Navigator.pop(context);
-                                              });
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                                backgroundColor: Constants
-                                                    .checkBoxSelectedColor),
-                                            child: const Text(
-                                              "Áp dụng",
-                                              style: TextStyle(
-                                                color: Constants.primaryColor,
-                                                fontSize: FontSize.medium,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            )),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ]),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-                style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    side: const BorderSide(
-                        color: Constants.checkBoxSelectedColor)),
-                child: const Icon(
-                  Icons.filter_alt_outlined,
-                  color: Constants.checkBoxSelectedColor,
-                )),
             const SizedBox(
               height: 10,
             ),

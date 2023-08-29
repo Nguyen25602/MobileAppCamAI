@@ -28,17 +28,19 @@ class _TimeKeepingItemState extends State<TimeKeepingItem> {
       ),
       Attribute(
           icon: Icons.location_on_outlined,
-          infomation: widget._timeKeeping.timeCheckIn),
+          infomation: "Check-In: ${widget._timeKeeping.timeCheckIn}"),
       Attribute(
           icon: Icons.access_time_outlined,
           infomation:
-              '${widget._timeKeeping.workTime.toStringAsPrecision(2)} hours'),
+              "Tổng Thời Gian: ${widget._timeKeeping.workTime.toStringAsPrecision(2)} hours"),
       Attribute(
           icon: Icons.output_outlined,
-          infomation: widget._timeKeeping.timeCheckOut),
+          infomation: widget._timeKeeping.timeCheckOut.isEmpty
+              ? "Check-Out: None "
+              : "Check-Out: ${widget._timeKeeping.timeCheckOut}"),
       Attribute(
           icon: Icons.devices_other_outlined,
-          infomation: widget._timeKeeping.deviceCheckIn)
+          infomation: "Thiết Bị: ${widget._timeKeeping.deviceCheckIn}")
     ]);
   }
 }
