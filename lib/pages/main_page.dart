@@ -549,8 +549,6 @@ class _MainPageState extends State<MainPage> {
     final checkin = CheckIn(date: DateTime.now(), device: TypeDevice.wifi);
     final data = checkin.toMap();
     data["bssid"] = bssid;
-    String res = await context.read<CheckinRepository>().checkIn(data);
-    await checkinStatusDialog(context, res, "WIFI");
     String result = await context.read<CheckinRepository>().checkIn(data);
     return result;
   }

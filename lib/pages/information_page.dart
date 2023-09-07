@@ -345,7 +345,7 @@ class _InformationPageState extends State<InformationPage> {
                             child: _changeava
                                 ? userProvider.user!.avatar != ""
                                     ? Image.network(
-                                        "http://api.cloudpro.vn${userProvider.user!.avatar}",
+                                        "http://192.168.31.33/onlinecrm${userProvider.user!.avatar}",
                                         height: 100,
                                         width: 100,
                                         fit: BoxFit.cover,

@@ -594,7 +594,7 @@ class _CheckGPSState extends State<CheckGPS> {
                     isButtonEnabledCameraDevice = true;
                   });
                   showProcessWaiting(context);
-                  _checkInCamera().then((result) {
+                  _checkInCamera(image).then((result) {
                     Navigator.pop(context);
                     checkinStatusDialog(context, result, "CameraDevice");
                   });
@@ -618,13 +618,15 @@ class _CheckGPSState extends State<CheckGPS> {
     return result;
   }
 
-  Future<String> _checkInCamera() async {
+  Future<String> _checkInCamera(File image) async {
     final checkIn =
         CheckIn(date: DateTime.now(), device: TypeDevice.cameradevice);
     final data = checkIn.toMap();
     data["distance"] = distance.toString();
     data["place_name"] = _address;
-    String result = await context.read<CheckinRepository>().checkIn(data);
+    String result = await context
+        .read<CheckinRepository>()
+        .checkInCameraDevice(data, image);
     return result;
   }
 }

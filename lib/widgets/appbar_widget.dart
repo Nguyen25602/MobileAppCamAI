@@ -48,7 +48,7 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       image: NetworkImage(
-                          "http://api.cloudpro.vn${user?.avatar}"), // Đặt URL hình ảnh của bạn ở đây
+                          "http://192.168.31.33/onlinecrm${user?.avatar}"), // Đặt URL hình ảnh của bạn ở đây
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -272,7 +272,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                       color: Colors.grey[700],
                     )
                   : Image.network(
-                      "http://api.cloudpro.vn${widget.user?.avatar}",
+                      "http://192.168.31.33/onlinecrm${widget.user?.avatar}",
                       fit: BoxFit.cover,
                     ),
             ),
