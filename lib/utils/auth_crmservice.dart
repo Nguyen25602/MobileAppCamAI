@@ -8,8 +8,7 @@ import 'package:http/http.dart' as http;
 //Login Username
 Future<Map<String, dynamic>?> loginUsernameEmployee(
     String username, String password) async {
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {
     "RequestAction": "LoginByUserName",
     "IsOpenId": 0,
@@ -42,8 +41,7 @@ Future<Map<String, dynamic>?> loginUsernameEmployee(
 //Login Gmail
 Future<Map<String, dynamic>?> loginGmailEmployee(
     String email, String password) async {
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {
     "RequestAction": "LoginByEmail",
     "IsOpenId": 0,
@@ -75,8 +73,7 @@ Future<Map<String, dynamic>?> loginGmailEmployee(
 
 //Logout bằng Token
 Future<Map<String, dynamic>?> logoutEmployee(String token) async {
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {"RequestAction": "Logout"};
   final http.Response response = await http.post(
     Uri.parse(apiUrl),
@@ -100,8 +97,7 @@ Future<Map<String, dynamic>?> logoutEmployee(String token) async {
 //ChangeProfile bằng Token
 Future<String?> changeProfileEmployee(
     String token, Map<String, dynamic> requestData) async {
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
   final http.Response response = await http.post(
     Uri.parse(apiUrl),
     headers: {
@@ -124,8 +120,7 @@ Future<String?> changeProfileEmployee(
 //Check Token lấy User Current App
 Future<Map<String, dynamic>?> checkToken(
     String token, String employeeId) async {
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {
     "RequestAction": "CheckToken",
     "token": token,
@@ -158,8 +153,7 @@ Future<Map<String, dynamic>?> checkToken(
 //Get Data CheckLogin
 Future<Map<String, dynamic>> getCheckLog(
     String token, String employeeId) async {
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {
     "RequestAction": "GetCheckLog",
     "employeeId": employeeId,
@@ -193,8 +187,7 @@ Future<Map<String, dynamic>> getCheckLog(
 //Add Data CheckLog
 Future<Map<String, dynamic>> addCheckLog(
     String token, Map<String, dynamic> requestData) async {
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
 
   final http.Response response = await http.post(
     Uri.parse(apiUrl),
@@ -224,8 +217,7 @@ Future<Map<String, dynamic>> addCheckLog(
 //Add Data CheckLogin
 Future<Map<String, dynamic>> addCheckLogCameraDevice(
     String token, Map<String, dynamic> requestData, File image) async {
-  final uri =
-      Uri.parse("http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php");
+  final uri = Uri.parse("http://api.cloudpro.vn/api/EmployeePortalApi.php");
   final request = http.MultipartRequest('POST', uri);
   // Thêm các trường dữ liệu vào form-data
   requestData.forEach((key, value) {
@@ -266,8 +258,7 @@ Future<Map<String, dynamic>> addCheckLogCameraDevice(
 // 12/08/2023
 Future<Map<String, dynamic>?> saveFcmToken(
     String token, Map<String, dynamic> requestData) async {
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
 
   final http.Response response = await http.post(
     Uri.parse(apiUrl),
@@ -305,8 +296,7 @@ Future<Map<String, dynamic>> getNotificationList(
       "paging": {"next_offset": ""}
     };
   }
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {
     "RequestAction": "GetNotificationList",
     "employeeId": employeeId,
@@ -347,8 +337,7 @@ Future<Map<String, dynamic>> getNotificationList(
 //Get Data CheckLogin
 Future<Map<String, dynamic>> markNotificationsAsRead(
     String token, String employeeId, int id) async {
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {
     "RequestAction": "MarkNotificationsAsRead",
     "employeeId": employeeId,
@@ -385,8 +374,7 @@ Future<Map<String, dynamic>> markNotificationsAsRead(
 // Create 15/8/2023
 // Get Leaving by employeeID
 Future<Map<String, dynamic>> getLeaving(String token, String employeeId) async {
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
   final Map<String, dynamic> requestData = {
     "RequestAction": "GetLeavingEmployee",
     "employeeId": employeeId,
@@ -420,8 +408,7 @@ Future<Map<String, dynamic>> getLeaving(String token, String employeeId) async {
 // Add Leaving
 Future<Map<String, dynamic>?> addLeaving(
     String token, Map<String, dynamic> requestData) async {
-  const String apiUrl =
-      "http://192.168.31.33/onlinecrm/api/EmployeePortalApi.php";
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
 
   final http.Response response = await http.post(
     Uri.parse(apiUrl),
