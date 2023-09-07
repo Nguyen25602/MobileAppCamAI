@@ -27,19 +27,15 @@ class CheckGPS extends StatefulWidget {
 
 class _CheckGPSState extends State<CheckGPS> {
   // Config Camera by Hoang Nguyen
-  File? _image;
-
+  File? image;
   Future<void> _getImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
+    var pickedFile = await ImagePicker().pickImage(source: source);
 
     if (pickedFile != null) {
       setState(() {
-        _image = File(pickedFile.path);
+        image = File(pickedFile.path);
       });
-      print(_image);
-      print("gdsfdsfdsfdsf");
-      print(pickedFile.path);
-      await _showImageDialog();
+      await _showImageDialog(image, _address, distance);
     }
   }
 
@@ -122,10 +118,8 @@ class _CheckGPSState extends State<CheckGPS> {
     if (placemarks.isNotEmpty) {
       Placemark firstPlace = placemarks.first;
       setState(() {
-        _address =
-            "${firstPlace.street}, ${firstPlace.locality}, ${firstPlace.country}";
+        _address = "${firstPlace.street}, ${firstPlace.country}";
       });
-      print(_address);
     }
   }
 
@@ -149,8 +143,8 @@ class _CheckGPSState extends State<CheckGPS> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 animation.Lottie.asset("assets/gpsStatus.json"),
-                SizedBox(height: 20),
-                Text(
+                const SizedBox(height: 20),
+                const Text(
                   "Để xử dụng tính năng này",
                   style: TextStyle(
                     color: Constants.textColor,
@@ -158,8 +152,8 @@ class _CheckGPSState extends State<CheckGPS> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 5),
-                Text(
+                const SizedBox(height: 5),
+                const Text(
                   "Vui lòng bật GPS",
                   style: TextStyle(
                     color: Constants.textColor,
@@ -506,32 +500,101 @@ class _CheckGPSState extends State<CheckGPS> {
     );
   }
 
-  Future<void> _showImageDialog() async {
+  Future<void> _showImageDialog(
+      File? image, String address, int distance) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Selected Image'),
+          title: Text('Check-in bằng CameraDeivce'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.file(_image!),
-              SizedBox(height: 20),
-              Text('Do you want to submit this image?'),
+              Image.file(
+                image!,
+                width: 300,
+                height: 300,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Bạn đang ở cách công ty: ${distance.toString()}m",
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: FontSize.small,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.28,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Vị trí hiện tại: $address",
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: FontSize.small,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.28,
+                ),
+              ),
             ],
           ),
           actions: <Widget>[
             TextButton(
-              child: animation.Lottie.asset('assets/cancle.json', height: 60),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                side: MaterialStateProperty.all<BorderSide>(
+                  const BorderSide(
+                      color: Colors.red,
+                      width: 2.0), // Đặt màu và độ rộng của viền
+                ),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.cancel),
+                  SizedBox(width: 6),
+                  Text('Hủy'),
+                ],
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: animation.Lottie.asset('assets/send.json', height: 60),
-              onPressed: () {
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                foregroundColor:
+                    MaterialStateProperty.all<Color>(Constants.enableButton),
+                side: MaterialStateProperty.all<BorderSide>(
+                  const BorderSide(
+                      color: Constants.enableButton,
+                      width: 2.0), // Đặt màu và độ rộng của viền
+                ),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.send),
+                  SizedBox(width: 6),
+                  Text('Check-in'),
+                ],
+              ),
+              onPressed: () async {
                 // Perform submission logic here
+
+                final checkIn = CheckIn(
+                    date: DateTime.now(), device: TypeDevice.cameradevice);
+
+                final data = checkIn.toMap();
+                data["distance"] = distance.toString();
+                data["place_name"] = _address;
+                String result = await context
+                    .read<CheckinRepository>()
+                    .checkInCameraDevice(data, image);
                 Navigator.of(context).pop();
+                checkinStatusDialog(context, result, "CameraDevice");
               },
             ),
           ],

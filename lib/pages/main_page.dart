@@ -65,38 +65,7 @@ class _MainPageState extends State<MainPage> {
     String notificationTitle = message.notification?.title ?? "Notification";
     String notificationBody = message.notification?.body ?? "Empty body";
     print("Handling a background message: Đây n");
-    Map<String, dynamic> extraData = jsonDecode(message.data['extra_data']);
-    Future.microtask(() {
-      if (extraData["action"] == "employee_checkin_mobileapp") {
-        context.read<NotificationRepository>().updateNotification(
-            ntf.NotificationCheckin(
-                message.data["raw_message"],
-                DateFormat("yyyy-MM-dd HH:mm:ss")
-                    .parse(extraData["checkin_time"]),
-                false,
-                int.parse(message.data["id"])));
-      } else {
-        if (extraData.containsKey("status")) {
-          context.read<NotificationRepository>().updateNotification(
-              ntf.NotificationApproveLeaving(
-                  message.data["raw_message"],
-                  DateFormat("yyyy-MM-dd HH:mm:ss").parse(
-                      extraData["created_time"]), // Fix Hoang Nguyen 21/08/2023
-                  StateOFRequest.fromString(extraData["created_time"]),
-                  false,
-                  int.parse(message.data["id"])));
-          context.read<RequestRepository>().updateWhenHaveNotification();
-        } else {
-          context.read<NotificationRepository>().updateNotification(
-              ntf.NotificationLeaving(
-                  message.data["raw_message"],
-                  DateFormat("yyyy-MM-dd HH:mm:ss")
-                      .parse(extraData["created_time"]),
-                  false,
-                  int.parse(message.data["id"])));
-        }
-      }
-    });
+
     Fluttertoast.showToast(
       msg: "$notificationTitle: $notificationBody",
       toastLength: Toast.LENGTH_LONG,
@@ -151,7 +120,8 @@ class _MainPageState extends State<MainPage> {
                     DateFormat("yyyy-MM-dd HH:mm:ss")
                         .parse(extraData["checkin_time"]),
                     false,
-                    int.parse(message.data["id"])));
+                    int.parse(message.data["id"]),
+                    extraData));
           } else {
             if (extraData.containsKey("status")) {
               context.read<NotificationRepository>().updateNotification(
@@ -161,7 +131,8 @@ class _MainPageState extends State<MainPage> {
                           "created_time"]), // Fix Hoang Nguyen 21/08/2023
                       StateOFRequest.fromString(extraData["created_time"]),
                       false,
-                      int.parse(message.data["id"])));
+                      int.parse(message.data["id"]),
+                      extraData));
               context.read<RequestRepository>().updateWhenHaveNotification();
             } else {
               context.read<NotificationRepository>().updateNotification(
@@ -170,7 +141,8 @@ class _MainPageState extends State<MainPage> {
                       DateFormat("yyyy-MM-dd HH:mm:ss")
                           .parse(extraData["created_time"]),
                       false,
-                      int.parse(message.data["id"])));
+                      int.parse(message.data["id"]),
+                      extraData));
             }
           }
         });
@@ -566,37 +538,5 @@ class _MainPageState extends State<MainPage> {
 
   Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     print("Handling a background message: ${message.messageId}");
-    Map<String, dynamic> extraData = jsonDecode(message.data['extra_data']);
-    Future.microtask(() {
-      if (extraData["action"] == "employee_checkin_mobileapp") {
-        context.read<NotificationRepository>().updateNotification(
-            ntf.NotificationCheckin(
-                message.data["raw_message"],
-                DateFormat("yyyy-MM-dd HH:mm:ss")
-                    .parse(extraData["checkin_time"]),
-                false,
-                int.parse(message.data["id"])));
-      } else {
-        if (extraData.containsKey("status")) {
-          context.read<NotificationRepository>().updateNotification(
-              ntf.NotificationApproveLeaving(
-                  message.data["raw_message"],
-                  DateFormat("yyyy-MM-dd HH:mm:ss").parse(
-                      extraData["created_time"]), // Fix Hoang Nguyen 21/08/2023
-                  StateOFRequest.fromString(extraData["created_time"]),
-                  false,
-                  int.parse(message.data["id"])));
-          context.read<RequestRepository>().updateWhenHaveNotification();
-        } else {
-          context.read<NotificationRepository>().updateNotification(
-              ntf.NotificationLeaving(
-                  message.data["raw_message"],
-                  DateFormat("yyyy-MM-dd HH:mm:ss")
-                      .parse(extraData["created_time"]),
-                  false,
-                  int.parse(message.data["id"])));
-        }
-      }
-    });
   }
 }

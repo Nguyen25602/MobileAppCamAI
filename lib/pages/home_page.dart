@@ -125,8 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
     distance > 200
         ? checkDistance = false
         : checkDistance = true; //Xử lý logic Distance
-    print("distance");
-    print(distance);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     var userProvider = Provider.of<UserProvider>(context);
@@ -202,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   repository.checkinTime)
                                           .isEmpty
                                       ? const Text(
-                                          "Chưa Check - In",
+                                          "NONE",
                                           style: TextStyle(fontSize: 14),
                                         )
                                       : Text(
@@ -243,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   repository.checkoutTime)
                                           .isEmpty
                                       ? const Text(
-                                          "Chưa Check-Out",
+                                          "NONE",
                                           style: TextStyle(fontSize: 14),
                                         )
                                       : Text(
@@ -306,30 +304,93 @@ class _HomeScreenState extends State<HomeScreen> {
                                     await info.getWifiName(); // "FooNetwork"
                                 final wifiBSSID = await info
                                     .getWifiBSSID(); // 11:22:33:44:55:66
-                                final wifiIP = await info.getWifiIP();
+                                // final wifiIP = await info.getWifiIP(); // Get IPv4
                                 if (wifiName == null || wifiBSSID == null) {
                                   if (servicestatus && haspermission) {
+                                    position =
+                                        await Geolocator.getCurrentPosition(
+                                            desiredAccuracy:
+                                                LocationAccuracy.high);
+                                    List<Placemark> placemarks =
+                                        await placemarkFromCoordinates(
+                                            position.latitude,
+                                            position.longitude);
+                                    if (placemarks.isNotEmpty) {
+                                      Placemark firstPlace = placemarks.first;
+                                      _address =
+                                          "${firstPlace.street}, ${firstPlace.locality}, ${firstPlace.country}";
+                                    }
+                                    distance = Geolocator.distanceBetween(
+                                            _kCloudGo.target.latitude,
+                                            _kCloudGo.target.longitude,
+                                            position.latitude,
+                                            position.longitude)
+                                        .toInt(); //Tính khoảng cách
                                     final checkIn = CheckIn(
                                         date: DateTime.now(),
                                         device: TypeDevice.gps);
                                     final data = checkIn.toMap();
                                     data["distance"] = distance.toString();
                                     data["place_name"] = _address;
+                                    print(data["place_name"]);
+                                    print(data["distance"]);
                                     String result = await context
                                         .read<CheckinRepository>()
                                         .checkIn(data);
-                                    checkinStatusDialog(context, result, "GPS");
+                                    result == "1"
+                                        ? checkinStatusDialog(
+                                            context, result, "GPS")
+                                        : showCheckError(context);
+                                  }
+                                } else {
+                                  final checkin = CheckIn(
+                                      date: DateTime.now(),
+                                      device: TypeDevice.wifi);
+                                  final data = checkin.toMap();
+                                  data["bssid"] = wifiBSSID;
+                                  String result = await context
+                                      .read<CheckinRepository>()
+                                      .checkIn(data);
+                                  if (result == "1") {
+                                    checkinStatusDialog(
+                                        context, result, "WIFI");
                                   } else {
-                                    final checkin = CheckIn(
-                                        date: DateTime.now(),
-                                        device: TypeDevice.wifi);
-                                    final data = checkin.toMap();
-                                    data["bssid"] = wifiBSSID!;
-                                    String res = await context
-                                        .read<CheckinRepository>()
-                                        .checkIn(data);
-                                    await checkinStatusDialog(
-                                        context, res, "WIFI");
+                                    if (servicestatus && haspermission) {
+                                      position =
+                                          await Geolocator.getCurrentPosition(
+                                              desiredAccuracy:
+                                                  LocationAccuracy.high);
+                                      List<Placemark> placemarks =
+                                          await placemarkFromCoordinates(
+                                              position.latitude,
+                                              position.longitude);
+                                      if (placemarks.isNotEmpty) {
+                                        Placemark firstPlace = placemarks.first;
+                                        _address =
+                                            "${firstPlace.street}, ${firstPlace.locality}, ${firstPlace.country}";
+                                      }
+                                      distance = Geolocator.distanceBetween(
+                                              _kCloudGo.target.latitude,
+                                              _kCloudGo.target.longitude,
+                                              position.latitude,
+                                              position.longitude)
+                                          .toInt(); //Tính khoảng cách
+                                      final checkIn = CheckIn(
+                                          date: DateTime.now(),
+                                          device: TypeDevice.gps);
+                                      final data = checkIn.toMap();
+                                      data["distance"] = distance.toString();
+                                      data["place_name"] = _address;
+                                      print(data["place_name"]);
+                                      print(data["distance"]);
+                                      String result = await context
+                                          .read<CheckinRepository>()
+                                          .checkIn(data);
+                                      result == "1"
+                                          ? checkinStatusDialog(
+                                              context, result, "GPS")
+                                          : showCheckError(context);
+                                    }
                                   }
                                 }
                                 // Xử lý WiFi xong đến GPS

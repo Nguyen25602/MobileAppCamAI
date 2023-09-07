@@ -104,7 +104,8 @@ class TimeKeeping {
 enum TypeDevice {
   camera(formatString: "CAMERA"),
   gps(formatString: "GPS"),
-  wifi(formatString: "WIFI");
+  wifi(formatString: "WIFI"),
+  cameradevice(formatString: "CameraDevice");
 
   const TypeDevice({required this.formatString});
   final String formatString;

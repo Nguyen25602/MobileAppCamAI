@@ -77,7 +77,54 @@ Future checkinStatusDialog(
         : "Bạn đã checkin thành công";
   }
 
+  if (name == "CameraDevice") {
+    imageAssets = status == "0" ? "assets/error.json" : "assets/success.json";
+    text = status == "0" ? "Quá trình check-in thất bại" : "Chúc mừng";
+    text2 = status == "0"
+        ? "Vui lòng thử lại hoặc thử cách khác"
+        : "Bạn đã checkin thành công";
+  }
+
   Color color = status == "0" ? Colors.red : Constants.successfulColor;
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(imageAssets, animate: true),
+            Text(
+              text,
+              style: TextStyle(fontSize: FontSize.veryLarge, color: color),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              text2,
+              style: TextStyle(fontSize: FontSize.large, color: color),
+              textAlign: TextAlign.center,
+            )
+          ],
+        ),
+      );
+    },
+  );
+}
+
+// Using Dialog Show Action Check-In
+Future showCheckError(BuildContext context) async {
+  String imageAssets = "";
+  String text = "WIFI và GPS không đủ yêu cầu!!!";
+  String text2 = "Vui lòng di chuyển đến công ty";
+
+  imageAssets = "assets/error.json";
+
+  Color color = Colors.red;
   return showDialog(
     context: context,
     builder: (context) {

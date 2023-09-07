@@ -39,6 +39,8 @@ class _TimekeepingHistoryPageState extends State<TimekeepingHistoryPage> {
     _checkinRepository = Provider.of(context);
     _requestRepository = Provider.of(context);
     _timeKeepingRepository = TimeKeepingRepository(_checkinRepository);
+    PageController _pageController = PageController(initialPage: 0);
+    int _currentPageIndex = 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -270,119 +272,175 @@ class _TimekeepingHistoryPageState extends State<TimekeepingHistoryPage> {
               const SizedBox(
                 height: 5,
               ),
-              Container(
-                padding: const EdgeInsets.only(
-                    left: MarginValue.small, bottom: MarginValue.small),
-                alignment: Alignment.topLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentPageIndex = index;
+                    });
+                  },
                   children: [
-                    OutlinedButton.icon(
-                      onPressed: null,
-                      icon: const Icon(
-                        Icons.filter_alt_outlined,
-                        color: Color(0xFF008ECF),
-                        size: 16,
-                      ),
-                      label: Text(
-                        "Tháng ${_selectedMonth == DateTime.now().month || _selectedMonth == null ? "này" : "$_selectedMonth"}",
-                        style: const TextStyle(
-                            color: Color(0xFF008ECF),
-                            fontSize: FontSize.small,
-                            fontFamily: 'roboto',
-                            fontWeight: FontWeight.bold),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                              color: Color(0xFF008ECF), width: 2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          )),
-                    ),
-                    _timeKeepingRepository
-                            .getDataByMonth(_selectedMonth!)
-                            .isNotEmpty
-                        ? SizedBox(
-                            height: 400,
-                            child: ListView.separated(
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return InkWell(
-                                      onTap: () {
-                                        nextScreen(
-                                            context,
-                                            CheckinHistory(
-                                                day: DateFormat("dd/MM/yyyy")
-                                                    .parse(
-                                                        _timeKeepingRepository
-                                                            .listTimeKeeping[
-                                                                index]
-                                                            .day)));
-                                      },
-                                      child: TimeKeepingItem(
-                                          timeKeeping: _timeKeepingRepository
-                                              .getDataByMonth(
-                                                  _selectedMonth!)[index]));
-                                },
-                                separatorBuilder: (context, index) {
-                                  return const Divider(
-                                    thickness: 2,
-                                    color: Constants.lineColor,
-                                  );
-                                },
-                                itemCount: _timeKeepingRepository
-                                    .getDataByMonth(_selectedMonth!)
-                                    .length),
-                          )
-                        : Center(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Lottie.asset('assets/canNotData.json',
-                                    height: 200),
-                                const SizedBox(
-                                  height: MarginValue.small,
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.6,
+                      padding: const EdgeInsets.only(
+                          left: MarginValue.small, bottom: MarginValue.small),
+                      alignment: Alignment.topLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              OutlinedButton.icon(
+                                onPressed: null,
+                                icon: const Icon(
+                                  Icons.filter_alt_outlined,
+                                  color: Color(0xFF008ECF),
+                                  size: 16,
                                 ),
-                                const Text(
-                                  "Không tìm thấy dữ liệu của tháng này",
-                                  style: TextStyle(
-                                    fontSize: FontSize.large,
-                                    fontWeight: FontWeight.w500,
+                                label: Text(
+                                  "Tháng ${_selectedMonth == DateTime.now().month || _selectedMonth == null ? "này" : "$_selectedMonth"}",
+                                  style: const TextStyle(
+                                      color: Color(0xFF008ECF),
+                                      fontSize: FontSize.small,
+                                      fontFamily: 'roboto',
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                    side: const BorderSide(
+                                        color: Color(0xFF008ECF), width: 2),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    )),
+                              ),
+                              ElevatedButton(
+                                onPressed: null,
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                    Colors.transparent,
                                   ),
                                 ),
-                              ],
-                            ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Thống kê chi tiết',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: Constants.enableButton,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(width: 2),
+                                    Icon(
+                                      Icons.navigate_next_outlined,
+                                      color: Constants.enableButton,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                    const Divider(
-                      thickness: 2,
-                      color: Constants.lineColor,
+                          _timeKeepingRepository
+                                  .getDataByMonth(_selectedMonth!)
+                                  .isNotEmpty
+                              ? SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.5,
+                                  child: ListView.separated(
+                                      shrinkWrap: true,
+                                      itemBuilder: (context, index) {
+                                        return InkWell(
+                                            onTap: () {
+                                              nextScreen(
+                                                  context,
+                                                  CheckinHistory(
+                                                      day: DateFormat(
+                                                              "dd/MM/yyyy")
+                                                          .parse(_timeKeepingRepository
+                                                              .getDataByMonth(
+                                                                  _selectedMonth!)[index]
+                                                              .day)));
+                                            },
+                                            child: TimeKeepingItem(
+                                                timeKeeping:
+                                                    _timeKeepingRepository
+                                                            .getDataByMonth(
+                                                                _selectedMonth!)[
+                                                        index]));
+                                      },
+                                      separatorBuilder: (context, index) {
+                                        return const Divider(
+                                          thickness: 2,
+                                          color: Constants.lineColor,
+                                        );
+                                      },
+                                      itemCount: _timeKeepingRepository
+                                          .getDataByMonth(_selectedMonth!)
+                                          .length),
+                                )
+                              : Center(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Lottie.asset('assets/canNotData.json',
+                                          height: 200),
+                                      const SizedBox(
+                                        height: MarginValue.small,
+                                      ),
+                                      const Text(
+                                        "Không tìm thấy dữ liệu của tháng này",
+                                        style: TextStyle(
+                                          fontSize: FontSize.large,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    const Text(
-                      "Thống kê chi tiết",
-                      style: TextStyle(
-                          color: Constants.textColor,
-                          fontFamily: 'roboto',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: MarginValue.medium),
-                      child: _statisticTable(
-                          hoursMonth:
-                              _timeKeepingRepository.countHour(_selectedMonth!),
-                          lateCount:
-                              _timeKeepingRepository.countLate(_selectedMonth!),
-                          goHomeEarlyCount: _timeKeepingRepository
-                              .countHomeEarly(_selectedMonth!),
-                          offRequestCount: _requestRepository
-                              .countApproveRequest(_selectedMonth!)),
-                    ),
+                    Container(
+                      child: Column(
+                        children: [
+                          const Divider(
+                            thickness: 2,
+                            color: Constants.lineColor,
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Text(
+                            "Thống kê chi tiết",
+                            style: TextStyle(
+                                color: Constants.textColor,
+                                fontFamily: 'roboto',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: MarginValue.medium),
+                            child: _statisticTable(
+                                hoursMonth: _timeKeepingRepository
+                                    .countHour(_selectedMonth!),
+                                lateCount: _timeKeepingRepository
+                                    .countLate(_selectedMonth!),
+                                goHomeEarlyCount: _timeKeepingRepository
+                                    .countHomeEarly(_selectedMonth!),
+                                offRequestCount: _requestRepository
+                                    .countApproveRequest(_selectedMonth!)),
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),

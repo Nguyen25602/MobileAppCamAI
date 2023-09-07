@@ -136,6 +136,7 @@ class Request {
   final Period? _period;
   final DateTime _createTime;
   final String _approvedBy;
+  String? _id = null;
   // ignore: unused_field
   String? _approvedDescription;
   Request({
@@ -175,6 +176,7 @@ class Request {
             : Period.fromString(
                 data["cpleavingdetail_time"],
               ),
+        _id = data["cpleavingid"],
         _approvedBy = "1", //cần thêm dữ liệu về người được giao khi call api*/
         _approvedDescription = data["approval_description"] {
     var dates = parseFromAndToDate(data['leaving_date']);
@@ -200,6 +202,7 @@ class Request {
   DistanceOffType get distanceOffType => _distanceOffType;
   DateTime get createTime => _createTime;
   String? get approvedDescription => _approvedDescription;
+  String? get id => _id;
 
   int get numberOfLeavingDay {
     var from = DateTime(_start.year, _start.month, _start.day);

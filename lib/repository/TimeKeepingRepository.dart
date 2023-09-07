@@ -54,8 +54,9 @@ class TimeKeepingRepository {
   }
 
   List<TimeKeeping> getDataByMonth(int month) {
+    int temp = month;
     return _listTimeKeeping
-        .where((element) => element.getMonth() == month)
+        .where((element) => element.getMonth() == temp)
         .toList();
   }
 }

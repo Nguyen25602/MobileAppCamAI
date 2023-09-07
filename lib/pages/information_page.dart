@@ -21,6 +21,7 @@ class InformationPage extends StatefulWidget {
 class _InformationPageState extends State<InformationPage> {
   final GlobalKey<ScaffoldState> _infoKey = GlobalKey<ScaffoldState>();
   final List<String> _avatarPaths = ['assets/cloudgo_icon.png'];
+  XFile? image;
   String? _selectedGender;
   // ignore: unused_field
   String _userAvatar = "";
@@ -344,7 +345,7 @@ class _InformationPageState extends State<InformationPage> {
                             child: _changeava
                                 ? userProvider.user!.avatar != ""
                                     ? Image.network(
-                                        "http://54.179.104.127${userProvider.user!.avatar}",
+                                        "http://api.cloudpro.vn${userProvider.user!.avatar}",
                                         height: 100,
                                         width: 100,
                                         fit: BoxFit.cover,
@@ -401,6 +402,7 @@ class _InformationPageState extends State<InformationPage> {
                             "temporary_address": _address,
                             "email": _email
                           },
+                          "Avatar": image,
                           "id": userProvider.user!.id,
                         };
                         changeProfileEmployee(
@@ -430,7 +432,7 @@ class _InformationPageState extends State<InformationPage> {
 
   Future<void> _changeAvatar() async {
     final ImagePicker _picker = ImagePicker();
-    XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    image = await _picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
       _count += 1;
@@ -439,7 +441,7 @@ class _InformationPageState extends State<InformationPage> {
       String newImagePath =
           "${appDocumentsDirectory.path}/new_avatar${_count}.png";
 
-      File(image.path).copySync(newImagePath);
+      File(image!.path).copySync(newImagePath);
       setState(() {
         _avatarPaths.add(newImagePath);
         _userAvatar = _avatarPaths.last;

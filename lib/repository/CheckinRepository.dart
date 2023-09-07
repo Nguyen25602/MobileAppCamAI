@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloudgo_mobileapp/object/CheckIn.dart';
 import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
 import 'package:flutter/material.dart';
@@ -75,11 +77,25 @@ class CheckinRepository with ChangeNotifier {
     return listDayCheckin.map((e) => DateFormat("yy-M-D").parse(e)).toList();
   }
 
-  Future<String> checkIn(Map<String, String> data) async {
+  Future<String> checkIn(Map<String, dynamic> data) async {
     data["RequestAction"] = "AddCheckLog";
     data["token"] = _token;
     data["employeeId"] = _employeeId;
     final result = await addCheckLog(_token, data);
+    await getNewData();
+    isTodayCheckIn = isCheckin();
+    checkinTime = timeCheckIn();
+    checkoutTime = timeCheckOut();
+    notifyListeners();
+    return result["success"];
+  }
+
+  Future<String> checkInCameraDevice(
+      Map<String, dynamic> data, File image) async {
+    data["RequestAction"] = "AddCheckLog";
+    data["token"] = _token;
+    data["employeeId"] = _employeeId;
+    final result = await addCheckLogCameraDevice(_token, data, image);
     await getNewData();
     isTodayCheckIn = isCheckin();
     checkinTime = timeCheckIn();
@@ -101,12 +117,18 @@ class CheckinRepository with ChangeNotifier {
   String timeCheckIn() {
     var a = listData
         .where((element) => isSameDay(element.dateTime, DateTime.now()));
+    if (a.isEmpty) {
+      return "";
+    }
     return a.first.time;
   }
 
   String timeCheckOut() {
     var a = listData
         .where((element) => isSameDay(element.dateTime, DateTime.now()));
+    if (a.isEmpty) {
+      return "";
+    }
     return a.last.time;
   }
 }

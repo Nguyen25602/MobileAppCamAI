@@ -32,6 +32,8 @@ class CheckIn {
   static TypeDevice _getTypeFromString(String type) {
     if (type == "GPS") return TypeDevice.gps;
     if (type == "WIFI") return TypeDevice.wifi;
+    // Hoang Nguyen add new method checkin
+    if (type == "CameraDevice") return TypeDevice.cameradevice;
     return TypeDevice.camera;
   }
 
@@ -48,7 +50,7 @@ class CheckIn {
   }
 
   //Chuyển dổi từ Checkin -> json để đóng gói trong lúc gọi api
-  Map<String, String> toMap() {
+  Map<String, dynamic> toMap() {
     return {
       "device_name": _device.formatString,
       "detected_time": DateFormat("yyyy-MM-dd HH:mm:ss").format(_date),

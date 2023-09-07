@@ -16,18 +16,22 @@ import 'package:intl/intl.dart';
 class Notification {
   final String message;
   final DateTime sendTime;
-  String categlory = "";
+  final Map<String, dynamic> categlory;
   bool isRead;
   int id;
+  String? idLeaving = "";
   IconData iconData = Icons.location_on_outlined;
 
-  Notification(this.message, this.sendTime, this.isRead, this.id);
+  Notification(
+      this.message, this.sendTime, this.isRead, this.id, this.categlory);
   Notification.fromMap(Map<String, dynamic> data)
       : message = data["message"],
         sendTime = DateFormat("yyyy-MM-dd HH:mm:ss")
             .parse(data["data"]["created_time"]),
         isRead = data["data"]["read"] == "1",
-        id = int.parse(data["data"]["id"]);
+        id = int.parse(data["data"]["id"]),
+        categlory = data["data"]["extra_data"],
+        idLeaving = data["data"]["extra_data"]["id"];
 
   //Trả về chuỗi định dạng cho thời gian thông báo được nhận đi
   //1 phút trước/ hôm qua/ 2 ngày trước ....
@@ -50,8 +54,9 @@ class Notification {
 
 //Thông báo thuộc loại thông báo checkin
 class NotificationCheckin extends Notification {
-  NotificationCheckin(String message, DateTime dateTime, bool isRead, int id)
-      : super(message, dateTime, isRead, id) {
+  NotificationCheckin(String message, DateTime dateTime, bool isRead, int id,
+      Map<String, dynamic> categlory)
+      : super(message, dateTime, isRead, id, categlory) {
     super.iconData = Icons.location_on_outlined;
   }
   NotificationCheckin.fromMap(Map<String, dynamic> data) : super.fromMap(data) {
@@ -61,23 +66,25 @@ class NotificationCheckin extends Notification {
 
 //Thông báo thuộc loại thông báo đơn nghỉ phép
 class NotificationLeaving extends Notification {
-  NotificationLeaving(String message, DateTime dateTime, bool isRead, int id)
-      : super(message, dateTime, isRead, id) {
+  NotificationLeaving(String message, DateTime dateTime, bool isRead, int id,
+      Map<String, dynamic> categlory)
+      : super(message, dateTime, isRead, id, categlory) {
     super.iconData = Icons.request_quote_outlined;
+    super.idLeaving = categlory['id'];
   }
   NotificationLeaving.fromMap(Map<String, dynamic> data) : super.fromMap(data) {
     super.iconData = Icons.request_quote_outlined;
   }
 }
 
-//Thong báo thuộc loại thông báo duyệt đơn nghỉ phép
+//Thông báo thuộc loại thông báo duyệt đơn nghỉ phép
 //Là 1 TH đặc biệt của đơn nghỉ phép
 //Có thêm 1 thuộc tính là được từ chối hay đồng ý
 class NotificationApproveLeaving extends NotificationLeaving {
   final StateOFRequest stateOFRequest;
   NotificationApproveLeaving(String message, DateTime dateTime,
-      this.stateOFRequest, bool isRead, int id)
-      : super(message, dateTime, isRead, id) {
+      this.stateOFRequest, bool isRead, int id, Map<String, dynamic> categlory)
+      : super(message, dateTime, isRead, id, categlory) {
     super.iconData = stateOFRequest == StateOFRequest.reject
         ? Icons.highlight_off_outlined
         : Icons.offline_pin_outlined;
