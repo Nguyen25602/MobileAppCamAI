@@ -18,6 +18,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart' as animation;
 import 'package:provider/provider.dart';
 
+bool isButtonEnabledGPS = true;
+bool isButtonEnabledCameraDevice = true;
+
 class CheckGPS extends StatefulWidget {
   const CheckGPS({super.key});
 
@@ -427,17 +430,20 @@ class _CheckGPSState extends State<CheckGPS> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: () async {
-                        final checkIn = CheckIn(
-                            date: DateTime.now(), device: TypeDevice.gps);
-
-                        final data = checkIn.toMap();
-                        data["distance"] = distance.toString();
-                        data["place_name"] = _address;
-                        String result = await context
-                            .read<CheckinRepository>()
-                            .checkIn(data);
-                        checkinStatusDialog(context, result, "GPS");
+                      onPressed: () {
+                        if (isButtonEnabledGPS) {
+                          isButtonEnabledGPS = false;
+                          Timer(const Duration(minutes: 1), () {
+                            isButtonEnabledGPS = true;
+                          });
+                          showProcessWaiting(context);
+                          _checkInGPS().then((result) {
+                            Navigator.pop(context);
+                            checkinStatusDialog(context, result, "GPS");
+                          });
+                        } else {
+                          showBreakPress(context);
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.fromLTRB(
@@ -581,25 +587,44 @@ class _CheckGPSState extends State<CheckGPS> {
                   Text('Check-in'),
                 ],
               ),
-              onPressed: () async {
-                // Perform submission logic here
-
-                final checkIn = CheckIn(
-                    date: DateTime.now(), device: TypeDevice.cameradevice);
-
-                final data = checkIn.toMap();
-                data["distance"] = distance.toString();
-                data["place_name"] = _address;
-                String result = await context
-                    .read<CheckinRepository>()
-                    .checkInCameraDevice(data, image);
-                Navigator.of(context).pop();
-                checkinStatusDialog(context, result, "CameraDevice");
+              onPressed: () {
+                if (isButtonEnabledCameraDevice) {
+                  isButtonEnabledCameraDevice = false;
+                  Timer(Duration(minutes: 1), () {
+                    isButtonEnabledCameraDevice = true;
+                  });
+                  showProcessWaiting(context);
+                  _checkInCamera().then((result) {
+                    Navigator.pop(context);
+                    checkinStatusDialog(context, result, "CameraDevice");
+                  });
+                } else {
+                  showBreakPress(context);
+                }
               },
             ),
           ],
         );
       },
     );
+  }
+
+  Future<String> _checkInGPS() async {
+    final checkIn = CheckIn(date: DateTime.now(), device: TypeDevice.gps);
+    final data = checkIn.toMap();
+    data["distance"] = distance.toString();
+    data["place_name"] = _address;
+    String result = await context.read<CheckinRepository>().checkIn(data);
+    return result;
+  }
+
+  Future<String> _checkInCamera() async {
+    final checkIn =
+        CheckIn(date: DateTime.now(), device: TypeDevice.cameradevice);
+    final data = checkIn.toMap();
+    data["distance"] = distance.toString();
+    data["place_name"] = _address;
+    String result = await context.read<CheckinRepository>().checkIn(data);
+    return result;
   }
 }

@@ -47,7 +47,7 @@ enum StateOFRequest {
       formatStringEnglish: "Not approve",
       icon: Icons.dangerous_outlined,
       color: Constants.dangerousColor),
-  waitting(
+  waiting(
       formatString: "Đợi duyệt",
       formatStringEnglish: "Wait approved",
       icon: Icons.hourglass_bottom_outlined,
@@ -70,7 +70,7 @@ enum StateOFRequest {
     } else if (name.compareTo("Approved") == 0) {
       return StateOFRequest.accept;
     }
-    return StateOFRequest.waitting;
+    return StateOFRequest.waiting;
   }
 }
 
@@ -149,7 +149,7 @@ class Request {
     required DateTime createTime,
     Period? period,
     DistanceOffType distanceOffType = DistanceOffType.oneDay,
-    StateOFRequest state = StateOFRequest.waitting,
+    StateOFRequest state = StateOFRequest.waiting,
     required String idApprovedPerson,
   })  : _title = title,
         _name = name,

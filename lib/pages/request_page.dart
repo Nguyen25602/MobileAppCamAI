@@ -371,7 +371,7 @@ class RequestPageState extends State<RequestPage>
                     context,
                     context.select<RequestRepository, List<Request>>(
                         (repository) => repository.requests),
-                    StateOFRequest.waitting),
+                    StateOFRequest.waiting),
                 myRequestTab(
                     context,
                     context.select<RequestRepository, List<Request>>(

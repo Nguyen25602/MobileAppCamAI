@@ -10,7 +10,7 @@ class DetailRequestPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool checkState = _request.state == StateOFRequest.waitting ? true : false;
+    bool checkState = _request.state == StateOFRequest.waiting ? true : false;
     return Scaffold(
       appBar: AppBar(
         title: Text(

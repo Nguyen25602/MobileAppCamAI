@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloudgo_mobileapp/helper/helper_function.dart';
@@ -43,6 +44,8 @@ Future updateRepository(
       .read<NotificationRepository>()
       .updateUserInformation(token, employeeId);
 }
+
+bool isButtonEnabledWiFi = true;
 
 class MainPage extends StatefulWidget {
   const MainPage({
@@ -247,14 +250,20 @@ class _MainPageState extends State<MainPage> {
                   ],
                 ),
                 ElevatedButton(
-                  onPressed: () async {
-                    final checkin =
-                        CheckIn(date: DateTime.now(), device: TypeDevice.wifi);
-                    final data = checkin.toMap();
-                    data["bssid"] = bssid;
-                    String res =
-                        await context.read<CheckinRepository>().checkIn(data);
-                    await checkinStatusDialog(context, res, "WIFI");
+                  onPressed: () {
+                    if (isButtonEnabledCameraDevice) {
+                      isButtonEnabledCameraDevice = false;
+                      Timer(Duration(minutes: 1), () {
+                        isButtonEnabledCameraDevice = true;
+                      });
+                      showProcessWaiting(context);
+                      _checkInWiFi(bssid).then((result) {
+                        Navigator.pop(context);
+                        checkinStatusDialog(context, result, "WIFI");
+                      });
+                    } else {
+                      showBreakPress(context);
+                    }
                   },
                   child: const Text('Check - In'),
                 )
@@ -534,6 +543,16 @@ class _MainPageState extends State<MainPage> {
             gapLocation: GapLocation.center,
           ));
     }
+  }
+
+  Future<String> _checkInWiFi(String bssid) async {
+    final checkin = CheckIn(date: DateTime.now(), device: TypeDevice.wifi);
+    final data = checkin.toMap();
+    data["bssid"] = bssid;
+    String res = await context.read<CheckinRepository>().checkIn(data);
+    await checkinStatusDialog(context, res, "WIFI");
+    String result = await context.read<CheckinRepository>().checkIn(data);
+    return result;
   }
 
   Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {

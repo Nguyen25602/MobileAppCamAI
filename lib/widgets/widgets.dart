@@ -59,10 +59,15 @@ void showSnackbar(context, color, message) {
 
 // Checkin Success || Error
 Future checkinStatusDialog(
-    BuildContext context, String status, String name) async {
+    BuildContext context, String? status, String name) async {
   String imageAssets = "";
   String text = "";
   String text2 = "";
+  if (name == "All") {
+    imageAssets = status == "0" ? "assets/error.json" : "assets/success.json";
+    text = status == "0" ? "WIFI và GPS không đúng" : "Chúc mừng";
+    text2 = status == "0" ? "Checkin thất bại" : "Bạn đã checkin thành công";
+  }
   if (name == "WIFI") {
     imageAssets =
         status == "0" ? "assets/wifiDisconnect.json" : "assets/success.json";
@@ -148,6 +153,75 @@ Future showCheckError(BuildContext context) async {
               style: TextStyle(fontSize: FontSize.large, color: color),
               textAlign: TextAlign.center,
             )
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Future showProcessWaiting(BuildContext context) async {
+  String imageAssets = "";
+  String text = "Quá trình đang xử lý";
+  String text2 = "Vui lòng đợi một xíu";
+
+  imageAssets = "assets/process.json";
+
+  Color color = Colors.red;
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(imageAssets, animate: true),
+            Text(
+              text,
+              style: TextStyle(fontSize: FontSize.veryLarge, color: color),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              text2,
+              style: TextStyle(fontSize: FontSize.large, color: color),
+              textAlign: TextAlign.center,
+            )
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Future showBreakPress(BuildContext context) async {
+  String imageAssets = "";
+  String text = "Vui lòng thử lại sau";
+  imageAssets = "assets/waiting.json";
+
+  Color color = Colors.red;
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Lottie.asset(imageAssets, animate: true),
+            Text(
+              text,
+              style: TextStyle(fontSize: FontSize.veryLarge, color: color),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       );
