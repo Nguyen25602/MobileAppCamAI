@@ -23,7 +23,9 @@ class User {
     _temporaryAddress = maps['user_info']['temporary_address'];
     _email = maps['user_info']['email'];
     _mobile = maps['user_info']['mobile'];
-    _birthday = maps['user_info']['birthday'];
+    DateTime birthday = DateTime.parse(maps['user_info']['birthday']);
+    _birthday =
+        "${birthday.day.toString().padLeft(2, '0')}-${birthday.month.toString().padLeft(2, '0')}-${birthday.year}";
     _firstName = maps['user_info']['firstname'];
     _avatar = maps['user_info']['avatar'];
     _createdtime = maps['user_info']['createdtime'];
@@ -54,10 +56,6 @@ class User {
     _createdtime = userInfo['createdtime'];
     _cpemployeeGender = userInfo['cpemployee_gender'];
   }
-
-  void updateAtribute(String name) {
-    _fullName = name;
-  }
 }
 
 class UserProvider extends ChangeNotifier {
@@ -67,11 +65,6 @@ class UserProvider extends ChangeNotifier {
   void updateUser(Map<String, dynamic> userInfo) {
     user?.updateUserInfo(userInfo);
     // Gọi notifyListeners để thông báo cho các widget có sử dụng UserProvider biết là dữ liệu đã thay đổi.
-    notifyListeners();
-  }
-
-  void updateName(String name) {
-    user?.updateAtribute(name);
     notifyListeners();
   }
 

@@ -43,14 +43,22 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
                 )
               : Container(
                   height: 150,
-                  margin: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          "http://api.cloudpro.vn${user?.avatar}"), // Đặt URL hình ảnh của bạn ở đây
-                      fit: BoxFit.cover,
-                    ),
+                  alignment: Alignment.topCenter,
+                  child: ClipOval(
+                    child: ElevatedButton(
+                        onPressed: null,
+                        style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          disabledBackgroundColor: Colors.transparent,
+                          disabledForegroundColor: Colors.transparent,
+                          padding: const EdgeInsets.all(0),
+                        ),
+                        child: Image.network(
+                          "http://api.cloudpro.vn${user?.avatar}",
+                          height: 150,
+                          width: 150,
+                          fit: BoxFit.cover,
+                        )),
                   ),
                 ),
           const SizedBox(

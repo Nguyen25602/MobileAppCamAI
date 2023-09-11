@@ -129,6 +129,10 @@ class CheckinRepository with ChangeNotifier {
     if (a.isEmpty) {
       return "";
     }
+    // Fix bug 10/9/2023 create by Hoang Nguyen
+    // if (a.last.time == a.first.time) {
+    //   return "";
+    // }
     return a.last.time;
   }
 }

@@ -1,11 +1,17 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:cloudgo_mobileapp/helper/helper_function.dart';
+import 'package:cloudgo_mobileapp/main.dart';
 import 'package:cloudgo_mobileapp/object/User.dart';
+import 'package:cloudgo_mobileapp/pages/login_page.dart';
+import 'package:cloudgo_mobileapp/repository/CheckinRepository.dart';
+import 'package:cloudgo_mobileapp/repository/NotificationRepository.dart';
+import 'package:cloudgo_mobileapp/repository/RequestRepository.dart';
 import 'package:cloudgo_mobileapp/shared/constants.dart';
 import 'package:cloudgo_mobileapp/utils/auth_crmservice.dart';
 import 'package:cloudgo_mobileapp/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:lottie/lottie.dart';
 
 import 'package:provider/provider.dart';
 
@@ -20,95 +26,40 @@ class InformationPage extends StatefulWidget {
 
 class _InformationPageState extends State<InformationPage> {
   final GlobalKey<ScaffoldState> _infoKey = GlobalKey<ScaffoldState>();
-  final List<String> _avatarPaths = ['assets/cloudgo_icon.png'];
   XFile? image;
   String? _selectedGender;
   // ignore: unused_field
-  String _userAvatar = "";
-  String _name = "";
-  // ignore: non_constant_identifier_names
-  String _first_name = "";
-  // ignore: non_constant_identifier_names
-  String _last_name = "";
   String _user = '';
   String _number = '';
-  String _email = '';
   String _address = '';
+  String _dob = '';
+  String _password1 = '';
+  String _password2 = '';
   // ignore: unused_field
   String _sex = '';
-
-  bool _changeava = true;
-  int _count = 0;
+  DateTime? _startDay = DateTime.now();
   bool button1valiable = true;
   bool button2valiable = false;
 
-  final TextEditingController _textEditingController = TextEditingController();
-  final TextEditingController _textEditingController2 = TextEditingController();
-  final TextEditingController _textEditingController3 = TextEditingController();
-  final TextEditingController _textEditingController4 = TextEditingController();
-  final TextEditingController _textEditingController5 = TextEditingController();
-
-  String? _selectedDay = '25';
-  String? _selectedMonth = '06';
-  String? _selectedYear = '2002';
-
-  void _updateDaysInMonth() {
-    if (_selectedMonth == null || _selectedYear == null) {
-      return;
-    }
-
-    int month = _months.indexOf(_selectedMonth!) + 1;
-    int year = int.parse(_selectedYear!);
-
-    List<int> daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    if (month == 2 && year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
-      daysInMonth[1] = 29; // Năm nhuận
-    }
-
-    // Cập nhật danh sách ngày dựa trên số ngày trong tháng mới
-    int selectedDay = _selectedDay != null ? int.parse(_selectedDay!) : 1;
-    _days.clear();
-    _days.addAll(List.generate(
-        daysInMonth[month - 1], (index) => (index + 1).toString()));
-
-    // Nếu ngày đã chọn vượt quá số ngày trong tháng mới thì reset ngày về 1
-    if (selectedDay > daysInMonth[month - 1]) {
-      _selectedDay = '1';
-    }
-  }
-
-  final List<String> _days =
-      List.generate(31, (index) => (index + 1).toString());
-  final List<String> _months = [
-    '01',
-    '02',
-    '03',
-    '04',
-    '05',
-    '06',
-    '07',
-    '08',
-    '09',
-    '10',
-    '11',
-    '12',
-  ];
-  final List<String> _years =
-      List.generate(100, (index) => (2023 - index).toString());
-
+  final TextEditingController _textUsername = TextEditingController();
+  final TextEditingController _textPhone = TextEditingController();
+  final TextEditingController _textBOD = TextEditingController();
+  final TextEditingController _textAddress = TextEditingController();
   @override
   void dispose() {
-    _textEditingController.dispose();
+    _textUsername.dispose();
+    _textAddress.dispose();
+    _textBOD.dispose();
+    _textPhone.dispose();
     super.dispose();
   }
 
   void _clearTextField() {
     setState(() {
-      _textEditingController.clear();
-      _textEditingController2.clear();
-      _textEditingController3.clear();
-      _textEditingController4.clear();
-      _textEditingController5.clear();
+      _textUsername.clear();
+      _textPhone.clear();
+      _textBOD.clear();
+      _textAddress.clear();
     });
   }
 
@@ -184,37 +135,19 @@ class _InformationPageState extends State<InformationPage> {
                                       child: const Icon(Icons.edit),
                                     ),
                                   ),
-                                //if (!button1valiable) const SizedBox(height: 40),
-                                SizedBox(
-                                  height: desiredHeight * 0.05,
-                                ),
                                 Center(
                                   child: Column(
                                     children: [
-                                      button2valiable
-                                          ? TextFormField(
-                                              enabled: button2valiable,
-                                              textAlign: TextAlign.center,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  _name = value.toString();
-                                                });
-                                              },
-                                              decoration: const InputDecoration(
-                                                labelText: '',
-                                                alignLabelWithHint: true,
-                                                labelStyle: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            )
-                                          : Text(
-                                              userProvider.user!.name,
-                                              style: const TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
+                                      if (button2valiable)
+                                        const SizedBox(
+                                          height: 50,
+                                        ),
+                                      Text(
+                                        userProvider.user!.name,
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -228,7 +161,7 @@ class _InformationPageState extends State<InformationPage> {
                                     children: [
                                       TextFormField(
                                         enabled: button2valiable,
-                                        controller: _textEditingController,
+                                        controller: _textUsername,
                                         onChanged: (value) {
                                           setState(() {
                                             _user = value;
@@ -237,14 +170,14 @@ class _InformationPageState extends State<InformationPage> {
                                         decoration: InputDecoration(
                                           labelText: button1valiable
                                               ? 'Username      : ${userProvider.user!.userName}'
-                                              : 'Username',
+                                              : 'Tài khoản',
                                           labelStyle:
                                               const TextStyle(fontSize: 14),
                                         ),
                                       ),
                                       TextField(
                                         enabled: button2valiable,
-                                        controller: _textEditingController2,
+                                        controller: _textPhone,
                                         onChanged: (value) {
                                           setState(() {
                                             _number = value;
@@ -259,28 +192,27 @@ class _InformationPageState extends State<InformationPage> {
                                         ),
                                       ),
                                       TextField(
-                                        enabled: button2valiable,
-                                        controller: _textEditingController3,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _email = value;
-                                          });
-                                        },
+                                        enabled: false,
                                         decoration: InputDecoration(
-                                          labelText: button1valiable
-                                              ? 'Email              : ${userProvider.user!.gmail}'
-                                              : 'Email',
+                                          labelText:
+                                              'Email:               ${userProvider.user!.gmail}',
                                           labelStyle:
                                               const TextStyle(fontSize: 14),
                                         ),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
                                       ),
                                       button2valiable
                                           ? _buildGenderSelection()
                                           : TextField(
                                               enabled: button2valiable,
                                               decoration: InputDecoration(
-                                                labelText:
-                                                    'Giới tính         : ${userProvider.user!.gender}',
+                                                labelText: userProvider
+                                                            .user!.gender ==
+                                                        "Male"
+                                                    ? 'Giới tính         : Nam'
+                                                    : 'Giới tính         : Nữ',
                                                 labelStyle: const TextStyle(
                                                     fontSize: 14),
                                               ),
@@ -288,8 +220,7 @@ class _InformationPageState extends State<InformationPage> {
                                       button1valiable
                                           ? TextField(
                                               enabled: button2valiable,
-                                              controller:
-                                                  _textEditingController4,
+                                              controller: _textBOD,
                                               decoration: InputDecoration(
                                                 labelText: button1valiable
                                                     ? 'Ngày sinh      : ${userProvider.user!.birthday}'
@@ -298,10 +229,38 @@ class _InformationPageState extends State<InformationPage> {
                                                     fontSize: 14),
                                               ),
                                             )
-                                          : _selecBirthday(),
+                                          : textForm(
+                                              null,
+                                              "",
+                                              "Ngày sinh",
+                                              true,
+                                              const Icon(Icons
+                                                  .arrow_forward_ios_outlined),
+                                              _textBOD,
+                                              null,
+                                              null, () async {
+                                              List<DateTime?>? pickDate =
+                                                  await showCalendarDatePicker2Dialog(
+                                                      context: context,
+                                                      config: CalendarDatePicker2WithActionButtonsConfig(
+                                                          calendarType:
+                                                              CalendarDatePicker2Type
+                                                                  .single),
+                                                      dialogSize: Size(
+                                                          screenWidth, 250));
+                                              if (pickDate != null) {
+                                                if (pickDate.length == 1) {
+                                                  _startDay = pickDate[0];
+                                                  _textBOD.text =
+                                                      "${_startDay!.day}-${_startDay!.month}-${_startDay!.year}";
+                                                  _dob =
+                                                      "${_startDay!.day}-${_startDay!.month}-${_startDay!.year}";
+                                                }
+                                              }
+                                            }),
                                       TextField(
                                         enabled: button2valiable,
-                                        controller: _textEditingController5,
+                                        controller: _textAddress,
                                         onChanged: (value) {
                                           setState(() {
                                             _address = value;
@@ -316,8 +275,261 @@ class _InformationPageState extends State<InformationPage> {
                                         ),
                                       ),
                                       SizedBox(
-                                        height: desiredHeight * 0.05,
-                                      )
+                                        height: desiredHeight * 0.03,
+                                      ),
+                                      if (button2valiable)
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              ElevatedButton(
+                                                onPressed: () async {
+                                                  if (_number.isEmpty &&
+                                                      _user.isEmpty &&
+                                                      _address.isEmpty &&
+                                                      _dob.isEmpty) {
+                                                    showErrorDialog(
+                                                        context,
+                                                        "Không có dữ liệu",
+                                                        "Vui lòng nhập đúng");
+                                                  } else {
+                                                    showProcessWaiting(context);
+                                                    setState(() {
+                                                      button1valiable = true;
+                                                      button2valiable = false;
+                                                    });
+                                                    _clearTextField();
+                                                    final Map<String, dynamic>
+                                                        requestData = {
+                                                      "RequestAction":
+                                                          "SaveProfile",
+                                                      "Data": {
+                                                        "mobile": _number,
+                                                        "user_name_app": _user,
+                                                        "temporary_address":
+                                                            _address,
+                                                        "birthday": _dob,
+                                                      },
+                                                      "id":
+                                                          userProvider.user!.id,
+                                                    };
+                                                    await changeProfileEmployee(
+                                                            userProvider
+                                                                .user!.token,
+                                                            requestData)
+                                                        .then((value) => {
+                                                              if (value?[
+                                                                      'success'] ==
+                                                                  "1")
+                                                                {
+                                                                  logoutEmployee(userProvider
+                                                                          .user!
+                                                                          .token)
+                                                                      .then(
+                                                                          (value) async =>
+                                                                              {
+                                                                                await HelperFunctions.saveUserLoggedInStatus(false),
+                                                                                await HelperFunctions.saveAccessTokenSF(""),
+                                                                                await HelperFunctions.saveUserNameSF(""),
+                                                                                await HelperFunctions.saveEmployeeIdSF(""),
+                                                                                context.read<UserProvider>().clear(),
+                                                                                context.read<RequestRepository>().clear(),
+                                                                                context.read<CheckinRepository>().clear(),
+                                                                                context.read<NotificationRepository>().clear(),
+                                                                                isSigned = false,
+                                                                                if (value != null)
+                                                                                  {
+                                                                                    if (value["success"] == "1")
+                                                                                      {
+                                                                                        await showSuccessDialog(context, "Vui lòng đăng nhập lại"),
+                                                                                        showSuccessLogout(context),
+                                                                                      }
+                                                                                    else
+                                                                                      {
+                                                                                        showSnackbar(context, Colors.blue, "Đăng xuất thất bại"),
+                                                                                        Navigator.pop(context),
+                                                                                      }
+                                                                                  }
+                                                                                else
+                                                                                  {
+                                                                                    showSnackbar(context, Colors.red, "Đã có thiết bị khác đăng nhập !!!"),
+                                                                                    nextScreenRemove(context, const LoginPage())
+                                                                                  }
+                                                                              }),
+                                                                }
+                                                              else if (value?[
+                                                                      'success'] ==
+                                                                  "-1")
+                                                                {
+                                                                  showErrorDialog(
+                                                                      context,
+                                                                      "Tài khoản đăng nhập bị trùng",
+                                                                      "Vui lòng nhập tài khoản mới",
+                                                                      route:
+                                                                          true),
+                                                                }
+                                                              else
+                                                                {
+                                                                  showErrorDialog(
+                                                                      context,
+                                                                      "Quá trình thay đổi thất bại",
+                                                                      "Vui lòng thử lại sau"),
+                                                                }
+                                                            });
+                                                  }
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30.0)),
+                                                ),
+                                                child: const Text("Xác nhận"),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () async {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: const Text(
+                                                            'Đổi mật khẩu'),
+                                                        content: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Container(
+                                                              margin: const EdgeInsets
+                                                                      .only(
+                                                                  top: MarginValue
+                                                                      .medium,
+                                                                  bottom:
+                                                                      MarginValue
+                                                                          .medium),
+                                                              child:
+                                                                  TextFormField(
+                                                                obscureText:
+                                                                    true,
+                                                                decoration: textInputDecoration
+                                                                    .copyWith(
+                                                                        labelText:
+                                                                            "Nhập Mật Khẩu",
+                                                                        prefixIcon:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .lock,
+                                                                          color:
+                                                                              Constants.textColor,
+                                                                        )),
+                                                                onChanged: (value) =>
+                                                                    _password1 =
+                                                                        value,
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              margin: const EdgeInsets
+                                                                      .only(
+                                                                  top: MarginValue
+                                                                      .medium,
+                                                                  bottom:
+                                                                      MarginValue
+                                                                          .medium),
+                                                              child:
+                                                                  TextFormField(
+                                                                obscureText:
+                                                                    true,
+                                                                decoration: textInputDecoration
+                                                                    .copyWith(
+                                                                        labelText:
+                                                                            "Nhập lại mật khẩu",
+                                                                        prefixIcon:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .lock,
+                                                                          color:
+                                                                              Constants.textColor,
+                                                                        )),
+                                                                onChanged: (value) =>
+                                                                    _password2 =
+                                                                        value,
+                                                              ),
+                                                            ),
+                                                            ElevatedButton(
+                                                              onPressed:
+                                                                  () async {
+                                                                if (_password1 ==
+                                                                    _password2) {
+                                                                  if (_password1
+                                                                          .length <
+                                                                      6) {
+                                                                    showSnackbar(
+                                                                        context,
+                                                                        Colors
+                                                                            .red,
+                                                                        "Mật khẩu phải hơn 6 ký tự Vui lòng nhập lại");
+                                                                  } else {
+                                                                    showProcessWaiting(
+                                                                        context);
+                                                                    final Map<
+                                                                            String,
+                                                                            dynamic>
+                                                                        requestData =
+                                                                        {
+                                                                      "RequestAction":
+                                                                          "ChangePassword",
+                                                                      "Params":
+                                                                          {
+                                                                        "new_password":
+                                                                            _password1,
+                                                                        "employeeId": userProvider
+                                                                            .user!
+                                                                            .id,
+                                                                      },
+                                                                    };
+                                                                    await changePassword(
+                                                                            userProvider
+                                                                                .user!.token,
+                                                                            requestData)
+                                                                        .then((value) async =>
+                                                                            {
+                                                                              if (value == "1")
+                                                                                {
+                                                                                  await showSuccessDialog(context, ""),
+                                                                                  Navigator.pop(context),
+                                                                                }
+                                                                            });
+                                                                  }
+                                                                } else {
+                                                                  showSnackbar(
+                                                                      context,
+                                                                      Colors
+                                                                          .red,
+                                                                      "Mật khẩu không khớp. Vui lòng nhập lại");
+                                                                }
+                                                              },
+                                                              child: const Text(
+                                                                  'Đổi mật khẩu'),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30.0)),
+                                                ),
+                                                child:
+                                                    const Text("Đổi mật khẩu"),
+                                              ),
+                                            ]),
+                                      SizedBox(
+                                        height: desiredHeight * 0.03,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -330,123 +542,36 @@ class _InformationPageState extends State<InformationPage> {
                         alignment: Alignment.topCenter,
                         child: ClipOval(
                           child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                if (button2valiable) {
-                                  _changeava = false;
-                                  _changeAvatar();
-                                }
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(0),
-                            ),
-                            child: _changeava
-                                ? userProvider.user!.avatar != ""
-                                    ? Image.network(
-                                        "http://api.cloudpro.vn${userProvider.user!.avatar}",
-                                        height: 100,
-                                        width: 100,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : const Icon(
-                                        Icons.account_circle,
-                                        size: 100,
-                                      )
-                                : Image.file(
-                                    File(_avatarPaths.last),
-                                    height: 100,
-                                    width: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                          ),
+                              onPressed: null,
+                              style: ElevatedButton.styleFrom(
+                                shape: const CircleBorder(),
+                                disabledBackgroundColor: Colors.transparent,
+                                disabledForegroundColor: Colors.transparent,
+                                padding: const EdgeInsets.all(0),
+                              ),
+                              child: userProvider.user!.avatar != ""
+                                  ? Image.network(
+                                      "http://api.cloudpro.vn${userProvider.user!.avatar}",
+                                      height: 100,
+                                      width: 100,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Icon(
+                                      Icons.account_circle,
+                                      size: 100,
+                                      color: Colors.grey[700],
+                                    )),
                         ),
                       ),
                     ],
                   ),
                 ),
-                if (button2valiable)
-                  SizedBox(
-                    height: desiredHeight * 0.1,
-                    width: desiredWidth * 0.9,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          button1valiable = true;
-                          button2valiable = false;
-                        });
-                        _clearTextField();
-                        userProvider.updateName(_name);
-                        List<String> nameParts = _name.split(" ");
-                        if (nameParts.length >= 2) {
-                          // Lấy Họ và tên đệm
-                          _first_name = nameParts
-                              .sublist(0, nameParts.length - 1)
-                              .join(" ");
-
-                          // Lấy Tên cuối cùng
-                          _last_name = nameParts.last;
-
-                          print("Họ và tên đệm: $_first_name");
-                          print("Tên: $_last_name");
-                        }
-                        final Map<String, dynamic> requestData = {
-                          "RequestAction": "SaveProfile",
-                          "Data": {
-                            "mobile": _number,
-                            "avatar": _avatarPaths,
-                            "firstname": _last_name,
-                            "lastname": _first_name,
-                            "user_name_app": _user,
-                            "temporary_address": _address,
-                            "email": _email
-                          },
-                          "Avatar": image,
-                          "id": userProvider.user!.id,
-                        };
-                        changeProfileEmployee(
-                                userProvider.user!.token, requestData)
-                            .then((value) => {
-                                  if (value == "1")
-                                    {
-                                      showSnackbar(context, Colors.red,
-                                          "Thay Đổi Thành Công")
-                                    }
-                                });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0)),
-                      ),
-                      child: const Text("Xác nhận"),
-                    ),
-                  ),
               ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  Future<void> _changeAvatar() async {
-    final ImagePicker _picker = ImagePicker();
-    image = await _picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      _count += 1;
-      Directory appDocumentsDirectory =
-          await path_provider.getApplicationDocumentsDirectory();
-      String newImagePath =
-          "${appDocumentsDirectory.path}/new_avatar${_count}.png";
-
-      File(image!.path).copySync(newImagePath);
-      setState(() {
-        _avatarPaths.add(newImagePath);
-        _userAvatar = _avatarPaths.last;
-      });
-    }
   }
 
   Widget _buildGenderSelection() {
@@ -486,78 +611,153 @@ class _InformationPageState extends State<InformationPage> {
     );
   }
 
-  Widget _selecBirthday() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Ngày sinh'),
-        Row(
-          children: [
-            // Dropdown ngày
-            Expanded(
-              child: DropdownButtonFormField<String>(
-                value: _selectedDay,
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedDay = newValue;
-                  });
-                },
-                items: _days.map((day) {
-                  return DropdownMenuItem<String>(
-                    value: day,
-                    child: Text(day),
-                  );
-                }).toList(),
-                decoration: const InputDecoration(
-                  labelText: 'Ngày',
-                ),
-              ),
-            ),
-            // Dropdown tháng
-            Expanded(
-              child: DropdownButtonFormField<String>(
-                value: _selectedMonth,
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedMonth = newValue;
-                    _updateDaysInMonth();
-                  });
-                },
-                items: _months.map((month) {
-                  return DropdownMenuItem<String>(
-                    value: month,
-                    child: Text(month),
-                  );
-                }).toList(),
-                decoration: const InputDecoration(
-                  labelText: 'Tháng',
-                ),
-              ),
-            ),
-            // Dropdown năm
-            Expanded(
-              child: DropdownButtonFormField<String>(
-                value: _selectedYear,
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedYear = newValue;
-                    _updateDaysInMonth();
-                  });
-                },
-                items: _years.map((year) {
-                  return DropdownMenuItem<String>(
-                    value: year,
-                    child: Text(year),
-                  );
-                }).toList(),
-                decoration: const InputDecoration(
-                  labelText: 'Năm',
-                ),
-              ),
-            ),
-          ],
+  Widget textForm(String? initValue, String? hintText, String? labelText,
+      [bool isReadOnly = true,
+      Widget? suffixIcon,
+      TextEditingController? controller,
+      int? maxLines,
+      void Function(String)? callBackOnChanged,
+      void Function()? callBackOnTap]) {
+    return TextFormField(
+      readOnly: isReadOnly,
+      controller: controller,
+      initialValue: initValue,
+      maxLines: maxLines,
+      onChanged: callBackOnChanged,
+      onTap: callBackOnTap,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return '$labelText của bạn';
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(
+            vertical: MarginValue.small, horizontal: MarginValue.small),
+        suffixIcon: suffixIcon,
+        hintText: hintText,
+        hintStyle: const TextStyle(
+            fontFamily: 'roboto',
+            fontSize: FontSize.small,
+            fontWeight: FontWeight.w300),
+        label: Text(
+          labelText ?? "",
+          style: const TextStyle(
+              color: Colors.black,
+              fontFamily: 'roboto',
+              fontSize: FontSize.small,
+              fontWeight: FontWeight.w300),
         ),
-      ],
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(width: 1)),
+      ),
+      style: const TextStyle(
+          color: Constants.textColor,
+          fontFamily: 'roboto',
+          fontSize: FontSize.small,
+          fontWeight: FontWeight.normal),
+    );
+  }
+
+  static void showSuccessLogout(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        Future.delayed(const Duration(seconds: 2), () {
+          Navigator.pop(context);
+          nextScreenRemove(context, const LoginPage());
+        });
+
+        return Scaffold(
+          body: Center(child: Lottie.asset("assets/goodbye.json")),
+        );
+      },
+    );
+  }
+
+  Future showSuccessDialog(BuildContext context, String text2) async {
+    String imageAssets = "";
+    String text = "Đã thay đổi thành công";
+
+    imageAssets = "assets/success.json";
+
+    Color color = Colors.red;
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.pop(context);
+      Navigator.pop(context);
+    });
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Lottie.asset(imageAssets, animate: true),
+              Text(
+                text,
+                style: TextStyle(fontSize: FontSize.veryLarge, color: color),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                text2,
+                style: TextStyle(fontSize: FontSize.large, color: color),
+                textAlign: TextAlign.center,
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future showErrorDialog(BuildContext context, String text, String text2,
+      {bool route = false}) async {
+    String imageAssets = "";
+    imageAssets = "assets/error.json";
+
+    Color color = Colors.red;
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.pop(context);
+      if (route) {
+        Navigator.pop(context);
+      }
+    });
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Lottie.asset(imageAssets, animate: true),
+              Text(
+                text,
+                style: TextStyle(fontSize: FontSize.veryLarge, color: color),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                text2,
+                style: TextStyle(fontSize: FontSize.large, color: color),
+                textAlign: TextAlign.center,
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }

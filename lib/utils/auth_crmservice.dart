@@ -95,7 +95,30 @@ Future<Map<String, dynamic>?> logoutEmployee(String token) async {
 }
 
 //ChangeProfile bằng Token
-Future<String?> changeProfileEmployee(
+Future<Map<String, dynamic>?> changeProfileEmployee(
+    String token, Map<String, dynamic> requestData) async {
+  const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
+  final http.Response response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+      "Client": "Mobile",
+      "token": token
+    },
+    body: jsonEncode(requestData),
+  );
+
+  if (response.statusCode == 200) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    return data;
+  } else {
+    print("Error calling the API. Status code: ${response.statusCode}");
+    return null;
+  }
+}
+
+//ChangePassword bằng ID
+Future<String?> changePassword(
     String token, Map<String, dynamic> requestData) async {
   const String apiUrl = "http://api.cloudpro.vn/api/EmployeePortalApi.php";
   final http.Response response = await http.post(
